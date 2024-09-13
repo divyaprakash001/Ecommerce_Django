@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'accounts',
-    'accounts.apps.AccountsConfig',
+    'accounts',
+    # 'accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +138,9 @@ MEDIA_ROOT = BASE_DIR / "media_root"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# t detect error tags
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS={
+  messages.ERROR:'danger',
+}

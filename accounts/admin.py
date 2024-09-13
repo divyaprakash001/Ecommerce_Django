@@ -4,6 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
 class CustomUserAdmin(UserAdmin):
+  # first three line are use to making password non-editable in admin or database
   filter_horizontal=()
   list_filter=()
   fieldsets=()

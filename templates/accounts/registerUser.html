@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card mx-auto my-5 border  border-2 border-secondary p-0 rounded" style="min-width: 500px; width: 40%;">
+
+  <div class="card-header text-center" style="background-color:#D19C97;">
+    <h2 class="text-white ">Register</h2>
+  </div>
+  <div class="card-content container py-2">
+    <form action="{% url "registerUser" %}" method="post">
+      {% csrf_token %}
+      <div class="row g-3">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="first_name">First Name</label>
+            {{form.first_name}}
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="last_name">Last Name</label>
+            {{form.last_name}}
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="username">Username</label>
+            {{form.username}}
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="">Email</label>
+            {{form.email}}
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="password">Password</label>
+            {{form.password}}
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="confirm_password">Confirm Password</label>
+            {{form.confirm_password}}
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-12 mt-3">
+          <div class="form-group">
+            <input type="submit" value="Register" class="btn text-white" style="background-color:#D19C97;" />
+          </div>
+        </div>
+      </div>
+      <ul class="errorlist" style="list-style: none;">
+        {% for field in form %}
+          {% if field.errors %}
+            {% for error in field.errors %}
+              <li style="color:red;">{{error}}</li>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+        <li style="color:red; list-style: none;">{{form.non_field_errors}}</li>
+      </ul>
+
+        <div class="row">
+          <div class="col-12">
+            {% include "includes/alerts.html" %}
+          </div>
+        </div>
+       
+  </div>
+
+  </form>
+</div>
+
+
+
+
+
+{% endblock content %}

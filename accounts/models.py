@@ -80,6 +80,9 @@ class User(AbstractBaseUser):
   
   def has_module_perms(self,app_label):
     return True
+  
+  class Meta:
+    db_table = "User"
 
 class UserProfile(models.Model):
   user = models.OneToOneField(User, on_delete=models.CASCADE,blank=True, null=True)
@@ -97,4 +100,9 @@ class UserProfile(models.Model):
 
   def __str__(self):
     return self.user.email
+  
+  class Meta:
+    db_table = "UserProfile"
+  
+  
   
