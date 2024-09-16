@@ -19,9 +19,15 @@
     </div>
     <div id="mobile-menu-wrap"></div>
     <div class="offcanvas__auth">
+        {% if user.is_authenticated %}
+        <a href="{% url "dashboard" %}" class="btn text-white" style="background-color:#E48989;">My Account</a>
+        <a href="{% url "logout" %}" class="btn text-white" style="background-color:#E48989;"><i class="fa fa-power-off"></i> Logout</a>
+        {% else %}
         <a href="{% url "login" %}">Login</a>
-        <a href="{% url "registerUser" %}">Register</a>
+        <a href="{% url "registerUser" %}">Register</a>  
         <a href="{% url "registerSeller" %}" class="btn text-white" style="background-color:#E48989;">Register</a>
+        {% endif %}
+        
     </div>
 </div>
 <header class="header">
@@ -55,9 +61,16 @@
             <div class="col-lg-3">
                 <div class="header__right">
                     <div class="header__right__auth">
+                        {% if user.is_authenticated %}
+                        <a href="{% url "dashboard" %}" class="btn text-white" style="background-color:#E48989;">My Account</a>
+                        <a href="{% url "logout" %}" class="btn text-white" style="background-color:#E48989;"><i class="fa fa-power-off"></i> Logout</a>
+                        {% else %}
                         <a href="{% url "login" %}">Login</a>
-                        <a href="{% url "registerUser" %}">Register</a>
+                        <a href="{% url "registerUser" %}">Register</a>  
                         <a href="{% url "registerSeller" %}" class="btn text-white" style="background-color:#E48989;">Register</a>
+                        {% endif %}
+                        
+                        
                     </div>
                     <ul class="header__right__widget">
                         <li><span class="icon_search search-switch"></span></li>

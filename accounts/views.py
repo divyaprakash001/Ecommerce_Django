@@ -2,13 +2,17 @@ from django.shortcuts import redirect, render
 from .forms import UserForm
 from seller.forms import SellerForm
 from .models import User, UserProfile
-from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib import messages, auth
+from django.contrib.auth.decorators import login_required
+
 
 
 # Create your views here.
 def registerUser(request):
-  if request.method == "POST":
+  if request.user.is_authenticated:
+    messages.warning(request,"You are already logged in!")
+    return redirect("dashboard")
+  elif request.method == "POST":
     form = UserForm(request.POST)
     if form.is_valid():
       first_name = form.cleaned_data['first_name']
@@ -33,9 +37,11 @@ def registerUser(request):
   return render(request,"accounts/registerUser.html",context)
 
 
-
 def registerSeller(request):
-  if request.method == "POST":
+  if request.user.is_authenticated:
+    messages.warning(request,"You are already logged in!")
+    return redirect("dashboard")
+  elif request.method == "POST":
     user_form = UserForm(request.POST)
     s_form = SellerForm(request.POST,request.FILES)
     if user_form.is_valid() and s_form.is_valid():
@@ -73,14 +79,31 @@ def registerSeller(request):
   return render(request,"accounts/registerSeller.html",context)
 
 def login(request):
-  if request.method == "POST":
-      email = request.POST['email'].strip()
-      password = request.POST['password'].strip()
-      user = User.objects.get(email=email,password=password)
-      if user.is_authenticated():
-        messages.success("You are already logged in!")
-        redirect('login')
-      else:
-        user = authenticate(email,password)
-        print(user)
+  if request.user.is_authenticated:
+    messages.warning(request,"You are already logged in!")
+    return redirect("dashboard")
+  elif request.method == "POST":
+    email = request.POST['email'].strip()
+    password = request.POST['password'].strip()
+      
+    user = auth.authenticate(email=email,password=password)
+
+    if user is not None:
+      auth.login(request,user)
+      messages.success(request,"You are successfully logged in!")
+      return redirect('dashboard')
+    else:
+      messages.error(request,"Invalid login credentials!!!")
+      return redirect('login')
+
   return render(request,"accounts/login.html")
+
+
+@login_required(login_url="login")
+def logout(request):
+  auth.logout(request)
+  messages.info(request,"You are logged out!")
+  return redirect("login")
+
+def dashboard(request):
+  return render(request,"accounts/dashboard.html")
