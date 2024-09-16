@@ -1,25 +1,47 @@
-@keyframes flash {
+.custom_file {
+  background-color: #E48989;
+  color: #fff;
+}
+
+/* For modern browsers: styling the file selector button */
+.custom_file::file-selector-button {
+  background-color: #E48989;
+  /* Red background */
+  color: #fff;
+  /* White text */
+  border: none;
+  /* Remove border */
+  padding: .5rem;
+  /* Padding */
+  border-radius: .25rem;
+  /* Rounded corners */
+  cursor: pointer;
+  /* Pointer cursor */
+}
+
+.flash {
+  position: absolute;
+  right: 3%;
+  bottom: -100%;
+  animation-name: alert;
+  animation-duration: 7s;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes alert {
   0% {
     bottom: -100%;
   }
 
-  20% {
-    bottom: 100px;
+  40% {
+    bottom: 110px;
   }
 
-  80% {
-    bottom: 100px;
+  70% {
+    bottom: 110px;
   }
 
   100% {
     bottom: -100%;
   }
-}
-
-.flash {
-  position: fixed;
-  bottom: 100%;
-  right: 20px;
-  animation-name: flash;
-  animation-duration: 8s;
 }
