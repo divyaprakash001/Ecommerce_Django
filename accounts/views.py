@@ -4,8 +4,14 @@ from seller.forms import SellerForm
 from .models import User, UserProfile
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required,user_passes_test
-from .utils import seller_required, customer_required
+# from .utils import seller_required, customer_required
 from django.core.exceptions import PermissionDenied
+from .utils import detectUser ,send_verification_email
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+
+
 
 # restricting user to access seller dashboard
 def check_role_seller(user):
@@ -39,6 +45,10 @@ def registerUser(request):
       user = User.objects.create_user(first_name=first_name,last_name=last_name,username=username, email=email,password=password)
       user.role = User.CUSTOMER
       user.save()
+
+      # send verification email
+      send_verification_email(request,user)
+
       messages.success(request, "Your account has been registered successfully! Please check your email !!!", fail_silently=True)
       return redirect("registerUser")
     else:
@@ -69,6 +79,8 @@ def registerSeller(request):
       user = User.objects.create_user(first_name=first_name,last_name=last_name,username=username, email=email,password=password)
       user.role = User.SELLER
       user.save()
+      
+
 
       # seller_name = user_form.cleaned_data['seller_name']
       # seller_gst_pic = user_form.cleaned_data['seller_gst_pic']
@@ -78,6 +90,10 @@ def registerSeller(request):
       userprofile = UserProfile.objects.get(user=user)
       seller.user_profile = userprofile
       seller.save()
+      mail_subject = "Activate your account"
+      email_template = "accounts/email/activation_email.html"
+      send_verification_email(request,user,mail_subject,email_template)
+
       messages.success(request, "Your account has been registered successfully! Please check your email !!!", fail_silently=True)
       return redirect("registerSeller")
     else:
@@ -92,6 +108,98 @@ def registerSeller(request):
       "s_form":s_form,
   }
   return render(request,"accounts/registerSeller.html",context)
+
+# activating via activation link *******************
+def activate(request,uidb64,token):
+  try:
+    id = force_str(urlsafe_base64_decode(uidb64).decode())
+    user = User.objects.get(pk=id)
+    print(user)
+  except (User.DoesNotExist, TypeError, ValueError, OverflowError):
+    user = None
+  if user is not None and default_token_generator.check_token(user, token):
+    user.is_active = True
+    user.save()
+    messages.success(request,"User activated successfully!")
+    return redirect("login")
+  else:
+    messages.error(request, 'Activation link is invalid!')
+    return render(request, 'accounts/activation_invalid.html')
+
+# forgot password
+def forget_password(request):
+  if request.user.is_authenticated:
+    messages.warning(request,"You are already logged in!")
+    return redirect("myAccount")
+  elif request.method == "POST":
+    try:
+      email = request.POST['email']
+      user = User.objects.get(email=email)
+      print(user)
+    except User.DoesNotExist:
+      user = None
+      messages.error(request,"User doesn't exists on given email !")
+      return redirect("forget_password")
+    
+    if user is not None and user.is_active:
+      mail_subject = "Here is the code for reset password !"
+      email_template = "accounts/email/reset_email.html"
+      send_verification_email(request,user,mail_subject,email_template)
+      messages.info(request,"reset link has been sent on given email")
+      return redirect("login")
+    else:
+      messages.error(request,"User is not active ! Wait for approval !!!")
+      # return redirect("login")
+  else:
+    return render(request,"accounts/forget_password.html")
+  return render(request,"accounts/forget_password.html")
+
+
+# reset password ***********************************************
+def reset_password(request,uidb64,token):
+  if request.user.is_authenticated:
+    messages.warning(request,"You are already logged in!")
+    return redirect("myAccount")
+  elif request.method == "POST":
+    try:
+      id = uidb64
+      user = User.objects.get(pk=id)
+    except User.DoesNotExist:
+      user=None
+    if user is not None:
+      password = request.POST['password'].strip()
+      confirm_password = request.POST['confirm_password'].strip()
+      if  password == confirm_password:
+        user.set_password(password)
+        user.save()
+        messages.success(request,"Password reset successfully!")
+        return redirect("login")
+      else:
+        messages.error(request,"Password doesn't match!")
+        return redirect("reset_password",uidb64,token)
+    else:
+      messages.error(request,"User doesn't exists!")
+      return redirect("login")
+  else:
+    try:
+      id = force_str(urlsafe_base64_decode(uidb64).decode())
+      user = User.objects.get(pk=id)
+    except (User.DoesNotExist, TypeError, ValueError, OverflowError):
+      user = None
+    
+    if user is not None and default_token_generator.check_token(user, token):
+      context = {
+        "uid":force_str(urlsafe_base64_decode(uidb64).decode()),
+        "token":token
+      }
+      return render(request,"accounts/reset_password.html",context)
+    else:
+      messages.error(request, 'Reset link is invalid!')
+      return redirect('forget_password')
+  
+
+
+
 
 def login(request):
   if request.user.is_authenticated:
@@ -113,7 +221,10 @@ def login(request):
 
   return render(request,"accounts/login.html")
 
-from .utils import detectUser
+
+
+
+
 @login_required(login_url="login")
 def myAccount(request):
   user = request.user
