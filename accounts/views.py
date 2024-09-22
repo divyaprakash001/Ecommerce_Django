@@ -1,3 +1,4 @@
+import socket
 from django.shortcuts import redirect, render
 from .forms import UserForm
 from seller.forms import SellerForm
@@ -47,7 +48,14 @@ def registerUser(request):
       user.save()
 
       # send verification email
-      send_verification_email(request,user)
+      try:
+        send_verification_email(request,user)
+      except socket.timeout:
+        print("Connection timed out. Please try again later.")
+      except socket.error as e:
+        print(f"Socket error: {e}")
+      except Exception as e:
+        print(f"An error occurred: {e}")
 
       messages.success(request, "Your account has been registered successfully! Please check your email !!!", fail_silently=True)
       return redirect("registerUser")
@@ -92,7 +100,14 @@ def registerSeller(request):
       seller.save()
       mail_subject = "Activate your account"
       email_template = "accounts/email/activation_email.html"
-      send_verification_email(request,user,mail_subject,email_template)
+      try:
+        send_verification_email(request,user,mail_subject,email_template)
+      except socket.timeout:
+        print("Connection timed out. Please try again later.")
+      except socket.error as e:
+        print(f"Socket error: {e}")
+      except Exception as e:
+        print(f"An error occurred: {e}")
 
       messages.success(request, "Your account has been registered successfully! Please check your email !!!", fail_silently=True)
       return redirect("registerSeller")
@@ -127,6 +142,7 @@ def activate(request,uidb64,token):
     return render(request, 'accounts/activation_invalid.html')
 
 # forgot password
+import secrets
 def forget_password(request):
   if request.user.is_authenticated:
     messages.warning(request,"You are already logged in!")
@@ -144,13 +160,29 @@ def forget_password(request):
     if user is not None and user.is_active:
       mail_subject = "Here is the code for reset password !"
       email_template = "accounts/email/reset_email.html"
-      send_verification_email(request,user,mail_subject,email_template)
-      messages.info(request,"reset link has been sent on given email")
-      return redirect("login")
+      
+      try:
+        send_verification_email(request,user,mail_subject,email_template)
+        messages.info(request,"reset link has been sent on given email")
+        return redirect("login")
+      except socket.timeout:
+        messages.error(request,"Connection timed out. Please try again later.")
+        return redirect('login')
+      except socket.error as e:
+        messages.error(request,"Error in sending email. Please Check your connection.")
+        return redirect('login')
+      except Exception as e:
+        print(f"An error occurred: {e}")
+        messages.error(request,"Something got error while sending email. Please try again later.")
+        return redirect('login')
+
     else:
       messages.error(request,"User is not active ! Wait for approval !!!")
       # return redirect("login")
-  else:
+  # else:
+  #   context={
+  #     # 'token':default_token_generator.make_token(),
+  #   }
     return render(request,"accounts/forget_password.html")
   return render(request,"accounts/forget_password.html")
 
