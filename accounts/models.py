@@ -75,6 +75,10 @@ class User(AbstractBaseUser):
   def __str__(self):
     return self.email
   
+  def full_name(self):
+    return  f'{self.first_name} {self.last_name}'
+
+  
   def has_perm(self,perm,obj=None):
     return self.is_admin
   
@@ -93,7 +97,7 @@ class User(AbstractBaseUser):
     db_table = "User"
 
 class UserProfile(models.Model):
-  user = models.OneToOneField(User, on_delete=models.CASCADE,blank=True, null=True)
+  user = models.OneToOneField(User, related_name="userprofile" ,on_delete=models.CASCADE,blank=True, null=True)
   profile_photo = models.ImageField(upload_to="users/profile_photo",blank=True,null=True)
   cover_photo = models.ImageField(upload_to="users/cover_photo",blank=True, null=True)
   address = models.CharField(max_length=200,blank=True,null=True)

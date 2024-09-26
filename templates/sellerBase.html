@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{data.title}}</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static "seller/css/bootstrap.css" %}">
+
+    <link rel="stylesheet" href="{% static "seller/css/vendors/iconly/bold.css" %}">
+    <link rel="stylesheet" href="{% static "seller/css/vendors/choices.js/choices.min.css" %}" />
+    <link rel="stylesheet" href="{% static "seller/css/vendors/perfect-scrollbar/perfect-scrollbar.css" %}">
+    <link rel="stylesheet" href="{% static "seller/css/vendors/bootstrap-icons/bootstrap-icons.css" %}">
+    <link rel="stylesheet" href="{% static "seller/css/app.css" %}">
+    <link rel="stylesheet" href="{% static "seller/css/vendors/simple-datatables/style.css" %}">
+    <link rel="shortcut icon" href="{% static "seller/css/images/favicon.svg" %}" type="image/x-icon">
+    {% block extralinks %}
+      
+    {% endblock extralinks %}
+    <style>
+        .page_change {
+            outline: none;
+            border: none;
+            background-color: #fff;
+            border-radius: 24px;
+            border-style: none;
+            box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 3px 0px 0,rgba(0, 0, 0, .12) 0 1px 0px 0;
+            box-sizing: border-box;
+            color: black;
+            cursor: pointer;
+            font-family: "Google Sans",Roboto,Arial,sans-serif;
+            font-weight: 500;
+            padding: 8px 24px;
+            text-align: center;
+            text-transform: none;
+            transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1),opacity 15ms linear 30ms,transform 270ms cubic-bezier(0, 0, .2, 1) 0ms;
+            width: auto;
+        }
+
+        .page_change:hover {
+          background: #F6F9FE;
+          color: #174ea6;
+          scale: 1.1;
+          transition: 0.6s;
+        }
+        .sidebar-wrapper .menu .sidebar-item.active .sidebar-link {
+            background-color: #2faaf6;
+        }
+        .sidebar-wrapper .menu .submenu .submenu-item .active2 {
+            background-color: #2faaf6;
+            color: white;
+            border-radius: 0.5rem;
+        }
+        .dataTable-dropdown label{
+            text-transform: capitalize !important;
+        }
+        #html_data table thead th{
+            padding-right: 1rem;
+        }
+        .dataTable-sorter::before, .dataTable-sorter::after{
+            right: -1rem;
+        }
+        .table-striped img{
+        height: 100%;
+        width: 100%;
+    }
+    .table-striped tbody tr td a{
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+    .table-striped tbody tr td{
+        text-align: center;
+    }
+
+    .table-striped thead tr th{
+        text-align: center;
+        padding: 0.8rem 2rem 0.8rem 2rem;
+    }
+    .loder{
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.089);
+        cursor: wait;
+        z-index: 99999;
+        overflow: hidden;
+    }
+    #preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 99999;
+    }
+    #loader {
+        display: block;
+        position: relative;
+        left: 50%;
+        top: 50%;
+        width: 150px;
+        height: 150px;
+        margin: -75px 0 0 -75px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #9370DB;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+    }
+    #loader:before {
+        content: "";
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        right: 5px;
+        bottom: 5px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #BA55D3;
+        -webkit-animation: spin 3s linear infinite;
+        animation: spin 3s linear infinite;
+    }
+    #loader:after {
+        content: "";
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #FF00FF;
+        -webkit-animation: spin 1.5s linear infinite;
+        animation: spin 1.5s linear infinite;
+    }
+    @-webkit-keyframes spin {
+        0%   {
+            -webkit-transform: rotate(0deg);
+            -ms-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+            -ms-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+    }
+    @keyframes spin {
+        0%   {
+            -webkit-transform: rotate(0deg);
+            -ms-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+            -ms-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+    }
+</style>
+</head>
+
+<body>
+{% comment %} <div hidden class="loder">
+    <div id="preloader">
+        <div id="loader"></div>
+    </div>
+</div> {% endcomment %}
+    <div id="app">
+        <div id="sidebar" class="active avoid-in-print">
+            <div class="sidebar-wrapper active">
+                <div class="sidebar-header">
+                    <div class="d-flex justify-content-between">
+                        <div class="logo">
+                            <a href="{% url "sellerDashboard" %}"><img src="{% static "img/logo.png" %}" style="width: 100%; height: 100%;" alt="">Ash Fashion</a>
+                        </div>
+                        <div class="toggler">
+                            <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-menu">
+                    <ul class="menu">
+
+                        <li class="sidebar-item {% if  request.path == '/Dashboard/' %}active{% endif %}">
+                            <a href="{% url "sellerDashboard" %}" class='sidebar-link'>
+                                <i class="bi bi-grid-fill"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if  request.path == '/Dashboard/' %}active{% endif %}">
+                            <a href="" class='sidebar-link'>
+                                <i class="bi bi-grid-fill"></i>
+                                <span>pending_work</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-title">Approval Section </li>
+
+                        <li class="sidebar-item {% if  request.path == '/approve-user/' %}active{% endif %} ">
+                            <a href="" class='sidebar-link'>
+                                <i class="fa-solid fa-person-circle-check"></i>
+                                <span> Approve New Users </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.path == '/leave-approve/' %}active{% endif %} ">
+                            <a href="" class='sidebar-link'>
+                                <i class="fa-solid fa-calendar-check"></i>
+                                <span> Approve Leave </span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-title">Message Section </li>
+
+                        <li class="sidebar-item {% if request.path == '/leave-approve/' %}active{% endif %} "></li>
+                            <a href="" class='sidebar-link'>
+                                <i class="fa-solid fa-message"></i>
+                                <span> Send Message </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.path == '/leave-approve/' %}active{% endif %} "></li>
+                            <a href="" class='sidebar-link'>
+                                <i class="fa-solid fa-lightbulb"></i>
+                                <span> Send Thought </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-title">Menu</li>
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class="sidebar-link">
+                                <i class="fa-solid fa-school"></i>
+                                <span>School Details</span>
+                            </a>
+                            <ul class="submenu" {% if request.path == '/add-branch/' or request.path == '/branch-details/' or request.path == '/add-academic/' or request.path == '/academic-details/' or request.path == '/Create-class/' or request.path == '/search-classes/' or request.path == '/add-subjects/' or request.path == '/subjects-details/' or request.path == '/add-fee-details/' or request.path == '/fee-details/' %} style="display: block;" {% endif %}>
+                                <li class="submenu-item  ">
+                                    <a {% if request.path == '/add-branch/' or request.path == '/branch-details/' %} class="active2" {% endif %} href="">Branch's</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/add-academic/' or request.path == '/academic-details/' %} class="active2" {% endif %} href="">Academic Details</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/Create-class/' or request.path == '/search-classes/' %} class="active2" {% endif %} href="">Create Class </a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/add-subjects/' or request.path == '/subjects-details/' %} class="active2" {% endif %}  href="">Add Subjects</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/add-fee-details/' or request.path == '/fee-details/' %} class="active2" {% endif %} href="">Fee Structure</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="sidebar-item {% if  request.path == '/add-privileges/' or request.path == '/search-privilege/' %}active{% endif %} ">
+                            <a href="" class='sidebar-link'>
+                                <i class="fa-solid fa-universal-access"></i>
+                                <span> Privileges </span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                <span>Student</span>
+                            </a>
+                            <ul class="submenu "  {% if request.path == '/Student-Registration/' or request.path == '/Search-Student/' or request.path == '/New-Admission/' or request.path == '/Admission-Record/' or request.path == '/generate-id-card/' or request.path == '/view-id-card/' %} style="display: block;" {% endif %} >
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/Student-Registration/' or request.path == '/Search-Student/' %} class="active2" {% endif %} href="">Registration</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/New-Admission/' or request.path == '/Admission-Record/' %} class="active2" {% endif %} href="">Admission</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/generate-id-card/' or request.path == '/view-id-card/' %} class="active2" {% endif %} href="">ID Card</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fa-solid fa-users"></i>
+                                <span>Employee</span>
+                            </a>
+                            <ul class="submenu" {% if request.path == '/Employee-Registration/' or request.path == '/Search-Employee/' %} style="display: block;" {% endif %} >
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/Employee-Registration/' or request.path == '/Search-Employee/' %} class="active2" {% endif %} href="">Registration</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fa-solid fa-money-bill"></i>
+                                <span>Accessory Charge</span>
+                            </a>
+                            <ul class="submenu" {% if request.path == '/search-id-card/' or request.path == '/Reissue-id-card/' or request.path == '/additional-charges/' or request.path == '/search-additional-charges/' %} style="display: block;" {% endif %} >
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/search-id-card/' or request.path == '/Reissue-id-card/' %} class="active2" {% endif %} href="">ID Card</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/additional-charges/' or request.path == '/search-additional-charges/' %} class="active2" {% endif %} href="">Additional Charges </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fa-solid fa-clock"></i>
+                                <span>Time Table</span>
+                            </a>
+                            <ul class="submenu " {% if request.path == '/Teacher-Time-Table/' or request.path == '/Class-Time-Table/' or request.path == '/Generate-Time-Table/' %} style="display: block;" {% endif %} >
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/Generate-Time-Table/' %} class="active2" {% endif %} href="">Generate Time Table</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/Class-Time-Table/' %} class="active2" {% endif %} href="">For Classes</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/Teacher-Time-Table/' %} class="active2" {% endif %} href="">For Teachers</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fa-solid fa-file-pen"></i>
+                                <span>Exam's</span>
+                            </a>
+                            <ul class="submenu" {% if request.path == '/Create-Exam/' or request.path == '/scheduled-exams/' or request.path == '/exam-registration/' or request.path == '/exam-registration-search/' or request.path == '/assign-exam/' or request.path == '/assigned-exams/' %} style="display: block;" {% endif %}  >
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/Create-Exam/' or request.path == '/scheduled-exams/' %} class="active2" {% endif %}  href="">Create</a>
+                                </li>
+                                
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/exam-registration/' or request.path == '/exam-registration-search/'  %} class="active2" {% endif %}  href="">Register Students</a>
+                                </li>
+
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/assign-exam/' or request.path == '/assigned-exams/' %} class="active2" {% endif %}  href="">Assignment</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fa-solid fa-bus"></i>
+                                <span>Transport</span>
+                            </a>
+                            <ul class="submenu" {% if request.path == '/add-transporter/' or request.path == '/search-transporter/' or request.path == '/add-driver/' or request.path == '/search-driver/' or request.path == '/route-plan/' or request.path == '/search-route-plan/' %} style="display: block;" {% endif %}  >
+                                <li class="submenu-item ">
+                                    <a  {% if request.path == '/add-transporter/' or request.path == '/search-transporter/' %} class="active2" {% endif %}  href="">Add Transporter</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a  {% if request.path == '/add-driver/' or request.path == '/search-driver/' %} class="active2" {% endif %}  href="">Add Driver</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a  {% if request.path == '/route-plan/' or request.path == '/search-route-plan/' %} class="active2" {% endif %}  href="">Route Plan</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fa-solid fa-calendar-day"></i>
+                                <span>Mark Attendence</span>
+                            </a>
+                            <ul class="submenu" {% if request.path == '/student-attendence/' or request.path == '/student-attendence-search/' or request.path == '/employee-attendence-in-time/' or request.path == '/employee-attendence-out-time/' or request.path == '/employee-attendence-search/' %} style="display: block;" {% endif %}  >
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/student-attendence/' or request.path == '/student-attendence-search/' %} class="active2" {% endif %} href="">Students</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/employee-attendence-in-time/' %} class="active2" {% endif %} href="">Employee In Time</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/employee-attendence-out-time/' or request.path == '/employee-attendence-search/' %} class="active2" {% endif %} href="">Employee Out Time</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="sidebar-item {% if request.path == '/Apply-for-leave/' or request.path == '/leave-record/' %} active {% endif %} " >
+                            <a href="" class='sidebar-link'>
+                                <i class="fa-regular fa-calendar-plus"></i>
+                                <span>Leave Apply</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.path == '/expenses/' or request.path == '/expenses-details/' %} active {% endif %} ">
+                            <a href="" class='sidebar-link'>
+                                <i class="fa-solid fa-wallet"></i>
+                                <span>Other Expenses</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fa-solid fa-suitcase-rolling"></i>
+                                <span>School Accessory</span>
+                            </a>
+                            <ul class="submenu" {% if request.path == '/add-uniform-details/' or request.path == '/uniform-details/' or request.path == '/issue-uniform/' or request.path == '/issued-uniform/' or request.path == '/add-book/' or request.path == '/book-details/' or request.path == '/sell-books/' or request.path == '/sold-books/' %} style="display: block;" {% endif %} >
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/add-uniform-details/' or request.path == '/uniform-details/' %} class="active2" {% endif %} href=""> Set Uniform Charge</a>
+                                </li>
+                               
+                            </ul>
+                        </li>
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fa-solid fa-book"></i>
+                                <span>Library</span>
+                            </a>
+                            <ul class="submenu" {% if request.path == '/add-shelf/' or request.path == '/search-shelf/' or request.path == '/add-library-book/' or request.path == '/search-book/' or request.path == '/issue-book/' or request.path == '/issued-book-details/' or request.path == '/return-book/' or request.path == '/returned-book-details/' or request.path == '/generate-library-card/' or request.path == '/library-card-details/'    %} style="display: block;" {% endif %} >
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/generate-library-card/' or request.path == '/library-card-details/' %} class="active2" {% endif %}  href="">Library Card</a>
+                                </li>
+                               
+                            
+                            </ul>
+                        </li>
+                        <li class="sidebar-title">Payment Section </li>
+                        
+                        <li class="sidebar-item {% if request.path == '/generate-fee-receipt/' or request.path == '/fee-record/' %} active {% endif %}  ">
+                            <a href="" class='sidebar-link'>
+                                <i class="fa-solid fa-bullhorn"></i>
+                                <span> Send Fee Notice </span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item {% if request.path == '/collect-fee/' or request.path == '/collected-fee/' %} active {% endif %}  ">
+                            <a href="" class='sidebar-link'>
+                                <i class="fa-solid fa-coins"></i>
+                                <span> Collect academic fees </span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item {% if request.path == '/Pay-Staffs/' or request.path == '/Search-Staffs-Payment/' %} active {% endif %} ">
+                            <a href="" class='sidebar-link'>
+                                <i class="fa-solid fa-money-bill-1-wave"></i>
+                                <span> Staff's Payment </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
+            </div>
+        </div>
+        <div class="bg-white d-flex justify-content-between align-items-center avoid-in-print" style="box-shadow: 1px 0px 3px black; margin-top: 0; height: fit-content;">
+            <a href="#" class="burger-btn d-block">
+                <i class="bi bi-justify fs-3"></i>
+            </a>
+            <div class="d-flex align-items-center w-75 justify-content-between">
+                <div>
+                    N.K. Enterprises
+                </div>
+                <div>
+                    <select name="change_branch" id="change_branch" class="form-select">
+                        <option value="None" {% if branch_id == None %} selected {% endif %}>-- Select Branch ID / Name  --</option>
+                        {% for data in branches %}
+                          <option value="{{data.branch_id}} --- {{data.school_name}}" {% if branch_id == data.branch_id %}
+                            selected
+                          {% endif %}>{{data.branch_id}} / {{data.school_name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <select name="academic_session" id="academic_session" class="form-select">
+                        <option value="None" {% if selected_academic == None %} selected {% endif %} >-- Select Academic Name --</option>
+                        {% for academic_name in academic_name %}
+                            <option value="{{academic_name.academic_name}}" {% if selected_academic == academic_name.academic_name %} selected {% endif %} >{{academic_name.academic_name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="btn-group me-1 mb-1">
+                    <div class="dropdown">
+                        <button type="button" class="btn d-flex justify-content-center  align-items-center gap-2 dropdown-toggle" style="border: none; box-shadow: none;"
+                            data-bs-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            <div style="height: 2.5rem; width: 2.5rem; border-radius: 50%; overflow: hidden;"><img {% if request.user.userprofile.profile_photo %} src="{{request.user.userprofile.profile_photo.url}} {% else %} src="{% static "seller/images/divya.jpg" %}"{% endif %} style="width: 100%; height: 100%;" alt="Profile Pic"></div>
+                            <div class="fs-5">{{request.user.full_name}}  <i class="fa-solid fa-angle-down"></i></div>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="#"><i class="fa-solid fa-user"></i> Profile</a>
+                            <a class="dropdown-item" href="#"><i class="fa-solid fa-dice-d20"></i> Change Password</a>
+                            <a class="dropdown-item" href="{% url "logout" %}"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div id="main">
+
+            {% block content %}
+              
+            {% endblock content %}
+
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{% static "seller/css/vendors/perfect-scrollbar/perfect-scrollbar.min.js" %}"></script>
+    <script src="{% static "seller/js/bootstrap.bundle.min.js" %}"></script>
+    <script src="{% static "seller/css/vendors/apexcharts/apexcharts.js" %}"></script>
+    <script src="{% static "seller/js/pages/dashboard.js" %}"></script>
+    <script src="{% static "seller/css/vendors/choices.js/choices.min.js" %}"></script>
+    <script src="{% static "seller/js/main.js" %}"></script>   
+    <script src="{% static "seller/css/vendors/simple-datatables/simple-datatables.js" %}"></script>   
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <!-- <script src="assets/vendors/simple-datatables/simple-datatables.js"></script>  -->
+{% if messages %}
+    {% for msg in messages %}
+        <script>
+            Swal.fire({
+                icon: '{{msg.tags}}',
+                title: '{{msg}}',
+                showConfirmButton: true,
+                confirmButtonClass: 'btn btn-success'
+            });
+        </script>
+    {% endfor %}
+{% endif %}
+
+
+<script>
+    {% comment %} $(document).ready(function () {
+        $('#change_branch').change(function (e) { 
+            $.ajax({
+                type: "get",
+                url: "{% url 'dashboard' %}",
+                data: {'branch_id':$(this).val()},
+                success: function (response) {
+                    Swal.fire({
+                        icon: response.msgtags,
+                        title: response.message,
+                        showConfirmButton: true,
+                        confirmButtonClass: 'btn btn-success',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        willClose: () => {
+                            window.location.href = '/Dashboard/' 
+                        }
+                    });
+                }
+            });
+        }); {% endcomment %}
+        {% comment %} $('#academic_session').change(function (e) { 
+            $.ajax({
+                type: "get",
+                url: "{% url 'dashboard' %}",
+                data: {'academic_session':$(this).val()},
+                success: function (response) {
+                    Swal.fire({
+                        icon: response.msgtags,
+                        title: response.message,
+                        showConfirmButton: true,
+                        confirmButtonClass: 'btn btn-success',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        willClose: () => {
+                            window.location.href = '/Dashboard/' 
+                        }
+                    });
+                }
+            });
+        });
+    }); {% endcomment %}
+</script>
+
+</body>
+
+</html>

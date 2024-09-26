@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User, UserProfile
+from accounts.utils import send_notification
 
 # Create your models here.
 class Seller(models.Model):
@@ -44,6 +45,23 @@ class Seller(models.Model):
   def get_full_address(self):
     parts = [self.seller_street, self.seller_city, self.seller_district, self.seller_state, self.seller_country, self.seller_pincode]
     return ', '.join(part for part in parts if part)
+  
+  def save(self,*args, **kwargs):
+    if self.pk is not None:
+      orig = Seller.objects.get(pk=self.pk)
+      if orig.is_approved != self.is_approved:
+        mail_template = 'accounts/email/admin_approval_email.html'
+        context={
+            'user': self.user,
+            'is_approved':self.is_approved
+          }
+        if self.is_approved == True:
+          mail_subject="Congratulations! Your restaurant _has been approved."
+          send_notification(mail_subject, mail_template,context)
+        else:
+          mail_subject="We're sorry! You are not eligible for publishing your products on our marketplace!"
+          send_notification(mail_subject, mail_template,context)
+    return super(Seller,self).save(*args, **kwargs)
   
   class Meta:
     db_table = "seller"
