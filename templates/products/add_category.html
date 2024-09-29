@@ -1,0 +1,93 @@
+{% extends "sellerBase.html" %}
+{% load static %}
+
+{% block extralinks %}
+{% comment %} yet to be done {% endcomment %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <style>
+    input, select{
+        height: 3rem;
+    }
+    {% comment %} for shifting header to left {% endcomment %}
+    .left-shift{
+        margin-left:-23px;
+    }
+    .up-shift{
+        margin-top:-20px;
+    }
+  </style>
+{% endblock extralinks %}
+
+{% block content %}
+<div class="page-heading mt-0">
+  <h3 style="text-align: center; position: relative;">Add Category
+      <a href="{% url "categories_details" %}" style="position: absolute; top: -40%; right: 0;" ><button class="page_change fs-6 btn" role="button"><i class="fa-solid fa-search"></i>&nbsp;Records&nbsp;</button></a>
+  </h3>
+</div>
+
+<section id="multiple-column-form">
+  <div class="row match-height">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h4 class="card-title">Category Information</h4>
+          <div><b class="text-danger" >Note</b><span class="font-bold"> :- All asterisk (*) field is mandatory.</span></div>
+        </div>
+        <div class="card-content up-shift">
+          <div class="card-body">
+              <form class="form" action="" method='post' autocomplete="off">
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <div class="col-md-4 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="category_id">Category Id<font class="text-danger"> *</font></label>
+                          <input required readonly  type="text" id="category_id" required class="form-control"
+                              placeholder="Category Id" name="category_id" value={{data.category_id}}>
+                      </div>
+                  </div>
+
+                  <div class="col-md-4 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="reg_date">Category Name<font class="text-danger"> *</font></label>
+                          <input placeholder="Category Name" required  type="text" id="reg_date" class="form-control" name="reg_date">
+                      </div>
+                  </div>
+                  <div class="col-md-4 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="category_slug">Category Slug<font class="text-danger"> *</font></label>
+                          <input required  type="text" id="category_slug" class="form-control" name="category_slug" placeholder="Category Slug">
+                      </div>
+                  </div>
+                  <div class="col-md-8 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="category_description">Category Description<font class="text-danger"> *</font></label>
+                          <textarea name="category_description"  id="category_description" class="form-control" row="4" placeholder="Category Description"></textarea>
+                      </div>
+                  </div>
+                  
+
+      
+                </div>
+  
+                    <div class="col-12 d-flex gap-4 justify-content-center mb-3 mt-3">
+                        <button type="submit"
+                            class="btn btn-success me-1 mb-1 mt-3"><i class="fa-solid fa-check"></i> &nbsp;Submit</button>
+                        <button type="reset"
+                            class="btn btn-light-secondary me-1 mb-1 mt-3"><i class="fa-solid fa-rotate"></i> &nbsp;Reset</button>
+                    </div>
+        
+
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+  
+</script>
+
+{% endblock %}

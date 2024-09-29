@@ -1,0 +1,651 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extralinks %}
+{% comment %} yet to be done {% endcomment %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="{% static "js/address_entry.js" %}"></script>
+  <style>
+    input, select{
+        height: 3rem;
+    }
+    {% comment %} for shifting header to left {% endcomment %}
+    .left-shift{
+        margin-left:-23px;
+    }
+    .up-shift{
+        margin-top:-20px;
+    }
+  </style>
+{% endblock extralinks %}
+
+{% block content %}
+<div class="page-heading mt-0">
+  <h3 style="text-align: center; position: relative;">Employee Registration Form 
+      <a href="{% url "Search_employee_registration" %}" style="position: absolute; top: -40%; right: 0;" ><button class="page_change fs-6 btn" role="button"><i class="fa-solid fa-search"></i>&nbsp;Records&nbsp;</button></a>
+  </h3>
+</div>
+
+<section id="multiple-column-form">
+  <div class="row match-height">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h4 class="card-title">Employee Information</h4>
+          <div><b class="text-danger" >Note</b><span class="font-bold"> :- All asterisk (*) field is mandatory.</span></div>
+        </div>
+        <div class="card-content up-shift">
+          <div class="card-body">
+              <form class="form" action="{% url "Employee_registration" %}" method='post' autocomplete="off">
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="employee-id">Employee Id<font class="text-danger"> *</font></label>
+                          <input required  type="text" id="employee-id" required class="form-control"
+                              placeholder="Employee Id" name="employee_id" value={{data.employee_id}} readonly>
+                      </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="reg_date">Registration Date<font class="text-danger"> *</font></label>
+                          <input required  type="date" id="reg_date" class="form-control" name="reg_date">
+                      </div>
+                  </div>
+                  <div class="col-md-6 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="employee-name">Employee Name<font class="text-danger"> *</font></label>
+                          <input required  type="text" id="employee-name" class="form-control"
+                          placeholder="Employee Name" name="employee_name">
+                      </div>
+                  </div>
+                  <div class="col-md-6 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="employee-father">Father's Name<font class="text-danger"> *</font></label>
+                          <input required  type="text" id="employee-father" class="form-control"
+                          placeholder="Father's Name" name="employee_father_name">
+                      </div>
+                  </div>
+                  <div class="col-md-6 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="employee-mother">Mother's Name<font class="text-danger"> *</font></label>
+                          <input required  type="text" id="employee-mother" class="form-control"
+                          placeholder="Mother's Name" name="employee_mother_name">
+                      </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="gender">Choose Gender<font class="text-danger"> *</font></label>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <div class="form-check">
+                                <input   class="form-check-input" type="radio" name="gender"
+                                    id="Male" value="Male" checked>
+                                <label class="form-check-label" for="Male">
+                                    Male
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input   class="form-check-input" type="radio" name="gender"
+                                    id="Female" value="Female">
+                                <label class="form-check-label" for="Female">
+                                    Female
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input   class="form-check-input" type="radio" name="gender"
+                                    id="Others" value="Others">
+                                <label class="form-check-label" for="Others">
+                                    Others
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-12 mt-3">
+                  <div class="form-group">
+                      <label for="dob">Date Of Birth<font class="text-danger"> *</font></label>
+                      <input required  type="Date" id="dob" class="form-control" name="date_of_birth">
+                  </div>
+                </div>
+
+
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="mobile-column">Mobile No<font class="text-danger"> *</font></label>
+                          <input required  type="text" id="mobile-column" class="form-control"
+                              placeholder="Mobile No" name="mobile_no">
+                      </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="alternate-mobile">Alternate Mobile No</label>
+                          <input required  type="text" id="alternate-mobile" class="form-control"
+                              placeholder="Alternate Mobile No" name="alternate_mobile_no">
+                      </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="email-column">Email<font class="text-danger"> *</font></label>
+                          <input required  type="email" id="email-column" class="form-control"
+                           placeholder="Email" name="email">
+                      </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="blood_group">Blood Group<font class="text-danger"> *</font></label>
+                        <select required  class="form-select" id="blood_group" name="blood_group">
+                            <option value="" selected>--- Select Blood Group ---</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="qualification-column">Qualification<font class="text-danger"> *</font></label>
+                          <input required  type="text" id="qualification-column" class="form-control"
+                              placeholder="Qualification" name="qualification">
+                      </div>
+                  </div>
+
+            
+
+                <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="specialization-column">Specialization<font class="text-danger"> *</font></label>
+                        <input required  type="text" id="specialization-column" class="form-control"
+                            placeholder="Specialization" name="specialization">
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="last-designation-column">Last Designation<font class="text-danger"> *</font></label>
+                        <input required  type="text" id="last-designation-column" class="form-control"
+                            placeholder="Last Designation" name="last_designation">
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="last-oragnization-column">Last Organization<font class="text-danger"> *</font></label>
+                        <input required  type="text" id="last-oragnization-column" class="form-control"
+                            placeholder="Last Organization" name="last_organization">
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-12 mt-3">
+                  <div class="form-group">
+                      <label for="nationality">Nationality<font class="text-danger"> *</font></label>
+                      <select required  class="form-select" id="nationality" name="nationlity">
+                          <option value="">Select Nationality</option>
+                          <option value="Indian">Indian</option>
+                      </select>
+                  </div>
+                </div>
+            
+              
+              <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="religion">Religion<font class="text-danger"> *</font></label>
+                    <select required  class="form-select" id="religion" name="religion">
+                        <option value="" selected>Select Religion</option>
+                        <option value="Hindi">Hindu</option>
+                        <option value="Muslim">Muslim</option>
+                        <option value="Sikh">Sikh</option>
+                        <option value="Christian">Christian</option>
+                        <option value="Jain">Jain</option>
+                        <option value="Buddhist">Buddhist</option>
+                        <option value="Sikh">Sikh</option>
+                    </select>
+                </div>
+              </div>
+              
+              <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="caste-category">Caste Category<font class="text-danger"> *</font></label>
+                    <select required  class="form-select" id="caste-category" name="caste_category">
+                        <option value="" selected disabled>Select Category</option>
+                        <option value="General">General</option>
+                        <option value="BC 1">BC 1</option>
+                        <option value="BC 2">BC 2</option>
+                        <option value="SC">SC</option>
+                        <option value="ST">ST</option>
+                        <option value="Minority">Minority</option>
+                    </select>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="marital-status">Marital Status<font class="text-danger"> *</font></label>
+                    <select required  class="form-select" id="marital-status" name="marital_status">
+                        <option value="" selected>Select Marital Status</option>
+                        <option value="Married">Married</option>
+                        <option value="Unmarried">Unmarried</option>
+                        <option value="Divorcee">Divorcee</option>
+                        <option value="Widow">Widow</option>
+                    </select>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="spouse-name-column">Spouse Name</label>
+                    <input required  type="text" id="spouse-name-column" class="form-control"
+                        placeholder="Spouse Name" name="spouse_name">
+                </div>
+            </div>
+          </div>
+
+          <div class="card-header left-shift">
+            <h4 class="card-title">Work Details</h4>
+          </div>
+
+          {% comment %} working details section {% endcomment %}
+          <div class="row mb-3 up-shift">
+
+            <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="designation-column">Designation<font class="text-danger"> *</font></label>
+                    <select required  class="form-select" id="designation-column" name="designation">
+                        <option value="" selected disabled>Select Designation</option>
+                        {% for role in data.roles %}
+                        <option value="{{role.role_name}}">{{role.role_name}}</option>
+                        {% endfor %}
+                        {% comment %} <option value="Board President">Board President</option>
+                        <option value="Board Members">Board Members</option>
+                        <option value="Superintendent">Superintendent</option>
+                        <option value="Assistant Superintendents">Assistant Superintendents</option>
+                        <option value="Directors">Directors</option>
+                        <option value="District Coordinators">District Coordinators</option>
+                        <option value="Principal">Principal</option>
+                        <option value="Assistant Principal">Assistant Principal</option>
+                        <option value="Dean of Students">Dean of Students</option>
+                        <option value="Department Head">Department Head</option>
+                        <option value="School Counselor">School Counselor</option>
+                        <option value="Coordinator">Coordinator</option>
+                        <option value="School Revenue Head">School Revenue Head</option>
+                        <option value="Teachers">Teachers</option>
+                        <option value="Special Education Teachers">Special Education Teachers</option>
+                        <option value="Teaching Assistant">Teaching Assistant</option>
+                        <option value="School Nurses">School Nurses</option>
+                        <option value="Librarians">Librarians</option>
+                        <option value="School Secretary">School Secretary</option>
+                        <option value="Registrar">Registrar</option>
+                        <option value="Keeper">Keeper</option>
+                        <option value="Maintenance Head">Maintenance Head</option>
+                        <option value="Maintenance Worker">Maintenance Worker</option>
+                        <option value="Canteen Head">Canteen Head</option>
+                        <option value="Canteen Worker">Canteen Worker</option> {% endcomment %}
+                    </select>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="class_column">Class<font class="text-danger"> *</font></label>
+                    <select required  class="form-select" id="class_column" name="class_column" multiple disabled>
+                        <option value="" selected disabled>--- Select Class ---</option>
+                        <option value="1st">1st</option>
+                        <option value="2nd">2nd</option>
+                    </select>
+                </div>
+              </div>
+            
+              {% comment %} this column need to add {% endcomment %}
+              <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="subject-column">Subject<font class="text-danger"> *</font></label>
+                    <select required  class="form-select" id="subject-column" name="subject" disabled>
+                        <option value="" selected disabled>---  Select Subject ---</option>
+
+                        <option value="MATH">MATH</option>
+                        <option value="SCIENCE">SCIENCE</option>
+                        <option value="ENGLISH">ENGLISH</option>
+                        <option value="HINDI">HINDI</option>
+                        <option value="SOCIAL SCIENCE">SOCIAL SCIENCE</option>
+                        <option value="COMPUTER">COMPUTER</option>
+                        <option value="SPORTS">SPORTS</option>
+                        <option value="SPORTS">SPORTS</option>
+                        <option value="GK">GK</option>
+                    </select>
+                </div>
+              </div>
+
+
+            
+
+            <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="in-time">In-Time<font class="text-danger"> *</font></label>
+                    <input required  type="time" id="in-time" class="form-control" name="in_time">
+                </div>
+            </div>
+
+            <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="out-time">Out-Time<font class="text-danger"> *</font></label>
+                    <input required  type="time" id="out-time" class="form-control" name="out_time">
+                </div>
+            </div>
+
+            <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="working-hour-column">Working Hour<font class="text-danger"> *</font></label>
+                    <input required  type="text" id="working-hour-column" class="form-control"
+                        placeholder="Working Hour" name="working_hour">
+                </div>
+            </div>
+
+
+            <div class="col-md-3 col-12 mt-3">
+              <div class="form-group">
+                  <label for="basic-salary-column">Basic Salary<font class="text-danger"> *</font></label>
+                  <input required  type="text" id="basic-salary-column" class="form-control"
+                      placeholder="Basic Salary" name="basic_salary">
+              </div>
+            </div>
+            
+            <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="da">DA in %<font class="text-danger"> *</font></label>
+                    <div class="input-group mb-3">
+                        <input required  type="text" required name="da" id="da" class="form-control" placeholder="DA">
+                        <button class="btn btn-light-success" type="button" id="button-addon1">%</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="hra">HRA in %<font class="text-danger"> *</font></label>
+                    <div class="input-group mb-3">
+                        <input required  type="text" required name="hra" id="hra" class="form-control" placeholder="HRA">
+                        <button class="btn btn-light-success" type="button" id="button-addon1">%</button>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="leave-column">Leave Charge / Day<font class="text-danger"> *</font></label>
+                    <input required  type="text" id="leave-column" class="form-control" name="leave_charge" placeholder="Leave Charges">
+                </div>
+            </div>
+            <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="late-column">Late Penalty / Day<font class="text-danger"> *</font></label>
+                    <input required  type="text" id="late-column" class="form-control" name="late_charges" placeholder="Late Charge">
+                </div>
+            </div>
+            <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="half-column">Half Day Penalty<font class="text-danger"> *</font></label>
+                    <input required  type="text" id="half-column" class="form-control" name="half_charge" placeholder="Half Day Penalty">
+                </div>
+            </div>
+        </div>
+
+      
+
+          <div class="card-header left-shift">
+            <h4 class="card-title">Bank Details</h4>
+          </div>
+
+          {% comment %} working details section {% endcomment %}
+          <div class="row mb-3 up-shift">
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="bank-name-column">Bank Name<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="bank-name-column" class="form-control"
+                                placeholder="Bank Name" name="bank_name">
+                        </div>
+                    </div>
+            
+                    <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="account-holder-column">Account Holder Name<font class="text-danger"> *</font></label>
+                        <input required  type="text" id="account-holder-column" class="form-control"
+                            placeholder="Account Holder Name" name="account_holder_name">
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="account-number-column">Account Number<font class="text-danger"> *</font></label>
+                        <input required  type="text" id="account-number-column" class="form-control"
+                        placeholder="Account Number" name="account_number">
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-12 mt-3">
+                <div class="form-group">
+                    <label for="confirm-account-number-column">Confirm Account Number<font class="text-danger"> *</font></label>
+                    <input required  type="text" id="confirm-account-number-column" class="form-control"
+                    placeholder="Confirm Account Number" name="confirm_account_number">
+                </div>
+            </div>
+
+
+            
+            
+          <div class="col-md-3 col-12 mt-3">
+            <div class="form-group">
+                <label for="account-type-column">Account Type<font class="text-danger"> *</font></label>
+                <select required  class="form-select" id="account-type-column" name="account_type">
+                    <option value="" selected disabled>Select Account Type</option>
+                    <option value="Saving">Saving</option>
+                    <option value="Current">Current</option>
+                    
+                </select>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-12 mt-3">
+            <div class="form-group">
+                <label for="ifsc-column">IFSC Code<font class="text-danger"> *</font></label>
+                <input required  type="text" id="ifsc-column" class="form-control"
+                    placeholder="IFSC Code" name="ifsc_code">
+            </div>
+          </div>
+
+          <div class="col-md-3 col-12 mt-3">
+            <div class="form-group">
+                <label for="micr-column">MICR Code</label>
+                <input required  type="text" id="ifsc-column" class="form-control"
+                    placeholder="MICR Code" name="micr_code">
+            </div>
+          </div>
+
+          
+
+      </div>
+
+      
+      <div class="card-header left-shift">
+        <h4 class="card-title">Present Address</h4>
+      </div>
+
+    <div class="row mb-3 up-shift">
+        <div class="col-md-3 col-12 mt-3">
+            <div class="form-group">
+                <label for="state">Select State<font class="text-danger"> *</font></label>
+                <select required  name="p_state" class="form-select" id="state">
+                    <option value="" selected  disabled>Select State</option>
+                    {% for state in data.state_name %}
+                    <option value="{{state.state_name}}">{{state.state_name}}</option>
+                    {% endfor %}
+                </select>                                        
+            </div>
+        </div>
+        <div class="col-md-3 col-12 mt-3">
+            <div class="form-group">
+                <label for="district">Select District<font class="text-danger"> *</font></label>
+                <select required  name="p_dist" class="form-select" id="p_dist">
+                    <option value="" selected disabled>Select District</option>
+                </select>                                        
+            </div>
+        </div>
+        <div class="col-md-6 col-12 mt-3">
+            <div class="form-group">
+                <label for="P_address">Address<font class="text-danger"> *</font></label>
+                <input required  type="text" name="P_address" placeholder="Street, Land Mark, Place, House No." class="form-control" id="P_address">
+            </div>
+        </div>
+    
+        <div class="col-md-3 col-12 mt-3">
+            <div class="form-group">
+                <label for="p_pincode">Pincode<font class="text-danger"> *</font></label>
+                <input required  type="text" name="p_pincode" placeholder="Pincode" class="form-control" id="p_pincode">
+            </div>
+        </div>
+    </div>
+    <div class="card-header left-shift">
+        <h4 class="card-title">Permanent Address</h4>
+    </div>
+    <div class="row mb-3 up-shift" >
+        <div class="col-md-3 col-12 mt-3">
+            <div class="form-group">
+                <label for="per_state">Select State<font class="text-danger"> *</font></label>
+                <select required  name="per_state" class="form-select" id="per_state">
+                    <option value="" selected disabled>Select State</option>
+                    {% for state in data.state_name %}
+                    <option value="{{state.state_name}}">{{state.state_name}}</option>
+                    {% endfor %}
+                </select>                                        
+            </div>
+        </div>
+        <div class="col-md-3 col-12 mt-3">
+            <div class="form-group">
+                <label for="per_dist">Select District<font class="text-danger"> *</font></label>
+                <select required  name="per_dist" class="form-select" id="per_dist">
+                    <option value="" selected disabled>Select District</option>
+                </select>                                        
+            </div>
+        </div>
+        <div class="col-md-6 col-12 mt-3">
+            <div class="form-group">
+                <label for="per_address">Address<font class="text-danger"> *</font></label>
+                <input required  type="text" name="per_address" placeholder="Street, Land Mark, Place, House No." class="form-control" id="per_address">
+            </div>
+        </div>
+    
+        <div class="col-md-3 col-12 mt-3">
+            <div class="form-group">
+                <label for="per_pincode">Pincode<font class="text-danger"> *</font></label>
+                <input required  type="text" name="per_pincode" placeholder="Pincode" class="form-control" id="per_pincode" >
+            </div>
+        </div>
+    </div>
+
+    <div class="card-header left-shift">
+      <h4 class="card-title">Upload Documents</h4>
+  </div>
+  <div class="row mb-3 up-shift">
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="profile_photo">Upload Photo<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="e_photo" id="profile_photo" class="form-control" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="signature">Upload Signature<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="e_signature" class="form-control" id="signature" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="aadhar">Upload Aadhar<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="e_aadhar" class="form-control" id="aadhar" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="medical">Upload Medical<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="e_medical" class="form-control" id="medical" accept="image/*">
+                        </div>
+                    </div>
+                    {% comment %} <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="driving_license">Upload Driving License</label>
+                            <input required  type="file" name="e_driving_license" class="form-control form-control-lg" id="driving_license" accept="image/*">
+                        </div>
+                    </div> {% endcomment %}
+                
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="qualification">Upload Qualification<font class="text-danger"> *</font></label>
+                            <input required  type="file" class="form-control" name="e_qualification" id="qualification" accept="image/*">
+                        </div>
+                    </div>
+      
+                </div>
+  
+                    <div class="col-12 d-flex gap-4 justify-content-center mb-3 mt-3">
+                        <button type="submit"
+                            class="btn btn-success me-1 mb-1 mt-3"><i class="fa-solid fa-check"></i> &nbsp;Submit</button>
+                        <button type="reset"
+                            class="btn btn-light-secondary me-1 mb-1 mt-3"><i class="fa-solid fa-rotate"></i> &nbsp;Reset</button>
+                    </div>
+        
+
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+    $(document).ready(function () {
+        
+
+        $("#designation-column").on("change",function(){
+            role_name = $("#designation-column").val();
+            if(role_name.toLowerCase().includes('teacher')){
+                $("#subject-column").removeAttr('disabled');
+                $("#class_column").removeAttr('disabled');
+            }else{
+                $("#subject-column").attr('disabled',true);
+                $("#class_column").attr('disabled',true);
+            }
+
+        })
+
+        // ************* State And District *****************
+        $('select[name="per_state"]').change(function(){
+            sendUrl=`{% url "getDistrict" %}?state_id=${encodeURIComponent($(this).val())}`;
+            $.get(sendUrl,function(response){
+                $('select#per_dist').html(response);
+            });
+        });
+
+        $('select[name="p_state"]').change(function(){
+            sendUrl=`{% url "getDistrict" %}?state_id=${encodeURIComponent($(this).val())}`;
+            $.get(sendUrl,function(response){
+                $('select#p_dist').html(response);
+            });
+        });
+    });
+</script>
+
+{% endblock %}

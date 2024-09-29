@@ -1,0 +1,356 @@
+{% extends "sellerBase.html" %}
+{% load static %}
+
+{% block extralinks %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/styles/choices.min.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="{% static "js/address_entry.js" %}"></script>
+  <style>
+    input, select{
+        height: 3rem;
+    }
+    /* for shifting header to left  */
+    .left-shift{
+        margin-left:-23px;
+    }
+    .up-shift{
+        margin-top:-20px;
+    }
+  </style>
+{% endblock extralinks %}
+
+{% block content %}
+<div class="page-heading mt-0">
+  <h3 style="text-align: center; position: relative;">Product Details 
+      <a href="{% url "add_products" %}" style="position: absolute; top: -40%; right: 0;" ><button class="page_change fs-6 btn" role="button"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;Add New</button></a>
+  </h3>
+</div>
+
+<section id="multiple-column-form">
+  <div class="row match-height">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Product Information</h4>
+        </div>
+        <div class="card-content up-shift">
+          <div class="card-body">
+              <form class="form" id="myForm" action="{% url 'products_details' %}" method="post" autocomplete="off">
+                {% csrf_token %}
+                <div class="row mb-3">
+
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="role_id" class="form-label">Product Id</label>
+                          <select name="role_id" id="role_id" class="form-select">
+                            <option value="">-- Select Product Id --</option>
+                            {% for x in data.searching_data %}
+                            <option value="{{x.role_id}}">{{x.role_id}}</option>
+                            {% endfor %}
+                          </select>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="product_name" class="form-label">Product Name</label>
+                          <input required  type="text" id="product_name" class="form-control"
+                          placeholder="Product Name" name="product_name">
+                      </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="role_id" class="form-label">Product Brand</label>
+                        <select required  class="form-select" id="blood_group" name="blood_group">
+                          <option value="" selected>--- Select Brand Name ---</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="blood_group">Category</label>
+                        <select required  class="form-select" id="blood_group" name="blood_group">
+                            <option value="" selected>--- Select Category ---</option>
+                            
+                        </select>
+                    </div>
+                  </div>
+
+                  
+                  <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="blood_group">Size</label>
+                        <select required  class="form-select" id="blood_group" name="blood_group">
+                            <option value="" selected>--- Select Size ---</option>
+                        </select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="color">Color</label>
+                        <select required  class="form-select" id="blood_group" name="blood_group">
+                          <option value="" selected>--- Select Color ---</option>
+                      </select>
+                    </div>
+                  </div>
+
+                <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="weight">Weight</label>
+                        <input required  type="text" id="weight" class="form-control"
+                            placeholder="Weight" name="weight">
+                    </div>
+                  </div>
+                  
+
+                  <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="material">Material</label>
+                        <select required  class="form-select" id="blood_group" name="blood_group">
+                          <option value="" selected>--- Select Material ---</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                    <div class="d-flex align-items-center">
+                        <div class="form-group w-50 mr-2">
+                            <label for="min_price">Min Price<font class="text-danger"></font></label>
+                            <input required type="text" id="min_price" class="form-control" placeholder="Min Price" name="min_price">
+                        </div>
+                        <span class="mx-2">x</span>
+                        <div class="form-group w-50">
+                            <label for="max_price">Max Price<font class="text-danger"></font></label>
+                            <input required type="text" id="max_price" class="form-control" placeholder="Max Price" name="max_price">
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <div class="col-md-3 col-12 mt-3">
+                  <div class="form-group">
+                      <label for="material">Sort By</label>
+                      <select required  class="form-select" id="blood_group" name="blood_group">
+                        <option value="" selected>--- Select Sort By ---</option>
+                        <option value="ascending">Ascending</option>
+                        <option value="descending">Descending</option>
+                    </select>
+                  </div>
+                </div>
+
+                </div>
+                
+                  <div class="row mb-3">
+                  <div class="col-md-12 col-12 mt-3">
+                    <div class="col-12 d-flex gap-4 justify-content-center mb-0" style="margin-top:20px;">
+                      <button type="submit"
+                          class="btn btn-success me-1 mb-1 mt-3"><i class="fa-solid fa-search"></i> &nbsp;Search</button>
+                      <button type="reset"
+                          class="btn btn-light-secondary me-1 mb-1 mt-3"><i class="fa-solid fa-rotate"></i> &nbsp;Reset</button>
+                  </div>
+                </div>
+
+              </div>
+  
+                    
+        
+
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<div class="me-1 mb-1 d-inline-block">
+  <!-- Button trigger for Extra Large  modal -->
+  <button type="button" id="view_details" class="btn btn-outline-warning d-none" data-bs-toggle="modal"
+      data-bs-target="#xlarge">
+      Extra Large Modal
+  </button>
+
+  <!--Extra Large Modal -->
+  <div class="modal fade text-left w-100" id="xlarge" tabindex="-1" role="dialog"
+      aria-labelledby="myModalLabel16" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl"
+          role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title" id="myModalLabel16">Privilege Details</h4>
+                  <button type="button" class="close" data-bs-dismiss="modal"
+                      aria-label="Close" style="background-color:#e6eaee;">
+                      <i class="fa-solid fa-close"></i>
+                  </button>
+              </div>
+              <div class="modal-body">
+                 
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-light-secondary"
+                      data-bs-dismiss="modal">
+                      <i class="bx bx-x d-block d-sm-none"></i>
+                      <span class="d-none d-sm-block">Close</span>
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<section class="section" >
+  <div class="card">
+      <div class="card-body overflow-auto" id="html_data">
+          <div class="alert alert-info fs-5 rounded font-bold" >
+              Search To See The Records !
+          </div>
+      </div>
+  </div>
+
+</section>
+
+
+
+<script>
+  function changeStatus(e) { 
+    alert(e)
+    swal.fire({
+            title: 'Are you sure?',
+            text: 'Do You Want To Delete This Record ?',
+            icon: 'question',
+            confirmButtonColor: 'rgb(66 215 9)',
+            confirmButtonText: '✔ Yes, Delete',
+            showCancelButton: true,
+            cancelButtonText: "✖ No, Keep It",
+            cancelButtonColor: "rgb(215 9 9)",
+        }).then((res) => {
+            if (res.isConfirmed) {
+              $.ajax({
+                type: "get",
+                data: {'what':'changeStatus','role_id':e},
+                success: function (response) {
+                  $('.modal-body').html(response.view_html);  
+                  $('#view_details').click();
+                }
+            });
+            }
+        });
+ }
+</script>
+
+
+<script>
+  function Delete(e) { 
+    alert(e)
+    swal.fire({
+            title: 'Are you sure?',
+            text: 'Do You Want To Delete This Record ?',
+            icon: 'question',
+            confirmButtonColor: 'rgb(66 215 9)',
+            confirmButtonText: '✔ Yes, Delete',
+            showCancelButton: true,
+            cancelButtonText: "✖ No, Keep It",
+            cancelButtonColor: "rgb(215 9 9)",
+        }).then((res) => {
+            if (res.isConfirmed) {
+                window.location.href = e
+                $('.loder').removeAttr('hidden');
+            }
+        });
+ }
+</script>
+
+
+
+<script>
+  
+
+  $(document).ready(function () {
+      $('#myForm').on('submit',function (e) {
+        e.preventDefault(); 
+          $.ajax({
+              type: "POST",
+              url: "",
+              data: $(this).serialize(),
+              success: function (response) {
+              if(response.status == true){
+                $("#search_table").removeClass("d-none");
+                $("#html_data").html(response.html_part)
+              }else{
+                $("#search_table").addClass("d-none");
+                $("#html_data").html(response.html_part)
+                Swal.fire({
+                  icon: response.tags,
+                  title: response.message,
+                  showConfirmButton: true,
+                  confirmButtonClass: 'btn btn-success'
+              });
+              }
+              }
+          });
+      });
+  });
+
+
+
+  {% comment %} view the details on models {% endcomment %}
+  $(document).on('click', '.view', function() {
+    role_id = $(this).closest('tr').find('#role_id').text();
+    $('.loder').removeAttr('hidden');
+    $.ajax({
+        type: "get",
+        data: {'what':'view privileges','role_id':role_id},
+        success: function (response) {
+          $('.modal-body').html(response.view_html);  
+          $('#view_details').click();
+        }
+    });
+    $('#view_details').click();
+    $('.loder').attr('hidden','hidden');
+});
+
+
+
+{% comment %} change the status {% endcomment %}
+  $(document).on('click', '.fa-user', function() {
+    role_id = $(this).closest('tr').find('#role_id').text();
+    swal.fire({
+      title: 'Are you sure?',
+      text: 'Do You Want To Change the Status ?',
+      icon: 'question',
+      confirmButtonColor: 'rgb(66 215 9)',
+      confirmButtonText: '✔ Yes, Change',
+      showCancelButton: true,
+      cancelButtonText: "✖ No, Keep It",
+      cancelButtonColor: "rgb(215 9 9)",
+  }).then((res) => {
+    if (res.isConfirmed) {
+      $.ajax({
+        type: "get",
+        data: {'what':'changeStatus','role_id':role_id},
+        success: function (response) {
+          Swal.fire({
+            icon: response.tags,
+            title: response.message,
+            showConfirmButton: true,
+            confirmButtonClass: 'btn btn-success'
+        });
+        }
+    });
+    }
+});
+});
+
+
+
+
+
+</script>
+
+{% endblock %}

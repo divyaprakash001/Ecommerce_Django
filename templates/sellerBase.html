@@ -184,7 +184,7 @@
                 <div class="sidebar-header">
                     <div class="d-flex justify-content-between">
                         <div class="logo">
-                            <a href="{% url "sellerDashboard" %}"><img src="{% static "img/logo.png" %}" style="width: 100%; height: 100%;" alt="">Ash Fashion</a>
+                            <a href="{% url "sellerDashboard" %}"><img src="{% static "img/ekart_logo.png" %}" style="width: 100%; height: 100%;" alt=""></a>
                         </div>
                         <div class="toggler">
                             <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
@@ -200,10 +200,10 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
-                        <li class="sidebar-item {% if  request.path == '/Dashboard/' %}active{% endif %}">
-                            <a href="" class='sidebar-link'>
+                        <li class="sidebar-item {% if  request.path == '/' %}active{% endif %}">
+                            <a href="{% url "home_page" %}" class='sidebar-link'>
                                 <i class="bi bi-grid-fill"></i>
-                                <span>pending_work</span>
+                                <span>View Site</span>
                             </a>
                         </li>
 
@@ -212,53 +212,14 @@
                         <li class="sidebar-item {% if  request.path == '/approve-user/' %}active{% endif %} ">
                             <a href="" class='sidebar-link'>
                                 <i class="fa-solid fa-person-circle-check"></i>
-                                <span> Approve New Users </span>
+                                <span> Approve New Sellers </span>
                             </a>
                         </li>
-                        <li class="sidebar-item {% if request.path == '/leave-approve/' %}active{% endif %} ">
+                        <li class="sidebar-item {% if  request.path == '/approve-user/' %}active{% endif %} ">
                             <a href="" class='sidebar-link'>
-                                <i class="fa-solid fa-calendar-check"></i>
-                                <span> Approve Leave </span>
+                                <i class="fa-solid fa-person-circle-check"></i>
+                                <span> Approve Staff Leave </span>
                             </a>
-                        </li>
-
-                        <li class="sidebar-title">Message Section </li>
-
-                        <li class="sidebar-item {% if request.path == '/leave-approve/' %}active{% endif %} "></li>
-                            <a href="" class='sidebar-link'>
-                                <i class="fa-solid fa-message"></i>
-                                <span> Send Message </span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item {% if request.path == '/leave-approve/' %}active{% endif %} "></li>
-                            <a href="" class='sidebar-link'>
-                                <i class="fa-solid fa-lightbulb"></i>
-                                <span> Send Thought </span>
-                            </a>
-                        </li>
-                        <li class="sidebar-title">Menu</li>
-                        <li class="sidebar-item  has-sub">
-                            <a href="#" class="sidebar-link">
-                                <i class="fa-solid fa-school"></i>
-                                <span>School Details</span>
-                            </a>
-                            <ul class="submenu" {% if request.path == '/add-branch/' or request.path == '/branch-details/' or request.path == '/add-academic/' or request.path == '/academic-details/' or request.path == '/Create-class/' or request.path == '/search-classes/' or request.path == '/add-subjects/' or request.path == '/subjects-details/' or request.path == '/add-fee-details/' or request.path == '/fee-details/' %} style="display: block;" {% endif %}>
-                                <li class="submenu-item  ">
-                                    <a {% if request.path == '/add-branch/' or request.path == '/branch-details/' %} class="active2" {% endif %} href="">Branch's</a>
-                                </li>
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/add-academic/' or request.path == '/academic-details/' %} class="active2" {% endif %} href="">Academic Details</a>
-                                </li>
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/Create-class/' or request.path == '/search-classes/' %} class="active2" {% endif %} href="">Create Class </a>
-                                </li>
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/add-subjects/' or request.path == '/subjects-details/' %} class="active2" {% endif %}  href="">Add Subjects</a>
-                                </li>
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/add-fee-details/' or request.path == '/fee-details/' %} class="active2" {% endif %} href="">Fee Structure</a>
-                                </li>
-                            </ul>
                         </li>
 
                         <li class="sidebar-item {% if  request.path == '/add-privileges/' or request.path == '/search-privilege/' %}active{% endif %} ">
@@ -268,31 +229,48 @@
                             </a>
                         </li>
 
+                        
+                        <li class="sidebar-title">Menu</li>
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class="sidebar-link">
+                                <i class="fa-solid fa-school"></i>
+                                <span>Product Details</span>
+                            </a>
+                            <ul class="submenu" {% if request.path == '/add-categories/' or request.path == '/categories-details/' or request.path == '/add-products/' or request.path == '/products-details/' or request.path == '/add-attributes/' or request.path == '/attributes-details/'  %} style="display: block;" {% endif %}>
+                                <li class="submenu-item  ">
+                                    <a {% if request.path == '/add-categories/' or request.path == '/categories-details/' %} class="active2" {% endif %} href="{% url "add_categories" %}">Categories</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/add-products/' or request.path == '/products-details/' %} class="active2" {% endif %} href="{% url "add_products" %}">Products</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a {% if request.path == '/add-attributes/' or request.path == '/attributes-details/' %} class="active2" {% endif %} href="">Attributes</a>
+                                </li>
+                                
+                            </ul>
+                        </li>
+
+                       
+
                         <li class="sidebar-item  has-sub">
                             <a href="#" class='sidebar-link'>
                                 <i class="fa-solid fa-graduation-cap"></i>
-                                <span>Student</span>
+                                <span>Order Details</span>
                             </a>
-                            <ul class="submenu "  {% if request.path == '/Student-Registration/' or request.path == '/Search-Student/' or request.path == '/New-Admission/' or request.path == '/Admission-Record/' or request.path == '/generate-id-card/' or request.path == '/view-id-card/' %} style="display: block;" {% endif %} >
+                            <ul class="submenu "  {% if request.path == '/order/' or request.path == '/order-details/' %} style="display: block;" {% endif %} >
                                 <li class="submenu-item ">
-                                    <a {% if request.path == '/Student-Registration/' or request.path == '/Search-Student/' %} class="active2" {% endif %} href="">Registration</a>
-                                </li>
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/New-Admission/' or request.path == '/Admission-Record/' %} class="active2" {% endif %} href="">Admission</a>
-                                </li>
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/generate-id-card/' or request.path == '/view-id-card/' %} class="active2" {% endif %} href="">ID Card</a>
+                                    <a {% if request.path == '/order/' or request.path == '/order-details/' %} class="active2" {% endif %} href="{% url "add_order" %}">Orders</a>
                                 </li>
                             </ul>
                         </li>
                         <li class="sidebar-item  has-sub">
                             <a href="#" class='sidebar-link'>
                                 <i class="fa-solid fa-users"></i>
-                                <span>Employee</span>
+                                <span>Staffs</span>
                             </a>
-                            <ul class="submenu" {% if request.path == '/Employee-Registration/' or request.path == '/Search-Employee/' %} style="display: block;" {% endif %} >
+                            <ul class="submenu" {% if request.path == '/add-staffs/' or request.path == '/staff-details/' %} style="display: block;" {% endif %} >
                                 <li class="submenu-item ">
-                                    <a {% if request.path == '/Employee-Registration/' or request.path == '/Search-Employee/' %} class="active2" {% endif %} href="">Registration</a>
+                                    <a {% if request.path == '/add-staffs/' or request.path == '/staffs-details/' %} class="active2" {% endif %} href="">Staff's Details</a>
                                 </li>
                             </ul>
                         </li>
@@ -385,6 +363,8 @@
                             </ul>
                         </li>
 
+                        
+
                         <li class="sidebar-item {% if request.path == '/Apply-for-leave/' or request.path == '/leave-record/' %} active {% endif %} " >
                             <a href="" class='sidebar-link'>
                                 <i class="fa-regular fa-calendar-plus"></i>
@@ -422,6 +402,21 @@
                             
                             </ul>
                         </li>
+
+                        <li class="sidebar-title">Message Section </li>
+
+                        <li class="sidebar-item {% if request.path == '/leave-approve/' %}active{% endif %} "></li>
+                            <a href="" class='sidebar-link'>
+                                <i class="fa-solid fa-message"></i>
+                                <span> Send Message </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.path == '/leave-approve/' %}active{% endif %} "></li>
+                            <a href="" class='sidebar-link'>
+                                <i class="fa-solid fa-lightbulb"></i>
+                                <span> Send Announcement </span>
+                            </a>
+                        </li>
                         <li class="sidebar-title">Payment Section </li>
                         
                         <li class="sidebar-item {% if request.path == '/generate-fee-receipt/' or request.path == '/fee-record/' %} active {% endif %}  ">
@@ -455,25 +450,10 @@
             </a>
             <div class="d-flex align-items-center w-75 justify-content-between">
                 <div>
-                    N.K. Enterprises
+                    
                 </div>
                 <div>
-                    <select name="change_branch" id="change_branch" class="form-select">
-                        <option value="None" {% if branch_id == None %} selected {% endif %}>-- Select Branch ID / Name  --</option>
-                        {% for data in branches %}
-                          <option value="{{data.branch_id}} --- {{data.school_name}}" {% if branch_id == data.branch_id %}
-                            selected
-                          {% endif %}>{{data.branch_id}} / {{data.school_name}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <select name="academic_session" id="academic_session" class="form-select">
-                        <option value="None" {% if selected_academic == None %} selected {% endif %} >-- Select Academic Name --</option>
-                        {% for academic_name in academic_name %}
-                            <option value="{{academic_name.academic_name}}" {% if selected_academic == academic_name.academic_name %} selected {% endif %} >{{academic_name.academic_name}}</option>
-                        {% endfor %}
-                    </select>
+                    <span style="font-size:24px; font-weight:bold;">{{seller.seller_name}}</span>
                 </div>
                 
                 <div class="btn-group me-1 mb-1">
