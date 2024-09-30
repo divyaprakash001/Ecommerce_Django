@@ -1,7 +1,8 @@
-from django.urls import path
+from django.urls import path,include
 from . import views
 
 urlpatterns = [
+    path("", views.myAccount, name="myAccount"),
     path("register-user", views.registerUser, name="registerUser"),
     path("register-seller", views.registerSeller, name="registerSeller"),
 
@@ -17,5 +18,7 @@ urlpatterns = [
     path("sellerDashboard", views.sellerDashboard, name="sellerDashboard"),
 
     # path("dashboard", views.dashboard, name="dashboard"),
-    path("access-denied",views.access_denied,name="access_denied")
+    path("access-denied",views.access_denied,name="access_denied"),
+
+    path("seller/", include('seller.urls')),
 ]

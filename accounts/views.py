@@ -142,7 +142,6 @@ def activate(request,uidb64,token):
     return render(request, 'accounts/activation_invalid.html')
 
 # forgot password
-import secrets
 def forget_password(request):
   if request.user.is_authenticated:
     messages.warning(request,"You are already logged in!")

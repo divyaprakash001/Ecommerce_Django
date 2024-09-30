@@ -41,7 +41,7 @@
             <div class="col-xl-6 col-lg-7">
                 <nav class="header__menu">
                     <ul>
-                        <li class="active"><a href="{% url "home_page" %}">Home</a></li>
+                        <li class="{% if '/' == request.path %}active{% endif %}"><a href="{% url "home_page" %}">Home</a></li>
                         <li><a href="#">Women’s</a></li>
                         <li><a href="#">Men’s</a></li>
                         <li><a href="./shop.html">Shop</a></li>
@@ -65,7 +65,7 @@
                         <a href="{% url "myAccount" %}" class="btn text-white" style="background-color:#E48989;">My Account</a>
                         <a href="{% url "logout" %}" class="btn text-white" style="background-color:#E48989;"><i class="fa fa-power-off"></i> Logout</a>
                         {% else %}
-                        <a href="{% url "login" %}">Login</a>
+                        <a class="{% if "login" in request.path %}active{% endif %}" href="{% url "login" %}">Login</a>
                         <a href="{% url "registerUser" %}">Register</a>  
                         <a href="{% url "registerSeller" %}" class="btn text-white" style="background-color:#E48989;">Register</a>
                         {% endif %}
