@@ -1,6 +1,362 @@
 {% extends "sellerBase.html" %}
+{% load static %}
+
+{% block extralinks %}
+{% comment %} yet to be done {% endcomment %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="{% static "js/address_entry.js" %}"></script>
+  <style>
+    input, select{
+        height: 3rem;
+    }
+    {% comment %} for shifting header to left {% endcomment %}
+    .left-shift{
+        margin-left:-23px;
+    }
+    .up-shift{
+        margin-top:-20px;
+    }
+  </style>
+{% endblock extralinks %}
 
 {% block content %}
-  
+<div class="page-heading mt-0">
+  <h3 style="text-align: center; position: relative;">My Profile 
+  </h3>
+</div>
 
-{% endblock content %}
+<section id="multiple-column-form">
+  <div class="row match-height">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h4 class="card-title">My Information</h4>
+          <div><b class="text-danger" >Note</b><span class="font-bold"> :- All asterisk (*) field is mandatory.</span></div>
+        </div>
+        <div class="card-content up-shift">
+          <div class="card-body">
+              <form class="form" action="" method='post' autocomplete="off">
+                {% csrf_token %}
+                <div class="row mb-3">
+
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="card border p-3" style="width: 90%;">
+                            <div class="img_container mx-auto mt-3" style="border-radius:50%; width: 120px; height:120px; overflow:hidden;">
+                                <img class="img-fluid" {% if request.user.userprofile.profile_photo %}
+                                    src="{{request.user.userprofile.profile_photo.url}}"
+                                {% else %}
+                                 src="{% static "seller/images/profile_photo.png" %}"
+                                 {% endif %}
+                                  alt="Profile Photo">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title text-center">
+                                    {% if request.user.full_name %}
+                                    {{request.user.full_name}}
+                                    {% else %}
+                                    Not Available
+                                    {% endif %}
+                                </h5>
+                                <p class="card-text text-center">{{request.user.get_role}}</p>
+                                <div class="social-media text-center">
+                                    <a href="#" class="btn btn-secondary rounded-circle" style="width: 30px; height:30px;"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="#" class="btn btn-secondary rounded-circle" style="width: 30px; height:30px;"><i class="fab fa-twitter"></i></a>
+                                    <a href="#" class="btn btn-secondary rounded-circle" style="width: 30px; height:30px;"><i class="fab fa-youtube"></i></a>
+                                    <a href="#" class="btn btn-secondary rounded-circle" style="width: 30px; height:30px;"><i class="fab fa-youtube"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+             
+
+                    
+                  <div class="col-md-8 col-12 mt-3">
+                    <div class="card-header bg-primary rounded py-3 left-shift">
+                        <h3 class="card-title text-white">Personal Details</h3>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6 col-12 mt-3">
+                            <div class="form-group">
+                                <label for="brand">First Name<font class="text-danger"> *</font></label>
+                                <input required  type="text" id="seller_name" class="form-control"
+                                placeholder="Seller Name" name="seller_name" value={{request.user.first_name}}>
+                            </div>
+                          </div>
+                        <div class="col-md-6 col-12 mt-3">
+                            <div class="form-group">
+                                <label for="brand">Last Name<font class="text-danger"> *</font></label>
+                                <input required  type="text" id="seller_name" class="form-control"
+                                placeholder="Seller Name" name="seller_name" value={{request.user.last_name}}>
+                            </div>
+                          </div>
+      
+                        <div class="col-md-6 col-12 mt-3">
+                            <div class="form-group">
+                                <label for="brand">Username<font class="text-danger"> *</font></label>
+                                <input required  type="text" id="seller_name" class="form-control"
+                                placeholder="Seller Name" name="seller_name" value={{request.user.username}}>
+                            </div>
+                          </div>
+                        <div class="col-md-6 col-12 mt-3">
+                            <div class="form-group">
+                                <label for="brand">Email<font class="text-danger"> *</font></label>
+                                <input required  type="email" id="seller_name" class="form-control"
+                                placeholder="Seller Name" name="seller_name" value={{request.user.email}}>
+                            </div>
+                          </div>
+                        <div class="col-md-6 col-12 mt-3">
+                            <div class="form-group">
+                                <label for="brand">Phone Number<font class="text-danger"> *</font></label>
+                                <input required  type="text" id="seller_name" class="form-control"
+                                placeholder="Phone Number" name="seller_name" value={{request.user.phone_number}}>
+                            </div>
+                          </div>
+      
+                      </div>
+                </div>
+                 
+
+            
+
+                <div class="card-header bg-primary rounded py-3">
+                    <h3 class="card-title text-white">Business Details</h3>
+                </div>
+
+
+                <div class="row mb-3">
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="stock_quantity">Business Name<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="business_name" class="form-control"
+                                placeholder="Business Name" name="business_name"
+                                value="{{seller.seller_name}}">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="sku">GST NO.<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="sku" class="form-control"
+                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                                {% if seller.seller_gst_no %}
+                                value="{{seller.seller_gst_no}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="business_address">Business Location<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="business_address" class="form-control"
+                                placeholder="Business Address" name="business_address" 
+                                {% if seller.get_full_address %}
+                                value="{{seller.get_full_address}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                                <span class="text-danger" style="font-size:14px;">*Note:- Location should be like this - Street, City, District, State, Country, Pincode</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="sku">Business Website Url</label>
+                            <input required  type="text" id="sku" class="form-control"
+                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                                {% if seller.seller_website_url %}
+                                value="{{seller.seller_website_url}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                        </div>
+                    </div><div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="sku">Facebook Url</label>
+                            <input required  type="text" id="sku" class="form-control"
+                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                                {% if seller.seller_facebook_url %}
+                                value="{{seller.seller_facebook_url}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                        </div>
+                    </div><div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="sku">Twitter Url</label>
+                            <input required  type="text" id="sku" class="form-control"
+                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                                {% if seller.seller_twitter_url %}
+                                value="{{seller.seller_twitter_url}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                        </div>
+                    </div><div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="sku">Instagram Url</label>
+                            <input required  type="text" id="sku" class="form-control"
+                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                                {% if seller.seller_instagram_url %}
+                                value="{{seller.seller_instagram_url}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                     
+                <div class="card-header bg-primary rounded py-3">
+                    <h3 class="card-title text-white">Business Bank Details</h3>
+                </div>
+
+                
+                <div class="row mb-3">
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="stock_quantity">Bank Name<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="business_name" class="form-control"
+                                placeholder="Business Name" name="business_name"
+                                value="{{seller.seller_name}}">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="sku">Account No.<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="sku" class="form-control"
+                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                                {% if seller.seller_gst_no %}
+                                value="{{seller.seller_gst_no}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="business_address">IFSC Code<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="business_address" class="form-control"
+                                placeholder="Business Address" name="business_address" 
+                                {% if seller.get_full_address %}
+                                value="{{seller.get_full_address}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="sku">Account Type<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="sku" class="form-control"
+                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                                {% if seller.seller_website_url %}
+                                value="{{seller.seller_website_url}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="sku">Accepted Payment Method<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="sku" class="form-control"
+                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                                {% if seller.seller_facebook_url %}
+                                value="{{seller.seller_facebook_url}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                        </div>
+                    </div>
+                    
+                </div>
+    
+                      
+
+
+                      
+                    
+
+
+                  
+
+    </div>
+
+    <div class="card-header bg-primary rounded py-3">
+        <h3 class="card-title text-white">Upload Details</h3>
+    </div>
+  <div class="row mb-3">
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="profile_photo">Profile Photo<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="e_photo" id="profile_photo" class="form-control" accept="image/*">
+                        </div>
+                    </div>
+                   
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="aadhar">Cover Photo<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="e_aadhar" class="form-control" id="aadhar" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="aadhar">GST License Photo<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="e_aadhar" class="form-control" id="aadhar" accept="image/*">
+                        </div>
+                    </div>
+                    
+                </div>
+  
+                    <div class="col-12 d-flex gap-4 justify-content-center mb-3 mt-3">
+                        <button type="submit"
+                            class="btn btn-success me-1 mb-1 mt-3"><i class="fa-solid fa-check"></i> &nbsp;Submit</button>
+                        <button type="reset"
+                            class="btn btn-light-secondary me-1 mb-1 mt-3"><i class="fa-solid fa-rotate"></i> &nbsp;Reset</button>
+                        
+                    </div>
+        
+
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+    function previewImage(event) {
+        const imagePreview = document.getElementById('image_preview');
+        imagePreview.src = URL.createObjectURL(event.target.files[0]);
+        imagePreview.style.display = 'block';
+    }
+    </script>
+
+
+<script>
+    $(document).ready(function () {
+        
+
+        $("#designation-column").on("change",function(){
+            role_name = $("#designation-column").val();
+            if(role_name.toLowerCase().includes('teacher')){
+                $("#subject-column").removeAttr('disabled');
+                $("#class_column").removeAttr('disabled');
+            }else{
+                $("#subject-column").attr('disabled',true);
+                $("#class_column").attr('disabled',true);
+            }
+
+        })
+
+       
+    });
+</script>
+
+{% endblock %}

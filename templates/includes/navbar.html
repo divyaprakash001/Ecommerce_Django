@@ -24,8 +24,8 @@
         <a href="{% url "logout" %}" class="btn text-white" style="background-color:#E48989;"><i class="fa fa-power-off"></i> Logout</a>
         {% else %}
         <a href="{% url "login" %}">Login</a>
-        <a href="{% url "registerUser" %}">Register</a>  
-        <a href="{% url "registerSeller" %}" class="btn text-white" style="background-color:#E48989;">Register</a>
+        <a title="Register as Customer" href="{% url "registerUser" %}">Register</a>  
+        <a title="Register as Seller" href="{% url "registerSeller" %}" class="btn text-white" style="background-color:#E48989;">Register</a>
         {% endif %}
         
     </div>
@@ -65,19 +65,19 @@
                         <a href="{% url "myAccount" %}" class="btn text-white" style="background-color:#E48989;">My Account</a>
                         <a href="{% url "logout" %}" class="btn text-white" style="background-color:#E48989;"><i class="fa fa-power-off"></i> Logout</a>
                         {% else %}
-                        <a class="{% if "login" in request.path %}active{% endif %}" href="{% url "login" %}">Login</a>
-                        <a href="{% url "registerUser" %}">Register</a>  
-                        <a href="{% url "registerSeller" %}" class="btn text-white" style="background-color:#E48989;">Register</a>
+                        <a title="Login" class="{% if "login" in request.path %}active{% endif %}" href="{% url "login" %}">Login</a>
+                        <a title="Register as Customer" href="{% url "registerUser" %}">Register</a>  
+                        <a title="Register as Seller" href="{% url "registerSeller" %}" class="btn text-white" style="background-color:#E48989;">Register</a>
                         {% endif %}
                         
                         
                     </div>
                     <ul class="header__right__widget">
-                        <li><span class="icon_search search-switch"></span></li>
-                        <li><a href="#"><span class="icon_heart_alt"></span>
+                        <li><span title="Search Products" class="icon_search search-switch"></span></li>
+                        <li><a title="Wishlist" href="#"><span class="icon_heart_alt"></span>
                                 <div class="tip">2</div>
                             </a></li>
-                        <li><a href="#"><span class="icon_bag_alt"></span>
+                        <li><a title="Cart" href="#"><span class="icon_bag_alt"></span>
                                 <div class="tip">2</div>
                             </a></li>
                     </ul>

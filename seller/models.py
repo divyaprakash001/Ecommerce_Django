@@ -16,14 +16,13 @@ class Seller(models.Model):
   seller_country = models.CharField(max_length=50,blank=True,null=True)
   seller_pincode = models.CharField(max_length=10,blank=True,null=True)
 
-   # New fields
-  # seller_business_type = models.CharField(max_length=50, choices=[('Retail', 'Retail'), ('Wholesale', 'Wholesale'), ('Service', 'Service')], blank=True, null=True)
   seller_website_url = models.URLField(blank=True, null=True)
-  seller_bank_account = models.CharField(max_length=50, blank=True, null=True)
+  seller_bank_name = models.CharField(max_length=50, blank=True, null=True)
+  seller_bank_account_no = models.CharField(max_length=50, blank=True, null=True)
+  seller_bank_acc_type = models.CharField(max_length=50, blank=True, null=True)
+  seller_bank_ifsc = models.CharField(max_length=50, blank=True, null=True)
   seller_payment_methods = models.CharField(max_length=255, blank=True, null=True)
 
-  # status = models.CharField(max_length=20, choices=[('Active', 'Active'), ('Inactive', 'Inactive'), ('Suspended', 'Suspended')], default='Active')
-  # join_date = models.DateTimeField(auto_now_add=True)
 
   seller_facebook_url = models.URLField(blank=True, null=True)
   seller_twitter_url = models.URLField(blank=True, null=True)

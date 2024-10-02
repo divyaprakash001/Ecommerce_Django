@@ -1,272 +1,290 @@
 {% extends "sellerBase.html" %}
 {% load static %}
-
 {% block extralinks %}
-{% comment %} yet to be done {% endcomment %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="{% static "js/address_entry.js" %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/styles/choices.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/scripts/choices.min.js"></script>
   <style>
     input, select{
         height: 3rem;
     }
-    {% comment %} for shifting header to left {% endcomment %}
-    .left-shift{
-        margin-left:-23px;
-    }
-    .up-shift{
-        margin-top:-20px;
+    .table-input{
+        background-color: transparent !important;
+        border: none;
+        outline: none;
+        box-shadow: none !important;
     }
   </style>
 {% endblock extralinks %}
-
 {% block content %}
 <div class="page-heading mt-0">
-  <h3 style="text-align: center; position: relative;">Add Order 
-      <a href="{% url "products_details" %}" style="position: absolute; top: -40%; right: 0;" ><button class="page_change fs-6 btn" role="button"><i class="fa-solid fa-search"></i>&nbsp;Records&nbsp;</button></a>
-  </h3>
+    <h3 style="text-align: center; position: relative;">Add Order
+        <a href="" style="position: absolute; top: -40%; right: 0;" ><button class="page_change fs-6 btn" role="button"><i class="fa-solid fa-search"></i>&nbsp;&nbsp;Records</button></a>
+    </h3>
 </div>
-
 <section id="multiple-column-form">
-  <div class="row match-height">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-header d-flex align-items-center justify-content-between">
-          <h4 class="card-title">Order Information</h4>
-          <div><b class="text-danger" >Note</b><span class="font-bold"> :- All asterisk (*) field is mandatory.</span></div>
-        </div>
-        <div class="card-content up-shift">
-          <div class="card-body">
-              <form class="form" action="{% url "add_products" %}" method='post' autocomplete="off">
-                {% csrf_token %}
-                <div class="row mb-3">
-                  <div class="col-md-3 col-12 mt-3">
-                      <div class="form-group">
-                          <label for="product_id">Order Id<font class="text-danger"> *</font></label>
-                          <input required  type="text" id="product_id" required class="form-control"
-                              placeholder="Product Id" name="product_id"  readonly>
-                      </div>
-                  </div>
-                  <div class="col-md-3 col-12 mt-3">
-                      <div class="form-group">
-                          <label for="product_id">User Id<font class="text-danger"> *</font></label>
-                          <input required  type="text" id="product_id" required class="form-control"
-                              placeholder="Product Id" name="product_id"  readonly>
-                      </div>
-                  </div>
-
-                  <div class="col-md-3 col-12 mt-3">
-                      <div class="form-group">
-                          <label for="product_name">Product Name<font class="text-danger"> *</font></label>
-                          <input required  type="text" id="product_name" class="form-control" name="product_name" placeholder="Product Name">
-                      </div>
-                  </div>
-                  <div class="col-md-3 col-12 mt-3">
-                    <div class="form-group">
-                        <label for="category">Category<font class="text-danger"> *</font></label>
-                        <select required  class="form-select" id="category" name="category">
-                            <option value="" selected>--- Select Category ---</option>
-                            
-                        </select>
-                    </div>
-                  </div>
-                  
-
-                  <div class="col-md-3 col-12 mt-3">
-                      <div class="form-group">
-                          <label for="brand">Brand<font class="text-danger"> *</font></label>
-                          <input required  type="text" id="brand" class="form-control"
-                          placeholder="Brand" name="brand">
-                      </div>
-                    </div>
-
-                    <div class="col-md-3 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="price">Price in ₹<font class="text-danger"> *</font></label>
-                            <div class="input-group mb-3">
-                                <button class="btn btn-light-success" type="button" id="button-addon1">₹</button>
-                                <input required  type="text" required name="price" id="price" class="form-control" placeholder="Price">
+    <div class="row match-height">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-body">
+                        <form class="form" autocomplete="off">
+                            <div class="card-header">
+                                <h4 class="card-title">Order Details</h4>
                             </div>
-                        </div>
-                    </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3 col-12">
+                                    <div class="form-group">
+                                        <label for="class" class="form-label"> Order ID </label>
+                                        <input type="text" name="prov_id" placeholder="Order ID" id="prov_id" class="form-control">
+                                    </div>
+                                </div>
 
-                    <div class="col-md-3 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="discount">Discount in %<font class="text-danger"> *</font></label>
-                            <div class="input-group mb-3">
-                                <input required  type="text" required name="discount" id="discount" class="form-control" placeholder="Discount">
-                                <button class="btn btn-light-success" type="button" id="button-addon1">%</button>
+                                <div class="col-md-3 col-12">
+                                  <div class="form-group">
+                                      <label for="section" class="form-label"> Order Date  </label>
+                                      <input type="date" name="prov_id" placeholder="Customer Email" id="prov_id" class="form-control">
+                                  </div>
+                              </div>
+                                <div class="col-md-3 col-12">
+                                    <div class="form-group">
+                                        <label for="class" class="form-label"> Customer Name </label>
+                                        <input type="text" name="prov_id" placeholder="Order ID" id="prov_id" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-12">
+                                    <div class="form-group">
+                                        <label for="class" class="form-label"> Customer Email </label>
+                                        <input type="text" name="prov_id" placeholder="Customer Email" id="prov_id" class="form-control">
+                                    </div>
+                                </div>
+                               
+                               
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="stock_quantity">Stock Quantity<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="stock_quantity" class="form-control"
-                                placeholder="Stock Quantity" name="stock_quantity">
-                        </div>
-                    </div>
-
-                    <div class="col-md-3 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="sku">SKU<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="sku" class="form-control"
-                                placeholder="Stock Keeping Unit" name="stock_quantity">
-                        </div>
-                    </div>
-
-                    <div class="col-md-3 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="size">Size<font class=""> (if applicable)</font></label>
-                            <select required  class="form-select" id="size" name="size">
-                                <option value="" selected>--- Select Size ---</option>
-                                <option value="S">S</option>
-                                <option value="M">M</option>
-                                <option value="L">L</option>
-                                <option value="XL">XL</option>
-                                <option value="XXL">XXL</option>
-                                <option value="XXXL">XXXL</option>
-                            </select>
-                        </div>
-                      </div>
-
-                      <div class="col-md-3 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="color">Color<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="color" class="form-control"
-                                placeholder="Color" name="color">
-                        </div>
-                      </div>
-
-                    <div class="col-md-3 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="weight">Weight<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="weight" class="form-control"
-                                placeholder="Weight" name="weight">
-                        </div>
-                      </div>
-                      
-    
-                      <div class="col-md-3 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="material">Material<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="material" class="form-control"
-                            placeholder="Material" name="material">
-                        </div>
-                      </div>
-
-
-                      <div class="col-md-3 col-12 mt-3">
-                        <div class="d-flex align-items-center">
-                            <div class="form-group w-50 mr-2">
-                                <label for="width">Width<font class="text-danger"> *</font></label>
-                                <input required type="text" id="width" class="form-control" placeholder="Width" name="width">
+                            <div class="row mb-3">
+                                <div class="col-lg-3 col-12">
+                                    <div class="form-group">
+                                        <label for="category" class="form-label"> Category </label>
+                                        <select name="category" class="form-select" id="category">
+                                            <option value="">-- Select Category</option>
+                                            <option value="Shirt">Shirt</option>
+                                            <option value="T-Shirt">T-Shirt</option>
+                                            <option value="Pants">Pants</option>
+                                            <option value="Skirt">Skirt</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-12">
+                                    <div class="form-group">
+                                        <label for="Colour" class="form-label"> Brand </label>
+                                        <select name="Colour" class="form-select" id="Colour">
+                                            <option value="">-- Select Colour</option>
+                                            <option value="Red">Red</option>
+                                            <option value="Blue">Blue</option>
+                                            <option value="White">White</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-12">
+                                    <div class="form-group">
+                                        <label for="Colour" class="form-label"> Size </label>
+                                        <select name="Colour" class="form-select" id="Colour">
+                                            <option value="">-- Select Colour</option>
+                                            <option value="Red">Red</option>
+                                            <option value="Blue">Blue</option>
+                                            <option value="White">White</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-12">
+                                    <div class="form-group">
+                                        <label for="Colour" class="form-label"> Product </label>
+                                        <select name="Colour" class="form-select" id="Colour">
+                                            <option value="">-- Select Product</option>
+                                            <option value="Red">Red</option>
+                                            <option value="Blue">Blue</option>
+                                            <option value="White">White</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-12">
+                                    <div class="form-group">
+                                        <label for="Colour" class="form-label"> Colour </label>
+                                        <select name="Colour" class="form-select" id="Colour">
+                                            <option value="">-- Select Colour</option>
+                                            <option value="Red">Red</option>
+                                            <option value="Blue">Blue</option>
+                                            <option value="White">White</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-1 col-12">
+                                    <div class="form-group">
+                                        <label for="Qty" class="form-label"> Qty </label>
+                                        <input type="text" name="Qty" class="form-control" placeholder="Qty" value="0" id="Qty">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-12">
+                                    <div class="form-group">
+                                        <label for="Total" class="form-label"> Total </label>
+                                        <input type="text" readonly name="Total" class="form-control" placeholder="Total" value="0" id="Total">
+                                    </div>
+                                </div>
+                                <div class="col-lg-1 col-12 d-flex justify-content-lg-center justify-content-end mt-3 align-items-lg-center align-items-end" >
+                                    <button type="button" class="btn btn-info fw-bold add">+</button>
+                                </div>                                
                             </div>
-                            <span class="mx-2">x</span>
-                            <div class="form-group w-50">
-                                <label for="height">Height<font class="text-danger"> *</font></label>
-                                <input required type="text" id="height" class="form-control" placeholder="Height" name="height">
+                            <section class="section middle-section" style="display: none;">
+                                <div class="row" id="table-hover-row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4 class="card-title">Selected Items : -</h4>
+                                            </div>
+                                            <div class="card-content">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover mb-0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Category</th>
+                                                                <th>Colour</th>
+                                                                <th>Size</th>
+                                                                <th>Qty</th>
+                                                                <th>Total</th>
+                                                                <th>ACTION</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            
+                                                        </tbody>
+                                                    </table>
+                                                    <div class="mt-1 d-flex w-100 justify-content-end gap-2 align-items-center">
+                                                        <div style="font-weight: bolder;" >Total Amount - </div>
+                                                        <div style="font-weight: bolder;" ><input type="text" readonly name="Amount" id="Amount" placeholder="Amount" class="form-control"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="row mb-3">
+                                <div class="col-md-3 col-12">
+                                    <div class="form-group">
+                                        <label for="discount" class="form-label"> Discount in % </label>
+                                        <input type="text" name="discount" id="discount" placeholder="Discount in % " class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-12">
+                                    <div class="form-group">
+                                        <label for="payable_amt" class="form-label"> Payable Amount </label>
+                                        <input type="text" readonly name="payable_amt" id="payable_amt" placeholder="Payable Amount" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-12">
+                                    <div class="form-group">
+                                        <label for="Amount_paid" class="form-label"> Amount Paid </label>
+                                        <input type="text"  name="Amount_paid" id="Amount_paid" placeholder="Amount Paid" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-12">
+                                    <div class="form-group">
+                                        <label for="due_amt" class="form-label"> Dues Amount </label>
+                                        <input type="text" name="due_amt" readonly id="due_amt" placeholder="Dues Amount" class="form-control">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12 col-12">
+                                    <div class="form-group">
+                                        <label for="desc" class="form-label"> Remark :- </label>
+                                        <textarea name="desc" id="desc" class="form-control" style="resize: none;" ></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 d-flex gap-4 justify-content-center">
+                                <button type="submit"
+                                    class="btn btn-success me-1 mb-1"><i class="fa-solid fa-check"></i> &nbsp;Submit</button>
+                                <button type="reset"
+                                    class="btn btn-light-secondary me-1 mb-1"><i class="fa-solid fa-rotate"></i> &nbsp;Reset</button>
+                            </div>
+                        </form>
                     </div>
-                    
-                    
-                    
-                    
-
-                  <div class="col-md-3 col-12 mt-3">
-                      <div class="form-group">
-                          <label for="alternate-mobile">Tags</label>
-                          <select required  class="form-select" id="blood_group" name="blood_group">
-                            <option value="" selected>--- Select Tags ---</option>
-                            <option value="trending">Trending</option>
-                        </select>
-                      </div>
-                  </div>
-
-                  
-
-    </div>
-
-    <div class="card-header left-shift">
-      <h4 class="card-title">Upload Photos</h4>
-  </div>
-  <div class="row mb-3 up-shift">
-                    <div class="col-md-4 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="profile_photo">Product Front Image<font class="text-danger"> *</font></label>
-                            <input required  type="file" name="e_photo" id="profile_photo" class="form-control" accept="image/*">
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="signature">Product Image Photo<font class="text-danger"> *</font></label>
-                            <input required  type="file" name="e_signature" class="form-control" id="signature" accept="image/*">
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="aadhar">Product Image 3<font class="text-danger"> *</font></label>
-                            <input required  type="file" name="e_aadhar" class="form-control" id="aadhar" accept="image/*">
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="medical">Product Image 4<font class="text-danger"> *</font></label>
-                            <input required  type="file" name="e_medical" class="form-control" id="medical" accept="image/*">
-                        </div>
-                    </div>
-                    {% comment %} <div class="col-md-4 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="driving_license">Upload Driving License</label>
-                            <input required  type="file" name="e_driving_license" class="form-control form-control-lg" id="driving_license" accept="image/*">
-                        </div>
-                    </div> {% endcomment %}
-                
-                    <div class="col-md-4 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="qualification">Upload Qualification<font class="text-danger"> *</font></label>
-                            <input required  type="file" class="form-control" name="e_qualification" id="qualification" accept="image/*">
-                        </div>
-                    </div>
-      
                 </div>
-  
-                    <div class="col-12 d-flex gap-4 justify-content-center mb-3 mt-3">
-                        <button type="submit"
-                            class="btn btn-success me-1 mb-1 mt-3"><i class="fa-solid fa-check"></i> &nbsp;Submit</button>
-                        <button type="reset"
-                            class="btn btn-light-secondary me-1 mb-1 mt-3"><i class="fa-solid fa-rotate"></i> &nbsp;Reset</button>
-                    </div>
-        
-
-              </form>
-          </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </section>
-
-
 <script>
     $(document).ready(function () {
-        
-
-        $("#designation-column").on("change",function(){
-            role_name = $("#designation-column").val();
-            if(role_name.toLowerCase().includes('teacher')){
-                $("#subject-column").removeAttr('disabled');
-                $("#class_column").removeAttr('disabled');
-            }else{
-                $("#subject-column").attr('disabled',true);
-                $("#class_column").attr('disabled',true);
+        all_category = []
+        all_colour = []
+        all_size = []
+        $('.add').click(function (e) { 
+        let row = $(this).closest('.row');
+        let category = row.find('#category').val();
+        let colour = row.find('#Colour').val();
+        let size = row.find('#Size').val();
+        let qty = row.find('#Qty').val().trim();
+        let total = row.find('#Total').val();
+        if (category != "" && colour != "" && size != "" && qty != "") {
+            if (!(all_category.includes(category) && all_colour.includes(colour) && all_size.includes(size))) {
+                all_category.push(category);
+                all_colour.push(colour);
+                all_size.push(size);
+                $('.middle-section').css('display', 'block');
+                let html = '<tr><td><input type="text" class="form-control table-input" readonly name="category" value="' + category + '"></td>';
+                html += '<td><input type="text" class="form-control table-input" readonly name="colour" value="' + colour + '"></td>';
+                html += '<td><input type="text" class="form-control table-input" readonly name="colour" value="' + colour + '"></td>';
+                html += '<td><input type="text" class="form-control table-input" readonly name="size" value="' + size + '"></td>';
+                html += '<td><input type="text" class="form-control table-input" readonly name="qty" value="' + qty + '"></td>';
+                html += '<td><input type="text" class="form-control table-input sum-this" readonly name="total" value="' + total + '"></td>';
+                html += '<td><div class="btn btn-danger remove-row"><i class="fa-solid fa-close fs-5 pt-1"></i></div></td></tr>';
+                $('.table tbody').append(html);
+                Calculate()
+            } else {
+                alert("This combination already exists!");
             }
+        } else {
+            alert("Please fill all the fields of this row!");
+        }
+    });
+    $(document).on('click', '.remove-row', function () {
+        $(this).closest('tr').remove();
+        Calculate()
+    });
 
-        })
+    $('#Qty').keyup(function (e) { 
+        let qty = parseInt($(this).val()) || 0;
+        let price = 100
+        let total = qty * price;
+        $(this).closest('.row').find('#Total').val(total);
+    });
 
-       
+    function Calculate(){
+        let sum = 0
+        $('.sum-this').each(function (){
+            sum = sum + parseInt($(this).val())
+        });
+        $('#Amount').val(sum);
+        let discount = parseFloat($('#discount').val()) || 0;
+        let finalAmount = sum - (sum * (discount / 100));
+        $('#payable_amt').val(finalAmount);
+        let amount = parseInt($('#Amount_paid').val()) || 0;
+        let balance = finalAmount - amount;
+        $('#due_amt').val(balance);
+    }
+    $('#Amount_paid, #discount ').keyup(function (e) { 
+        sum =  $('#Amount').val();
+        let discount = parseFloat($('#discount').val()) || 0;
+        let finalAmount = sum - (sum * (discount / 100));
+        $('#payable_amt').val(finalAmount);
+        let amount = parseInt($('#Amount_paid').val()) || 0;
+        let balance = finalAmount - amount;
+        $('#due_amt').val(balance);
+    });
+    
+
     });
 </script>
-
-{% endblock %}
+{% endblock content %}

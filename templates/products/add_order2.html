@@ -1,0 +1,296 @@
+{% extends "sellerBase.html" %}
+{% load static %}
+
+{% block extralinks %}
+{% comment %} yet to be done {% endcomment %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="{% static "js/address_entry.js" %}"></script>
+  <style>
+    input, select{
+        height: 3rem;
+    }
+    {% comment %} for shifting header to left {% endcomment %}
+    .left-shift{
+        margin-left:-23px;
+    }
+    .up-shift{
+        margin-top:-20px;
+    }
+  </style>
+{% endblock extralinks %}
+
+{% block content %}
+<div class="page-heading mt-0">
+  <h3 style="text-align: center; position: relative;">Add Order 
+      <a href="{% url "products_details" %}" style="position: absolute; top: -40%; right: 0;" ><button class="page_change fs-6 btn" role="button"><i class="fa-solid fa-search"></i>&nbsp;Records&nbsp;</button></a>
+  </h3>
+</div>
+
+<section id="multiple-column-form">
+  <div class="row match-height">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h4 class="card-title">Order Information</h4>
+          <button type="button" class="btn btn-primary"><i class="fa-solid fa-camera"></i> &nbsp;Scan</button>
+        </div>
+        <div class="card-content up-shift">
+          <div class="card-body">
+              <form class="form" action="{% url "add_products" %}" method='post' autocomplete="off">
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="product_id">Order Id<font class="text-danger"> *</font></label>
+                          <input required  type="text" id="product_id" required class="form-control"
+                              placeholder="Product Id" name="product_id"  readonly>
+                      </div>
+                  </div>
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="order_date">Order Date<font class="text-danger"> *</font></label>
+                          <input required  type="date" id="order_date" required class="form-control"
+                         name="order_date"  readonly>
+                      </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="customer_name">Customer Name<font class="text-danger"> *</font></label>
+                          <input required  type="text" id="customer_name" class="form-control" name="customer_name" placeholder="Customer Name">
+                      </div>
+                  </div>
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="customer_email">Customer Email<font class="text-danger"> *</font></label>
+                          <input required  type="email" id="customer_email" class="form-control" name="customer_email" placeholder="Customer Email">
+                      </div>
+                  </div>
+                  <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="category">Category<font class="text-danger"> *</font></label>
+                        <select required  class="form-select" id="category" name="category">
+                            <option value="" selected>--- Select Category ---</option>
+                            
+                        </select>
+                    </div>
+                  </div>
+                  
+
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="brand">Brand<font class="text-danger"> *</font></label>
+                          <select required  class="form-select" id="category" name="category">
+                            <option value="" selected>--- Select Brand ---</option>
+                            
+                        </select>
+                      </div>
+                    </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="brand">Product<font class="text-danger"> *</font></label>
+                          <select required  class="form-select" id="category" name="category">
+                            <option value="" selected>--- Select Product ---</option>
+                            
+                        </select>
+                      </div>
+                    </div>
+                  
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="size">Size<font class=""> (if applicable)</font></label>
+                            <select required  class="form-select" id="size" name="size">
+                                <option value="" selected>--- Select Size ---</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                                <option value="XXXL">XXXL</option>
+                            </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="brand">Color<font class="text-danger"> *</font></label>
+                            <select required  class="form-select" id="category" name="category">
+                              <option value="" selected>--- Select Color ---</option>
+                              
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="stock_quantity">Quantity<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="stock_quantity" class="form-control"
+                                placeholder="Stock Quantity" name="stock_quantity">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="price">Price in ₹<font class="text-danger"> *</font></label>
+                            <div class="input-group mb-3">
+                                <button class="btn btn-light-success" type="button" id="button-addon1">₹</button>
+                                <input required  type="text" required name="price" id="price" class="form-control" placeholder="Price">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="sku">SKU<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="sku" class="form-control"
+                                placeholder="Stock Keeping Unit" name="stock_quantity">
+                        </div>
+                    </div>
+
+                    
+
+                      <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="color">Color<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="color" class="form-control"
+                                placeholder="Color" name="color">
+                        </div>
+                      </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="weight">Weight<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="weight" class="form-control"
+                                placeholder="Weight" name="weight">
+                        </div>
+                      </div>
+                      
+    
+                      <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="material">Material<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="material" class="form-control"
+                            placeholder="Material" name="material">
+                        </div>
+                      </div>
+
+
+                      <div class="col-md-3 col-12 mt-3">
+                        <div class="d-flex align-items-center">
+                            <div class="form-group w-50 mr-2">
+                                <label for="width">Width<font class="text-danger"> *</font></label>
+                                <input required type="text" id="width" class="form-control" placeholder="Width" name="width">
+                            </div>
+                            <span class="mx-2">x</span>
+                            <div class="form-group w-50">
+                                <label for="height">Height<font class="text-danger"> *</font></label>
+                                <input required type="text" id="height" class="form-control" placeholder="Height" name="height">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    
+
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="alternate-mobile">Tags</label>
+                          <select required  class="form-select" id="blood_group" name="blood_group">
+                            <option value="" selected>--- Select Tags ---</option>
+                            <option value="trending">Trending</option>
+                        </select>
+                      </div>
+                  </div>
+
+                  
+
+    </div>
+
+    <div class="card-header left-shift">
+      <h4 class="card-title">Upload Photos</h4>
+  </div>
+  <div class="row mb-3 up-shift">
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="profile_photo">Product Front Image<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="e_photo" id="profile_photo" class="form-control" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="signature">Product Image Photo<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="e_signature" class="form-control" id="signature" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="aadhar">Product Image 3<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="e_aadhar" class="form-control" id="aadhar" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="medical">Product Image 4<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="e_medical" class="form-control" id="medical" accept="image/*">
+                        </div>
+                    </div>
+                    {% comment %} <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="driving_license">Upload Driving License</label>
+                            <input required  type="file" name="e_driving_license" class="form-control form-control-lg" id="driving_license" accept="image/*">
+                        </div>
+                    </div> {% endcomment %}
+                
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="qualification">Upload Qualification<font class="text-danger"> *</font></label>
+                            <input required  type="file" class="form-control" name="e_qualification" id="qualification" accept="image/*">
+                        </div>
+                    </div>
+      
+                </div>
+  
+                    <div class="col-12 d-flex gap-4 justify-content-center mb-3 mt-3">
+                        <button type="submit"
+                            class="btn btn-success me-1 mb-1 mt-3"><i class="fa-solid fa-check"></i> &nbsp;Submit</button>
+                        <button type="reset"
+                            class="btn btn-light-secondary me-1 mb-1 mt-3"><i class="fa-solid fa-rotate"></i> &nbsp;Reset</button>
+                    </div>
+        
+
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+    $(document).ready(function () {
+        
+
+        $("#designation-column").on("change",function(){
+            role_name = $("#designation-column").val();
+            if(role_name.toLowerCase().includes('teacher')){
+                $("#subject-column").removeAttr('disabled');
+                $("#class_column").removeAttr('disabled');
+            }else{
+                $("#subject-column").attr('disabled',true);
+                $("#class_column").attr('disabled',true);
+            }
+
+        })
+
+       
+    });
+</script>
+
+{% endblock %}
