@@ -184,7 +184,7 @@
                 <div class="sidebar-header">
                     <div class="d-flex justify-content-between">
                         <div class="logo">
-                            <a href="{% url "sellerDashboard" %}"><img src="{% static "img/ekart_logo.png" %}" style="width: 100%; height: 100%;" alt=""></a>
+                            <a href="{% url "sellerDashboard" %}"><img {% if seller.seller_business_logo %} src="{{seller.seller_business_logo.url}}" {% else %} src="{% static "img/ekart_logo.png" %}"{% endif %} style="width: 100%; height: 100%;" alt=""></a>
                         </div>
                         <div class="toggler">
                             <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>

@@ -7,6 +7,7 @@ class Seller(models.Model):
   user = models.OneToOneField(User,related_name="user" ,on_delete=models.CASCADE)
   user_profile = models.OneToOneField(UserProfile,related_name="user_profile" ,on_delete=models.CASCADE)
   seller_name = models.CharField(max_length=100, blank=True, null=True)
+  seller_business_logo = models.ImageField(upload_to="vendor/business_logo", null=True, blank=True)
   seller_gst_no = models.CharField(max_length=50, null=True, blank=True)
   seller_gst_pic = models.ImageField(upload_to="vendor/gst_pic")
   seller_street = models.CharField(max_length=100,blank=True,null=True)
@@ -16,7 +17,6 @@ class Seller(models.Model):
   seller_country = models.CharField(max_length=50,blank=True,null=True)
   seller_pincode = models.CharField(max_length=10,blank=True,null=True)
 
-  seller_website_url = models.URLField(blank=True, null=True)
   seller_bank_name = models.CharField(max_length=50, blank=True, null=True)
   seller_bank_account_no = models.CharField(max_length=50, blank=True, null=True)
   seller_bank_acc_type = models.CharField(max_length=50, blank=True, null=True)
@@ -24,9 +24,12 @@ class Seller(models.Model):
   seller_payment_methods = models.CharField(max_length=255, blank=True, null=True)
 
 
+  seller_website_url = models.URLField(blank=True, null=True)
   seller_facebook_url = models.URLField(blank=True, null=True)
   seller_twitter_url = models.URLField(blank=True, null=True)
   seller_instagram_url = models.URLField(blank=True, null=True)
+  seller_youtube_url = models.URLField(blank=True, null=True)
+  seller_linkedin_url = models.URLField(blank=True, null=True)
 
   business_hours = models.TextField(blank=True, null=True)
   shipping_methods = models.TextField(blank=True, null=True)

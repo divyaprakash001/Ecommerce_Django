@@ -263,14 +263,13 @@ def myAccount(request):
   print(redirectUrl)
   return redirect(redirectUrl)
 
-@login_required(login_url="login")
 # @customer_required  # first way
+@login_required(login_url="login")
 @user_passes_test(check_role_customer)        # second way
 def customerDashboard(request):
   return render(request, "accounts/customerDashboard.html")
 
 @login_required(login_url="login")
-# @seller_required
 @user_passes_test(check_role_seller) 
 def sellerDashboard(request):
   return render(request, "seller/sellerDashboard.html")

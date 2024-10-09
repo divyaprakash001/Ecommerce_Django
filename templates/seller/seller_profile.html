@@ -35,7 +35,7 @@
         </div>
         <div class="card-content up-shift">
           <div class="card-body">
-              <form class="form" action="" method='post' autocomplete="off">
+              <form class="form" action="{% url "seller_profile" %}" method='post' autocomplete="off">
                 {% csrf_token %}
                 <div class="row mb-3">
 
@@ -59,10 +59,10 @@
                                 </h5>
                                 <p class="card-text text-center">{{request.user.get_role}}</p>
                                 <div class="social-media text-center">
-                                    <a href="#" class="btn btn-secondary rounded-circle" style="width: 30px; height:30px;"><i class="fab fa-facebook-f"></i></a>
-                                    <a href="#" class="btn btn-secondary rounded-circle" style="width: 30px; height:30px;"><i class="fab fa-twitter"></i></a>
-                                    <a href="#" class="btn btn-secondary rounded-circle" style="width: 30px; height:30px;"><i class="fab fa-youtube"></i></a>
-                                    <a href="#" class="btn btn-secondary rounded-circle" style="width: 30px; height:30px;"><i class="fab fa-youtube"></i></a>
+                                    <a href="{{seller.seller_facebook_url}}" target="_blank" class="btn btn-secondary rounded-circle" style="width: 30px; height:30px; display: inline-flex; justify-content: center; align-items: center; text-decoration: none;"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="{{seller.seller_twitter_url}}"  target="_blank" class="btn btn-secondary rounded-circle" style="width: 30px; height:30px; display: inline-flex; justify-content: center; align-items: center; text-decoration: none;"><i class="fab fa-twitter"></i></a>
+                                    <a href="{{seller.seller_youtube_url}}" target="_blank" class="btn btn-secondary rounded-circle" style="width: 30px; height:30px; display: inline-flex; justify-content: center; align-items: center; text-decoration: none;"><i class="fab fa-youtube"></i></a>
+                                    <a href="{{seller.seller_linkedin_url}}" target="_blank" class="btn btn-secondary rounded-circle" style="width: 30px; height:30px; display: inline-flex; justify-content: center; align-items: center; text-decoration: none;"><i class="fab fa-linkedin"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -79,36 +79,37 @@
                             <div class="form-group">
                                 <label for="brand">First Name<font class="text-danger"> *</font></label>
                                 <input required  type="text" id="seller_name" class="form-control"
-                                placeholder="Seller Name" name="seller_name" value={{request.user.first_name}}>
+                                placeholder="Seller Name" name="seller_first_name" value="{{request.user.first_name}}">
                             </div>
                           </div>
                         <div class="col-md-6 col-12 mt-3">
                             <div class="form-group">
                                 <label for="brand">Last Name<font class="text-danger"> *</font></label>
                                 <input required  type="text" id="seller_name" class="form-control"
-                                placeholder="Seller Name" name="seller_name" value={{request.user.last_name}}>
+                                placeholder="Seller Name" name="seller_last_name" value="{{request.user.last_name}}">
                             </div>
                           </div>
       
                         <div class="col-md-6 col-12 mt-3">
                             <div class="form-group">
-                                <label for="brand">Username<font class="text-danger"> *</font></label>
-                                <input required  type="text" id="seller_name" class="form-control"
-                                placeholder="Seller Name" name="seller_name" value={{request.user.username}}>
+                                <label for="username">Username<font class="text-danger"> *</font></label>
+                                <input required  type="text" id="username" class="form-control"
+                                placeholder="Username" name="username" value="{{request.user.username}}">
+                                <span class="text-danger mt-1" id="span" style="font-size:14px; float: right;"></span>
                             </div>
                           </div>
                         <div class="col-md-6 col-12 mt-3">
                             <div class="form-group">
                                 <label for="brand">Email<font class="text-danger"> *</font></label>
                                 <input required  type="email" id="seller_name" class="form-control"
-                                placeholder="Seller Name" name="seller_name" value={{request.user.email}}>
+                                placeholder="Seller Name" name="seller_email" value="{{request.user.email}}" readonly>
                             </div>
                           </div>
                         <div class="col-md-6 col-12 mt-3">
                             <div class="form-group">
                                 <label for="brand">Phone Number<font class="text-danger"> *</font></label>
                                 <input required  type="text" id="seller_name" class="form-control"
-                                placeholder="Phone Number" name="seller_name" value={{request.user.phone_number}}>
+                                placeholder="Phone Number" name="seller_phone_number" value="{{request.user.phone_number}}">
                             </div>
                           </div>
       
@@ -126,7 +127,7 @@
                 <div class="row mb-3">
                     <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="stock_quantity">Business Name<font class="text-danger"> *</font></label>
+                            <label for="business_name">Business Name<font class="text-danger"> *</font></label>
                             <input required  type="text" id="business_name" class="form-control"
                                 placeholder="Business Name" name="business_name"
                                 value="{{seller.seller_name}}">
@@ -135,9 +136,9 @@
 
                     <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="sku">GST NO.<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="sku" class="form-control"
-                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                            <label for="gstno">GST NO.<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="gstno" class="form-control"
+                                placeholder="GST NO. Keeping Unit" name="gstno" 
                                 {% if seller.seller_gst_no %}
                                 value="{{seller.seller_gst_no}}"
                                 {% else %}
@@ -162,9 +163,9 @@
 
                     <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="sku">Business Website Url</label>
-                            <input required  type="text" id="sku" class="form-control"
-                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                            <label for="website_url">Business Website Url</label>
+                            <input required  type="text" id="website_url" class="form-control"
+                                placeholder="Business Website Url" name="website_url" 
                                 {% if seller.seller_website_url %}
                                 value="{{seller.seller_website_url}}"
                                 {% else %}
@@ -173,9 +174,9 @@
                         </div>
                     </div><div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="sku">Facebook Url</label>
-                            <input required  type="text" id="sku" class="form-control"
-                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                            <label for="facebook_url">Facebook Url</label>
+                            <input required  type="text" id="facebook_url" class="form-control"
+                                placeholder="Facebook Url" name="facebook_url" 
                                 {% if seller.seller_facebook_url %}
                                 value="{{seller.seller_facebook_url}}"
                                 {% else %}
@@ -184,22 +185,47 @@
                         </div>
                     </div><div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="sku">Twitter Url</label>
-                            <input required  type="text" id="sku" class="form-control"
-                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                            <label for="twitter_url">Twitter Url</label>
+                            <input required  type="text" id="twitter_url" class="form-control"
+                                placeholder="Twitter Url" name="twitter_url" 
                                 {% if seller.seller_twitter_url %}
                                 value="{{seller.seller_twitter_url}}"
                                 {% else %}
                                 value="Not Available"
                                 {% endif %}>
                         </div>
-                    </div><div class="col-md-3 col-12 mt-3">
+                    </div>
+                    <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="sku">Instagram Url</label>
-                            <input required  type="text" id="sku" class="form-control"
-                                placeholder="Stock Keeping Unit" name="stock_quantity" 
+                            <label for="instagram_url">Instagram Url</label>
+                            <input required  type="text" id="instagram_url" class="form-control"
+                                placeholder="Instagram Url" name="instagram_url" 
                                 {% if seller.seller_instagram_url %}
                                 value="{{seller.seller_instagram_url}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="youtube_url">Youtube Url</label>
+                            <input required  type="text" id="youtube_url" class="form-control"
+                                placeholder="Youtube Url" name="youtube_url" 
+                                {% if seller.seller_youtube_url %}
+                                value="{{seller.seller_youtube_url}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="linkedin_url">LinkedIn Url</label>
+                            <input required  type="text" id="linkedin_url" class="form-control"
+                                placeholder="LinkedIn Url" name="linkedin_url" 
+                                {% if seller.seller_linkedin_url %}
+                                value="{{seller.seller_linkedin_url}}"
                                 {% else %}
                                 value="Not Available"
                                 {% endif %}>
@@ -215,33 +241,20 @@
                 <div class="row mb-3">
                     <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="stock_quantity">Bank Name<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="business_name" class="form-control"
-                                placeholder="Business Name" name="business_name"
-                                value="{{seller.seller_name}}">
+                            <label for="bank_name">Bank Name<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="bank_name" class="form-control"
+                                placeholder="Seller Bank Name" name="bank_name"
+                                value="{{seller.seller_bank_name}}">
                         </div>
                     </div>
 
                     <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="sku">Account No.<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="sku" class="form-control"
-                                placeholder="Stock Keeping Unit" name="stock_quantity" 
-                                {% if seller.seller_gst_no %}
-                                value="{{seller.seller_gst_no}}"
-                                {% else %}
-                                value="Not Available"
-                                {% endif %}>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="business_address">IFSC Code<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="business_address" class="form-control"
-                                placeholder="Business Address" name="business_address" 
-                                {% if seller.get_full_address %}
-                                value="{{seller.get_full_address}}"
+                            <label for="account_no">Account No.<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="account_no" class="form-control"
+                                placeholder="Account Number" name="account_no" 
+                                {% if seller.seller_bank_account_no %}
+                                value="{{seller.seller_bank_account_no}}"
                                 {% else %}
                                 value="Not Available"
                                 {% endif %}>
@@ -250,11 +263,24 @@
 
                     <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="sku">Account Type<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="sku" class="form-control"
-                                placeholder="Stock Keeping Unit" name="stock_quantity" 
-                                {% if seller.seller_website_url %}
-                                value="{{seller.seller_website_url}}"
+                            <label for="ifsc_code">IFSC Code<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="ifsc_code" class="form-control"
+                                placeholder="Business Address" name="ifsc_code" 
+                                {% if seller.seller_bank_ifsc %}
+                                value="{{seller.seller_bank_ifsc}}"
+                                {% else %}
+                                value="Not Available"
+                                {% endif %}>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="account_type">Account Type<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="account_type" class="form-control"
+                                placeholder="Account Type" name="account_type" 
+                                {% if seller.seller_bank_acc_type %}
+                                value="{{seller.seller_bank_acc_type}}"
                                 {% else %}
                                 value="Not Available"
                                 {% endif %}>
@@ -262,64 +288,62 @@
                     </div>
                     <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="sku">Accepted Payment Method<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="sku" class="form-control"
-                                placeholder="Stock Keeping Unit" name="stock_quantity" 
-                                {% if seller.seller_facebook_url %}
-                                value="{{seller.seller_facebook_url}}"
-                                {% else %}
-                                value="Not Available"
-                                {% endif %}>
+                            <label for="accepted_payment_method">Accepted Payment Method<font class="text-danger"> *</font></label>
+                            <select name="category" class="form-select" id="category" multiple>
+                                <option value="{{seller.seller_payment_methods}}">{{seller.seller_payment_methods}}</option>
+                                <option value="Online">Online</option>
+                                <option value="Cash_on_delivery">Cash On Delivery</option>
+                                <option value="Debit_card">Debit Card</option>
+                                <option value="Credit_card">Credit Card</option>
+                            </select>
                         </div>
                     </div>
-                    
                 </div>
-    
-                      
-
-
-                      
-                    
-
-
-                  
-
     </div>
 
     <div class="card-header bg-primary rounded py-3">
         <h3 class="card-title text-white">Upload Details</h3>
     </div>
   <div class="row mb-3">
-                    <div class="col-md-4 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="profile_photo">Profile Photo<font class="text-danger"> *</font></label>
-                            <input required  type="file" name="e_photo" id="profile_photo" class="form-control" accept="image/*">
-                        </div>
-                    </div>
-                   
-                    <div class="col-md-4 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="aadhar">Cover Photo<font class="text-danger"> *</font></label>
-                            <input required  type="file" name="e_aadhar" class="form-control" id="aadhar" accept="image/*">
-                        </div>
-                    </div>
+        <div class="col-md-4 col-12 mt-3">
+            <div class="form-group">
+                <label for="profile_photo">Profile Photo</label>
+                <input  type="file" name="e_photo" id="profile_photo" class="form-control" accept="image/*">
+            </div>
+        </div>
+        
+        <div class="col-md-4 col-12 mt-3">
+            <div class="form-group">
+                <label for="cover_photo">Cover Photo</label>
+                <input  type="file" name="cover_photo" class="form-control" id="cover_photo" accept="image/*">
+            </div>
+        </div>
 
-                    <div class="col-md-4 col-12 mt-3">
-                        <div class="form-group">
-                            <label for="aadhar">GST License Photo<font class="text-danger"> *</font></label>
-                            <input required  type="file" name="e_aadhar" class="form-control" id="aadhar" accept="image/*">
-                        </div>
-                    </div>
+        <div class="col-md-4 col-12 mt-3">
+            <div class="form-group">
+                <label for="business_logo">Business Logo<font class="text-danger"> *</font></label>
+                <input required  type="file" name="business_logo" class="form-control" id="business_logo" accept="image/*">
+            </div>
+        </div>
+
+        <div class="col-md-4 col-12 mt-3">
+            <div class="form-group">
+                <label for="gst_license">GST License Photo<font class="text-danger"> *</font></label>
+                <input required  type="file" name="gst_license" class="form-control" id="gst_license" accept="image/*">
+            </div>
+        </div>
+
+                    
                     
                 </div>
   
-                    <div class="col-12 d-flex gap-4 justify-content-center mb-3 mt-3">
-                        <button type="submit"
-                            class="btn btn-success me-1 mb-1 mt-3"><i class="fa-solid fa-check"></i> &nbsp;Submit</button>
-                        <button type="reset"
-                            class="btn btn-light-secondary me-1 mb-1 mt-3"><i class="fa-solid fa-rotate"></i> &nbsp;Reset</button>
-                        
-                    </div>
+                <div class="col-12 d-flex gap-4 justify-content-center mb-3 mt-3">
+                    <button type="submit" id="submit_btn"
+                        class="btn btn-success me-1 mb-1 mt-3"><i class="fa-solid fa-check"></i> &nbsp;Update Profile</button>
+                    <button type="reset"
+                        class="btn btn-light-secondary me-1 mb-1 mt-3"><i class="fa-solid fa-rotate"></i> &nbsp;Reset</button>
+                    
+                </div>
         
 
               </form>
@@ -330,33 +354,57 @@
   </div>
 </section>
 
+
+<script>
+    $(document).ready(function() {
+        const p_username = $("#username").val();
+        $("#username").on("keyup",function(){
+            username = $("#username").val();
+            if(username != p_username){
+                $.ajax({
+                    url: "{% url 'seller_profile' %}",  
+                    type: "GET",
+                    data: {
+                        username: username,
+                    },
+                    success: function(response) {
+                        if(response.status == 'found'){
+                            $("#username").closest('.form-group').find('span').text(response.message);
+                        }else{
+                            $("#username").closest('.form-group').find('span').text("");
+                        }
+                    },
+                    error: function(xhr) {
+                        $('#response').html('An error occurred: ' + xhr.responseText);
+                    }
+                });
+            }
+        });
+
+        $("form").on("submit",function(e){
+            span = $("#span").text()
+            if((span != '')){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Username Already Exists',
+                    showConfirmButton: true,
+                    confirmButtonClass: 'btn btn-success'
+                });
+                return false;
+            }
+        })
+
+    })
+</script>
+
 <script>
     function previewImage(event) {
         const imagePreview = document.getElementById('image_preview');
         imagePreview.src = URL.createObjectURL(event.target.files[0]);
         imagePreview.style.display = 'block';
     }
-    </script>
-
-
-<script>
-    $(document).ready(function () {
-        
-
-        $("#designation-column").on("change",function(){
-            role_name = $("#designation-column").val();
-            if(role_name.toLowerCase().includes('teacher')){
-                $("#subject-column").removeAttr('disabled');
-                $("#class_column").removeAttr('disabled');
-            }else{
-                $("#subject-column").attr('disabled',true);
-                $("#class_column").attr('disabled',true);
-            }
-
-        })
-
-       
-    });
 </script>
+
+
 
 {% endblock %}
