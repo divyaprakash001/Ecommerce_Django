@@ -35,33 +35,40 @@
         </div>
         <div class="card-content up-shift">
           <div class="card-body">
-              <form class="form" action="" method='post' autocomplete="off">
+              <form class="form" action="{% url "add_categories" %}" method='post' enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row mb-3">
                   <div class="col-md-4 col-12 mt-3">
                       <div class="form-group">
                           <label for="category_id">Category Id<font class="text-danger"> *</font></label>
-                          <input required readonly  type="text" id="category_id" required class="form-control"
-                              placeholder="Category Id" name="category_id" value={{data.category_id}}>
+                          <input  readonly  type="text" id="category_id"  class="form-control"
+                              placeholder="Category Id" name="category_id">
                       </div>
                   </div>
 
                   <div class="col-md-4 col-12 mt-3">
                       <div class="form-group">
-                          <label for="reg_date">Category Name<font class="text-danger"> *</font></label>
-                          <input placeholder="Category Name" required  type="text" id="reg_date" class="form-control" name="reg_date">
+                          <label for="category_name">Category Name<font class="text-danger"> *</font></label>
+                          <input placeholder="Category Name"   type="text" id="category_name" class="form-control" name="category_name">
                       </div>
                   </div>
                   <div class="col-md-4 col-12 mt-3">
                       <div class="form-group">
                           <label for="category_slug">Category Slug<font class="text-danger"> *</font></label>
-                          <input required  type="text" id="category_slug" class="form-control" name="category_slug" placeholder="Category Slug">
+                          <input   type="text" id="category_slug" class="form-control" name="category_slug" placeholder="Category Slug">
                       </div>
                   </div>
+                  <div class="col-md-4 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="category_photo">Category Photo</label>
+                        <input   type="file" name="category_photo" class="form-control" id="category_photo" accept="image/*">
+                    </div>
+                </div>
+
                   <div class="col-md-8 col-12 mt-3">
                       <div class="form-group">
                           <label for="category_description">Category Description<font class="text-danger"> *</font></label>
-                          <textarea name="category_description"  id="category_description" class="form-control" row="4" placeholder="Category Description"></textarea>
+                          <textarea name="category_description"  id="category_description" class="form-control" row="5" placeholder="Category Description"></textarea>
                       </div>
                   </div>
                   
@@ -87,7 +94,25 @@
 
 
 <script>
-  
+  $(document).ready(function(){
+    $.ajax({
+      url: "{% url 'add_categories' %}",  
+      type: "GET",
+      data: {
+          username: username,
+      },
+      success: function(response) {
+          if(response.status == 'found'){
+              $("#username").closest('.form-group').find('span').text(response.message);
+          }else{
+              $("#username").closest('.form-group').find('span').text("");
+          }
+      },
+      error: function(xhr) {
+          $('#response').html('An error occurred: ' + xhr.responseText);
+      }
+  });
+  })
 </script>
 
 {% endblock %}

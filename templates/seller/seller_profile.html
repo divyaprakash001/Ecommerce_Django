@@ -35,7 +35,7 @@
         </div>
         <div class="card-content up-shift">
           <div class="card-body">
-              <form class="form" action="{% url "seller_profile" %}" method='post' autocomplete="off">
+              <form class="form" action="{% url "seller_profile" %}" method='post' enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row mb-3">
 
@@ -289,7 +289,7 @@
                     <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
                             <label for="accepted_payment_method">Accepted Payment Method<font class="text-danger"> *</font></label>
-                            <select name="category" class="form-select" id="category" multiple>
+                            <select name="accepted_payment_method" class="form-select" id="accepted_payment_method" multiple>
                                 <option value="{{seller.seller_payment_methods}}">{{seller.seller_payment_methods}}</option>
                                 <option value="Online">Online</option>
                                 <option value="Cash_on_delivery">Cash On Delivery</option>
@@ -308,7 +308,7 @@
         <div class="col-md-4 col-12 mt-3">
             <div class="form-group">
                 <label for="profile_photo">Profile Photo</label>
-                <input  type="file" name="e_photo" id="profile_photo" class="form-control" accept="image/*">
+                <input  type="file" name="profile_photo" id="profile_photo" class="form-control" accept="image/*">
             </div>
         </div>
         
@@ -321,15 +321,15 @@
 
         <div class="col-md-4 col-12 mt-3">
             <div class="form-group">
-                <label for="business_logo">Business Logo<font class="text-danger"> *</font></label>
-                <input required  type="file" name="business_logo" class="form-control" id="business_logo" accept="image/*">
+                <label for="business_logo">Business Logo</label>
+                <input   type="file" name="business_logo" class="form-control" id="business_logo" accept="image/*">
             </div>
         </div>
 
         <div class="col-md-4 col-12 mt-3">
             <div class="form-group">
-                <label for="gst_license">GST License Photo<font class="text-danger"> *</font></label>
-                <input required  type="file" name="gst_license" class="form-control" id="gst_license" accept="image/*">
+                <label for="gst_license">GST License Photo</label>
+                <input   type="file" name="gst_license" class="form-control" id="gst_license" accept="image/*">
             </div>
         </div>
 

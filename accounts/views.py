@@ -49,7 +49,9 @@ def registerUser(request):
 
       # send verification email
       try:
-        send_verification_email(request,user)
+        mail_subject = "Activate your account"
+        email_template = "accounts/email/activation_email.html"
+        send_verification_email(request,user,mail_subject,email_template)
       except socket.timeout:
         print("Connection timed out. Please try again later.")
       except socket.error as e:
@@ -110,7 +112,7 @@ def registerSeller(request):
         print(f"An error occurred: {e}")
 
       messages.success(request, "Your account has been registered successfully! Please check your email !!!", fail_silently=True)
-      return redirect("registerSeller")
+      return redirect("login")
     else:
       print(user_form.errors)
       print(s_form.errors)
