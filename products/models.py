@@ -7,6 +7,7 @@ class Category(models.Model):
   category_slug = models.SlugField()
   category_pic = models.ImageField(upload_to="products/categories", null=True)
   category_desc = models.CharField(max_length=50, null=True,blank=True)
+  status = models.CharField( max_length=10,default="Active")
 
   def __str__(self):
     return self.category_name

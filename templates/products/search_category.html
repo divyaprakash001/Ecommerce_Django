@@ -41,11 +41,11 @@
 
                   <div class="col-md-4 col-12 mt-3">
                       <div class="form-group">
-                          <label for="role_id" class="form-label">Category Id</label>
-                          <select name="role_id" id="role_id" class="form-select">
+                          <label for="category_id" class="form-label">Category Id</label>
+                          <select name="category_id" id="category_id" class="form-select">
                             <option value="">-- Select Category Id --</option>
-                            {% for x in data.searching_data %}
-                            <option value="{{x.role_id}}">{{x.role_id}}</option>
+                            {% for x in categories %}
+                            <option value="{{x.category_id}}">{{x.category_id}}</option>
                             {% endfor %}
                           </select>
                       </div>
@@ -53,11 +53,11 @@
                     
                     <div class="col-md-4 col-12 mt-3">
                       <div class="form-group">
-                          <label for="role_name" class="form-label">Category Name</label>
-                          <select name="role_name" id="role_name" class="form-select">
+                          <label for="category_name" class="form-label">Category Name</label>
+                          <select name="category_name" id="category_name" class="form-select">
                             <option value="">-- Select Category Name --</option>
-                            {% for x in data.searching_data %}
-                            <option value="{{x.role_name}}">{{x.role_name}}</option>
+                            {% for x in categories %}
+                            <option value="{{x.category_name}}">{{x.category_name}}</option>
                             {% endfor %}
                           </select>
                       </div>
@@ -85,12 +85,7 @@
                           class="btn btn-light-secondary me-1 mb-1 mt-3"><i class="fa-solid fa-rotate"></i> &nbsp;Reset</button>
                   </div>
                 </div>
-
                 </div>
-  
-                    
-        
-
               </form>
           </div>
         </div>
@@ -208,7 +203,7 @@
         e.preventDefault(); 
           $.ajax({
               type: "POST",
-              url: "",
+              url: "{% url 'categories_details' %}",
               data: $(this).serialize(),
               success: function (response) {
               if(response.status == true){
