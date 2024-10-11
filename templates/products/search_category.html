@@ -35,10 +35,9 @@
         </div>
         <div class="card-content up-shift">
           <div class="card-body">
-              <form class="form" id="myForm" action="{% url 'categories_details' %}" method="post" autocomplete="off">
+              <form class="form" id="myForm" action="{% url 'categories_details' %}" method="post">
                 {% csrf_token %}
                 <div class="row mb-3">
-
                   <div class="col-md-4 col-12 mt-3">
                       <div class="form-group">
                           <label for="category_id" class="form-label">Category Id</label>
@@ -133,7 +132,19 @@
 
 <section class="section" >
   <div class="card">
-      <div class="card-body overflow-auto" id="html_data">
+    <div class="text-end pt-3 d-flex justify-content-between px-4">
+      <div class="">
+        <select name="" id="" class="form-control">
+          <option value="">10</option>
+          <option value="">20</option>
+          <option value="">30</option>
+          <option value="">40</option>
+        </select>
+      </div>
+      <div><i class="fa-solid fa-filter fa-xl" style="color: #000; cursor:pointer;"></i></div>
+    
+    </div>
+    <div class="card-body overflow-auto" id="html_data">
           <div class="alert alert-info fs-5 rounded font-bold" >
               Search To See The Records !
           </div>

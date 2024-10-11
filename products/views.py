@@ -1,8 +1,10 @@
+import base64
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages
 
 from products.models import Category
+from seller.models import Seller
 
 def add_category(request):
   context={}
@@ -16,25 +18,34 @@ def add_category(request):
   else:
     new_id = 1
     category_id = f"{prefix}{new_id:04d}"
-
   context['category_id'] = category_id
 
   if request.method == 'POST':
     category_name = request.POST.get("category_name")
     category_slug = request.POST.get("category_slug")
-    category_desc = request.POST.get("category_desc")
-    category_photo = request.FILES["category_photo"]
+    category_desc = request.POST.get("category_description")
+    if "category_photo" in request.FILES:
+      category_photo = request.FILES["category_photo"]
+    else:
+      category_photo = None
 
-
-    cat = Category(category_id=category_id,category_name=category_name,category_slug=category_slug,category_desc=category_desc,category_pic=category_photo)
-    cat.save()
     try:
-      if Category.objects.filter(category_id=category_id).exists():
-        messages.success(request,"Category Added Successfully.")
-      else:
+      seller = Seller.objects.get(user = request.user)
+    except Seller.DoesNotExist:
+      messages.error(request, "You are not a seller")
+      return redirect("add_category")
+    if (category_id is not None and category_id is not '') and (category_name is not None and category_name is not ''):
+      cat = Category(seller=seller,category_id=category_id,category_name=category_name,category_slug=category_slug,category_desc=category_desc,category_pic=category_photo)
+      cat.save()
+      try:
+        if Category.objects.filter(category_id=category_id).exists():
+          messages.success(request,"Category Added Successfully.")
+        else:
+          messages.error(request,"Failed To Add Category!")
+      except Category.DoesNotExist:
         messages.error(request,"Failed To Add Category!")
-    except Category.DoesNotExist:
-      messages.error(request,"Failed To Add Category!")
+    else:
+      messages.error(request,"Please Fill All Required Fields!")
     return redirect("add_categories")
 
   
@@ -50,22 +61,34 @@ def add_category(request):
   return render(request,"products/add_category.html",context)
 
 def category_details(request):
+  try:
+    seller = Seller.objects.get(user=request.user)
+  except Seller.DoesNotExist:
+    messages.error(request,"You are not a seller")
+    return redirect("login")
+
   context={}
   if request.headers.get('x-requested-with') == 'XMLHttpRequest':
     if request.method == 'POST':
       category_id = request.POST.get("category_id").strip()
       category_name = request.POST.get("category_name").strip()
 
+      print(category_id)
+      print(category_name)
+
       conditions={}
-      if category_id != None or category_id != '':
+      if category_id is not None and category_id is not '':
           conditions['category_id'] = category_id
-      if category_name != None or category_name != '':
+      if category_name is not  None and category_name is not '':
           conditions['category_name'] = category_name
 
-      if conditions:
-        my_data = Category.objects.filter(**conditions)
+      print(conditions)
 
-        if my_data.exists():
+      if conditions:
+        my_data = Category.objects.filter(**conditions, seller=seller).order_by("category_id")
+      else:
+        my_data = Category.objects.filter(seller=seller).order_by("category_id")
+      if my_data.exists():
           sno=0
           html_part = '<table class="table table-hover table-responsive table-striped" id="table1"><thead><tr><th>S.&nbsp;No.</th><th>Category&nbsp;ID</th><th>Category&nbsp;Name</th><th>Seller&nbsp;Name</th><th>Category&nbsp;Slug</th><th>Image</th><th>Status</th><th align="center" colspan="5" >Action</th></tr> </thead> <tbody>'
           for x in my_data:
@@ -73,15 +96,16 @@ def category_details(request):
               html_part += '<tr><td>' + str(sno) + '</td>'
               html_part += '<td id="branch_id">' + str(x.category_id) + '</td>'
               html_part += '<td id="school_name">' + str(x.category_name) + '</td>'
+              html_part += '<td id="school_name">' + str(x.seller.seller_name) + '</td>'
               html_part += '<td id="role_id">' + str(x.category_slug) + '</td>'
-              html_part += '<td>' + str(x.role_name) + '</td>'
+              # html_part += '<td>' + str(x.role_name) + '</td>'
               html_part += f'<td> <a title="Click on view to see more" class="view" ><i class="fa-solid fa-eye" style="color:blue;" ></i></a> </td>'
               if x.status.lower() == 'active':
                   html_part += f'<td> <button title="Active" class="btn btn-sm btn-success">Active</button></td>'
               elif x.status.lower() == 'inactive':
                   html_part += f'<td> <button title="Inactive" class="btn btn-sm btn-danger">Inactive</button></td>'
 
-              # html_part += f'<td> <a title="Edit" href="/privilege-update/{base64.b64encode(str(x.role_id).encode()).decode()}/"><i class="fa-solid fa-pen" style="color:green;" ></i></a> </td>'
+              html_part += f'<td> <a title="Edit" href="/categories-update/{base64.b64encode(str(x.category_id).encode()).decode()}/"><i class="fa-solid fa-pen" style="color:green;" ></i></a> </td>'
               # html_part += f'<td> <a title="Change Status" onclick="changeStatus({base64.b64encode(str(x.role_id).encode()).decode()})" ><i class="fa-solid fa-user" style="color:#56B6F7;"></i></a> </td>'
               # html_part += f'<td> <a title="Delete" onclick="Delete(\'/privilege-delete/{base64.b64encode(str(x.role_id).encode()).decode()}/\')" ><i class="fa-solid fa-trash" style="color:red;"></i></a> </td>'
               
@@ -90,26 +114,29 @@ def category_details(request):
               'status': True,
               'html_part' : html_part
           }
-        else:
+      else:
           response_data = {
                 'status': False,
                 'tags' : 'error',
                 'message': 'No Record Available !',
                 'html_part' : '<div class="alert text-white text-black fs-5 rounded font-bold" style="background-color:#56B6F7;"> No Record Available ! </div>'
         }
-      else:
-        response_data = {
-          'status': False,
-          'tags' : 'info',
-          'message': 'Please Select Any Condtion !',
-          'html_part' : '<div class="alert text-white text-black fs-5 rounded font-bold" style="background-color:#56B6F7;"> Search To See The Records ! </div>'
-        }
+    
     return JsonResponse(response_data, safe=False)
 
 
   categories = Category.objects.all().order_by("category_id")
   context['categories'] = categories
   return render(request,"products/search_category.html",context)
+
+def update_category(request,iid):
+  context = {}
+  id = base64.b64decode(iid).decode('utf-8')
+  print(iid)
+  print(id)
+  category = Category.objects.get(category_id = id)
+  context['category'] = category
+  return render(request,"products/update_category.html",context)
 
 
 def add_products(request):

@@ -20,7 +20,7 @@
 
 {% block content %}
 <div class="page-heading mt-0">
-  <h3 style="text-align: center; position: relative;">Add Category
+  <h3 style="text-align: center; position: relative;">Update Category
       <a href="{% url "categories_details" %}" style="position: absolute; top: -40%; right: 0;" ><button class="page_change fs-6 btn" role="button"><i class="fa-solid fa-search"></i>&nbsp;Records&nbsp;</button></a>
   </h3>
 </div>
@@ -42,20 +42,20 @@
                       <div class="form-group">
                           <label for="category_id">Category Id<font class="text-danger"> *</font></label>
                           <input  readonly  type="text" id="category_id"  class="form-control"
-                              placeholder="Category Id" name="category_id" value="{{category_id}}" >
+                              placeholder="Category Id" name="category_id" value="{{category.category_id}}">
                       </div>
                   </div>
 
                   <div class="col-md-4 col-12 mt-3">
                       <div class="form-group">
                           <label for="category_name">Category Name<font class="text-danger"> *</font></label>
-                          <input placeholder="Category Name"   type="text" id="category_name" class="form-control" name="category_name">
+                          <input placeholder="Category Name"   type="text" id="category_name" class="form-control" name="category_name" value="{{category.category_name}}">
                       </div>
                   </div>
                   <div class="col-md-4 col-12 mt-3">
                       <div class="form-group">
                           <label for="category_slug">Category Slug<font class="text-danger"> *</font></label>
-                          <input   type="text" id="category_slug" class="form-control" name="category_slug" placeholder="Category Slug" readonly>
+                          <input   type="text" id="category_slug" class="form-control" name="category_slug" placeholder="Category Slug" value="{{category.category_slug}}" readonly>
                       </div>
                   </div>
                   <div class="col-md-4 col-12 mt-3">
@@ -68,7 +68,7 @@
                   <div class="col-md-8 col-12 mt-3">
                       <div class="form-group">
                           <label for="category_description">Category Description<font class="text-danger"> *</font></label>
-                          <textarea name="category_description"  id="category_description" class="form-control" row="5" placeholder="Category Description"></textarea>
+                          <textarea name="category_description"  id="category_description" class="form-control" row="5" placeholder="Category Description" value="{{category.category_desc}}"></textarea>
                       </div>
                   </div>
                   
@@ -80,7 +80,7 @@
                         <button type="submit"
                             class="btn btn-success me-1 mb-1 mt-3"><i class="fa-solid fa-check"></i> &nbsp;Submit</button>
                         <button type="reset"
-                            class="btn btn-light-secondary me-1 mb-1 mt-3"><i class="fa-solid fa-rotate"></i> &nbsp;Reset</button>
+                            class="btn btn-light-secondary me-1 mb-1 mt-3"><i class="fa-solid fa-rotate"></i> &nbsp;Back</button>
                     </div>
         
 
