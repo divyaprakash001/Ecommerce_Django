@@ -50,6 +50,7 @@
                       <div class="form-group">
                           <label for="category_name">Category Name<font class="text-danger"> *</font></label>
                           <input placeholder="Category Name"   type="text" id="category_name" class="form-control" name="category_name">
+                          <span id="span" class="text-danger"></span>
                       </div>
                   </div>
                   <div class="col-md-4 col-12 mt-3">
@@ -94,28 +95,25 @@
 
 <script>
   $(document).ready(function() {
-    const p_username = $("#username").val();
-    $("#username").on("keyup",function(){
-        username = $("#username").val();
-        if(username != p_username){
+    $("#category_name").on("keyup",function(){
+      category_name = $("#category_name").val();
             $.ajax({
-                url: "{% url 'seller_profile' %}",  
+                url: "{% url 'add_categories' %}",  
                 type: "GET",
                 data: {
-                    username: username,
+                    category_name: category_name,
                 },
                 success: function(response) {
                     if(response.status == 'found'){
-                        $("#username").closest('.form-group').find('span').text(response.message);
+                        $("#category_name").closest('.form-group').find('span').text(response.message);
                     }else{
-                        $("#username").closest('.form-group').find('span').text("");
+                        $("#category_name").closest('.form-group').find('span').text("");
                     }
                 },
                 error: function(xhr) {
                     $('#response').html('An error occurred: ' + xhr.responseText);
                 }
             });
-        }
     });
 
     $("form").on("submit",function(e){
@@ -123,7 +121,7 @@
         if((span != '')){
             Swal.fire({
                 icon: 'error',
-                title: 'Username Already Exists',
+                title: 'Category Name Already Exists',
                 showConfirmButton: true,
                 confirmButtonClass: 'btn btn-success'
             });

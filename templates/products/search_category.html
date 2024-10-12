@@ -152,32 +152,6 @@
 
 
 
-<script>
-  function changeStatus(e) { 
-    alert(e)
-    swal.fire({
-            title: 'Are you sure?',
-            text: 'Do You Want To Delete This Record ?',
-            icon: 'question',
-            confirmButtonColor: 'rgb(66 215 9)',
-            confirmButtonText: '✔ Yes, Delete',
-            showCancelButton: true,
-            cancelButtonText: "✖ No, Keep It",
-            cancelButtonColor: "rgb(215 9 9)",
-        }).then((res) => {
-            if (res.isConfirmed) {
-              $.ajax({
-                type: "get",
-                data: {'what':'changeStatus','role_id':e},
-                success: function (response) {
-                  $('.modal-body').html(response.view_html);  
-                  $('#view_details').click();
-                }
-            });
-            }
-        });
- }
-</script>
 
 
 <script>
@@ -285,7 +259,9 @@
 
 {% comment %} change the status {% endcomment %}
   $(document).on('click', '.fa-user', function() {
-    role_id = $(this).closest('tr').find('#role_id').text();
+    category_id = $(this).closest('tr').find('#category_id').text();
+    let statusButton = $(this).closest('tr').find('#statusButton'); 
+    let icon = $(this);
     swal.fire({
       title: 'Are you sure?',
       text: 'Do You Want To Change the Status ?',
@@ -299,14 +275,30 @@
     if (res.isConfirmed) {
       $.ajax({
         type: "get",
-        data: {'what':'changeStatus','role_id':role_id},
+        data: {'what':'changeStatus','category_id':category_id},
         success: function (response) {
-          Swal.fire({
+          if(response.message.toLowerCase().includes("inactive")){
+            statusButton.text("Inactive")
+            statusButton.removeClass("btn-success")
+            statusButton.addClass("btn-danger")
+            icon.css("color", "red");
+          }
+          else if(response.message.toLowerCase().includes("active")){
+            statusButton.text("Active")
+            statusButton.removeClass("btn-danger");
+            statusButton.addClass("btn-success");
+            icon.css("color", "#56B6F7");
+          }
+         
+          {% comment %} Swal.fire({
             icon: response.tags,
             title: response.message,
             showConfirmButton: true,
             confirmButtonClass: 'btn btn-success'
-        });
+        }); {% endcomment %}
+        
+        
+        
         }
     });
     }

@@ -7,7 +7,7 @@ class Category(models.Model):
   seller = models.ForeignKey(Seller, related_name="seller", on_delete=models.CASCADE, null=True)
   category_id = models.CharField(max_length=10,unique=True)
   category_name = models.CharField(max_length=50,unique=True)
-  category_slug = models.SlugField(unique=True)
+  category_slug = models.SlugField()
   category_pic = models.ImageField(upload_to="products/categories", null=True)
   category_desc = models.CharField(max_length=50, null=True,blank=True)
   status = models.CharField( max_length=10,default="Active")
