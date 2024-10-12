@@ -60,15 +60,42 @@
                   </div>
                   <div class="col-md-4 col-12 mt-3">
                     <div class="form-group">
-                        <label for="category_photo">Category Photo</label>
-                        <input   type="file" name="category_photo" class="form-control" id="category_photo" accept="image/*">
+                      <label for="image">Current Image:</label><br>
+                      {% if category.category_pic %}
+                          <img src="{{ category.category_pic.url }}" alt="Current Image" style="max-width: 150px; margin-bottom: 10px;">
+                      {% else %}
+                          <h2>no pic available</h2>
+                      {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-4 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="category_photo">New Category Photo</label>
+                        <input   type="file" name="category_photo" class="form-control" id="category_photo" accept="image/*" value="{{category.category_pic}}">
                     </div>
                 </div>
 
-                  <div class="col-md-8 col-12 mt-3">
+                <div class="col-md-4 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="category_status">Category Status</label>
+                        <select  name="category_status" class="form-select" id="category_status" >
+                          {% if category.status.lower == 'active' %}
+                          <option value="Active" selected>Active</option>
+                          <option value="Inactive">Inactive</option>
+                          {% else %}
+                          <option value="Active">Active</option>
+                          <option value="Inactive" selected>Inactive</option>
+                          {% endif %}
+                        </select>
+                    </div>
+                </div>
+
+                
+
+                  <div class="col-md-12 col-12 mt-3">
                       <div class="form-group">
                           <label for="category_description">Category Description<font class="text-danger"> *</font></label>
-                          <textarea name="category_description"  id="category_description" class="form-control" row="5" placeholder="Category Description" value="{{category.category_desc}}"></textarea>
+                          <textarea name="category_description"  id="category_description" class="form-control" row="5" placeholder="Category Description">{{category.category_desc}}</textarea>
                       </div>
                   </div>
                   
@@ -92,7 +119,47 @@
   </div>
 </section>
 
+<script>
+  $(document).ready(function() {
+    const p_username = $("#username").val();
+    $("#username").on("keyup",function(){
+        username = $("#username").val();
+        if(username != p_username){
+            $.ajax({
+                url: "{% url 'seller_profile' %}",  
+                type: "GET",
+                data: {
+                    username: username,
+                },
+                success: function(response) {
+                    if(response.status == 'found'){
+                        $("#username").closest('.form-group').find('span').text(response.message);
+                    }else{
+                        $("#username").closest('.form-group').find('span').text("");
+                    }
+                },
+                error: function(xhr) {
+                    $('#response').html('An error occurred: ' + xhr.responseText);
+                }
+            });
+        }
+    });
 
+    $("form").on("submit",function(e){
+        span = $("#span").text()
+        if((span != '')){
+            Swal.fire({
+                icon: 'error',
+                title: 'Username Already Exists',
+                showConfirmButton: true,
+                confirmButtonClass: 'btn btn-success'
+            });
+            return false;
+        }
+    })
+
+})
+</script>
 
 <script>
   $(document).ready(function(){

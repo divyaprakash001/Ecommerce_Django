@@ -16,6 +16,8 @@
     .up-shift{
         margin-top:-20px;
     }
+  
+  
   </style>
 {% endblock extralinks %}
 
@@ -133,22 +135,17 @@
 <section class="section" >
   <div class="card">
     <div class="text-end pt-3 d-flex justify-content-between px-4">
-      <div class="">
-        <select name="" id="" class="form-control">
-          <option value="">10</option>
-          <option value="">20</option>
-          <option value="">30</option>
-          <option value="">40</option>
-        </select>
-      </div>
+      <div class="total_page fw-bold">Total Pages</div>
       <div><i class="fa-solid fa-filter fa-xl" style="color: #000; cursor:pointer;"></i></div>
-    
     </div>
     <div class="card-body overflow-auto" id="html_data">
           <div class="alert alert-info fs-5 rounded font-bold" >
               Search To See The Records !
           </div>
-      </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-end align-self-end m-3 pe-3">
+      <div id="pagination-controls"></div>
+  </div>
   </div>
 
 </section>
@@ -212,14 +209,16 @@
   $(document).ready(function () {
       $('#myForm').on('submit',function (e) {
         e.preventDefault(); 
+        let page = $(this).data('page') || 1;
           $.ajax({
               type: "POST",
               url: "{% url 'categories_details' %}",
-              data: $(this).serialize(),
+              data: $(this).serialize() +"&page=" +page ,
               success: function (response) {
-              if(response.status == true){
+              if(response.status === true){
                 $("#search_table").removeClass("d-none");
                 $("#html_data").html(response.html_part)
+                updatePagination(response)
               }else{
                 $("#search_table").addClass("d-none");
                 $("#html_data").html(response.html_part)
@@ -230,9 +229,38 @@
                   confirmButtonClass: 'btn btn-success'
               });
               }
-              }
+              },
+              error: function (xhr, status, error) {
+                console.error("AJAX Error:", status, error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Something went wrong!',
+                    text: 'Please try again later.',
+                    showConfirmButton: true,
+                    confirmButtonClass: 'btn btn-danger'
+                });
+            }
           });
       });
+
+      function updatePagination(response){
+        let paginationControls = '';
+        $(".total_page").text('Total Page/s :- '  + response.total_pages)
+        if(response.has_previous){
+          paginationControls += `<button class='prev-button btn btn-primary' data-page="${response.current_page -1 }">Prev</button>`;
+        }
+        if(response.has_next){
+          paginationControls += `<button class='next-button btn btn-success' data-page="${response.current_page + 1 }">Next</button>`;
+        }
+        $("#pagination-controls").html(paginationControls);
+      }
+
+      $(document).on("click",".prev-button, .next-button",function(){
+        let page = $(this).data('page');
+        $("#myForm").data("page",page);
+        $("#myForm").submit();
+      });
+
   });
 
 

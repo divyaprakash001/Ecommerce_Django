@@ -2,6 +2,7 @@ import base64
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 from products.models import Category
 from seller.models import Seller
@@ -52,7 +53,7 @@ def add_category(request):
   elif request.headers.get('x-requested-with') == 'XMLHttpRequest':
       if request.method == 'GET':
         username = request.GET.get("username").strip()
-        # available = User.objects.filter(username=username).exists()
+        available = Category.objects.filter(category_name=category_name).exists()
         # if available:
           # return JsonResponse({"status":"found","message":"Already Exists!"})
         # else:
@@ -84,21 +85,22 @@ def category_details(request):
 
       print(conditions)
 
-      if conditions:
-        my_data = Category.objects.filter(**conditions, seller=seller).order_by("category_id")
-      else:
-        my_data = Category.objects.filter(seller=seller).order_by("category_id")
+      my_data = Category.objects.filter(**conditions, seller=seller).order_by("category_id") if conditions else Category.objects.filter(seller=seller).order_by("category_id")
+      print(my_data)
       if my_data.exists():
-          sno=0
+          items_per_page =10
+          paginator = Paginator(my_data, items_per_page)
+          page_number = request.POST.get('page', 1)
+          page_obj = paginator.get_page(page_number)
+          sno=1
           html_part = '<table class="table table-hover table-responsive table-striped" id="table1"><thead><tr><th>S.&nbsp;No.</th><th>Category&nbsp;ID</th><th>Category&nbsp;Name</th><th>Seller&nbsp;Name</th><th>Category&nbsp;Slug</th><th>Image</th><th>Status</th><th align="center" colspan="5" >Action</th></tr> </thead> <tbody>'
-          for x in my_data:
-              sno += 1
-              html_part += '<tr><td>' + str(sno) + '</td>'
-              html_part += '<td id="branch_id">' + str(x.category_id) + '</td>'
-              html_part += '<td id="school_name">' + str(x.category_name) + '</td>'
-              html_part += '<td id="school_name">' + str(x.seller.seller_name) + '</td>'
-              html_part += '<td id="role_id">' + str(x.category_slug) + '</td>'
-              # html_part += '<td>' + str(x.role_name) + '</td>'
+          for sno, x in enumerate(page_obj,start=1 + (page_obj.number - 1) * items_per_page):
+              # sno += 1
+              html_part += f'<tr><td>{sno}</td>'
+              html_part += f'<td id="branch_id">{x.category_id}</td>'
+              html_part += f'<td id="school_name">{x.category_name}</td>'
+              html_part += f'<td id="school_name">{x.seller.seller_name}</td>'
+              html_part += f'<td id="role_id">{x.category_slug}</td>'
               html_part += f'<td> <a title="Click on view to see more" class="view" ><i class="fa-solid fa-eye" style="color:blue;" ></i></a> </td>'
               if x.status.lower() == 'active':
                   html_part += f'<td> <button title="Active" class="btn btn-sm btn-success">Active</button></td>'
@@ -112,8 +114,12 @@ def category_details(request):
               html_part += f'</tr>'                        
           response_data = {   
               'status': True,
-              'html_part' : html_part
-          }
+              'html_part' : html_part,
+              'has_next': page_obj.has_next(),
+              'has_previous': page_obj.has_previous(),
+              'current_page': page_obj.number,
+              'total_pages': paginator.num_pages,
+            }
       else:
           response_data = {
                 'status': False,
@@ -132,10 +138,35 @@ def category_details(request):
 def update_category(request,iid):
   context = {}
   id = base64.b64decode(iid).decode('utf-8')
-  print(iid)
-  print(id)
   category = Category.objects.get(category_id = id)
   context['category'] = category
+  if request.method == 'POST':
+    category_id = request.POST.get('category_id')
+    category_name = request.POST.get('category_name')
+    category_slug = request.POST.get('category_slug')
+    category_status = request.POST.get('category_status')
+    category_desc = request.POST.get("category_description")
+    if "category_photo" in request.FILES:
+        category_photo = request.FILES["category_photo"]
+    else:
+      category_photo = None
+
+    category.category_id = category_id
+    category.category_name = category_name
+    category.category_pic = category_photo
+    category.status = category_status
+    category.category_desc = category_desc
+    category_desc.save()
+    messages.success(request,"Category Updated Successfully!")
+    return redirect("category_details")
+
+
+                                                                                   
+
+
+
+  # category = Category.objects.get(category_id = id)
+  # context['category'] = category
   return render(request,"products/update_category.html",context)
 
 

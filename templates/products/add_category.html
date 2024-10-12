@@ -92,7 +92,47 @@
   </div>
 </section>
 
+<script>
+  $(document).ready(function() {
+    const p_username = $("#username").val();
+    $("#username").on("keyup",function(){
+        username = $("#username").val();
+        if(username != p_username){
+            $.ajax({
+                url: "{% url 'seller_profile' %}",  
+                type: "GET",
+                data: {
+                    username: username,
+                },
+                success: function(response) {
+                    if(response.status == 'found'){
+                        $("#username").closest('.form-group').find('span').text(response.message);
+                    }else{
+                        $("#username").closest('.form-group').find('span').text("");
+                    }
+                },
+                error: function(xhr) {
+                    $('#response').html('An error occurred: ' + xhr.responseText);
+                }
+            });
+        }
+    });
 
+    $("form").on("submit",function(e){
+        span = $("#span").text()
+        if((span != '')){
+            Swal.fire({
+                icon: 'error',
+                title: 'Username Already Exists',
+                showConfirmButton: true,
+                confirmButtonClass: 'btn btn-success'
+            });
+            return false;
+        }
+    })
+
+})
+</script>
 
 <script>
   $(document).ready(function(){
