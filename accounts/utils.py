@@ -46,6 +46,8 @@ def send_notification(mail_subject, mail_template,context):
   mail.send()
 
 
+
+
 # def seller_required(view_func):
 #     @wraps(view_func)
 #     def _wrapped_view(request, *args, **kwargs):

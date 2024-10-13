@@ -36,14 +36,14 @@
         </div>
         <div class="card-content up-shift">
           <div class="card-body">
-              <form class="form" action="{% url "add_products" %}" method='post' autocomplete="off">
+              <form class="form" action="{% url "add_products" %}" method='post' enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row mb-3">
                   <div class="col-md-3 col-12 mt-3">
                       <div class="form-group">
                           <label for="product_id">Product Id<font class="text-danger"> *</font></label>
                           <input required  type="text" id="product_id" required class="form-control"
-                              placeholder="Product Id" name="product_id"  readonly>
+                              placeholder="Product Id" name="product_id" value="{{product_id}}"  readonly>
                       </div>
                   </div>
 
@@ -58,7 +58,9 @@
                         <label for="category">Category<font class="text-danger"> *</font></label>
                         <select required  class="form-select" id="category" name="category">
                             <option value="" selected>--- Select Category ---</option>
-                            
+                            {% for x in categories %}
+                            <option value="{{x.category_id}}">{{x.category_name | title}}</option>
+                            {% endfor %}
                         </select>
                     </div>
                   </div>
@@ -84,7 +86,7 @@
 
                     <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="discount">Discount in %<font class="text-danger"> *</font></label>
+                            <label for="discount">Discount in %</label>
                             <div class="input-group mb-3">
                                 <input required  type="text" required name="discount" id="discount" class="form-control" placeholder="Discount">
                                 <button class="btn btn-light-success" type="button" id="button-addon1">%</button>
@@ -104,7 +106,7 @@
                         <div class="form-group">
                             <label for="sku">SKU<font class="text-danger"> *</font></label>
                             <input required  type="text" id="sku" class="form-control"
-                                placeholder="Stock Keeping Unit" name="stock_quantity">
+                                placeholder="Stock Keeping Unit" name="sku">
                         </div>
                     </div>
 
@@ -142,7 +144,7 @@
     
                       <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="material">Material<font class="text-danger"> *</font></label>
+                            <label for="material">Material</label>
                             <input required  type="text" id="material" class="form-control"
                             placeholder="Material" name="material">
                         </div>
@@ -166,13 +168,22 @@
 
                   <div class="col-md-3 col-12 mt-3">
                       <div class="form-group">
-                          <label for="alternate-mobile">Tags</label>
-                          <select required  class="form-select" id="blood_group" name="blood_group">
+                          <label for="tags">Tags</label>
+                          <select required  class="form-select" id="tags" name="tags">
                             <option value="" selected>--- Select Tags ---</option>
-                            <option value="trending">Trending</option>
+                            {% for x in tags %}
+                            <option value="{{x.tag_name}}">{{x.tag_name | title}}</option>
+                            {% endfor %}
                         </select>
                       </div>
                   </div>
+
+                  <div class="col-md-6 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="product_desc">Product Description<font class="text-danger"> *</font></label>
+                            <textarea name="product_desc" id="product_desc" class="form-control"></textarea>
+                        </div>
+                      </div>
 
                   
 
@@ -184,26 +195,26 @@
   <div class="row mb-3 up-shift">
                     <div class="col-md-4 col-12 mt-3">
                         <div class="form-group">
-                            <label for="profile_photo">Product Front Image<font class="text-danger"> *</font></label>
-                            <input required  type="file" name="e_photo" id="profile_photo" class="form-control" accept="image/*">
+                            <label for="product_pic_front">Product Front Image<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="product_pic_front" id="product_pic_front" class="form-control" accept="image/*">
                         </div>
                     </div>
                     <div class="col-md-4 col-12 mt-3">
                         <div class="form-group">
-                            <label for="signature">Product Image Photo<font class="text-danger"> *</font></label>
-                            <input required  type="file" name="e_signature" class="form-control" id="signature" accept="image/*">
+                            <label for="product_pic_back">Product Back Image<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="product_pic_back" class="form-control" id="product_pic_back" accept="image/*">
                         </div>
                     </div>
                     <div class="col-md-4 col-12 mt-3">
                         <div class="form-group">
-                            <label for="aadhar">Product Image 3<font class="text-danger"> *</font></label>
-                            <input required  type="file" name="e_aadhar" class="form-control" id="aadhar" accept="image/*">
+                            <label for="product_pic_third">Product Image 3<font class="text-danger"> *</font></label>
+                            <input   type="file" name="product_pic_third" class="form-control" id="product_pic_third" accept="image/*">
                         </div>
                     </div>
                     <div class="col-md-4 col-12 mt-3">
                         <div class="form-group">
-                            <label for="medical">Product Image 4<font class="text-danger"> *</font></label>
-                            <input required  type="file" name="e_medical" class="form-control" id="medical" accept="image/*">
+                            <label for="product_pic_fourth">Product Image 4<font class="text-danger"> *</font></label>
+                            <input   type="file" name="product_pic_fourth" class="form-control" id="product_pic_fourth" accept="image/*">
                         </div>
                     </div>
                 
@@ -233,17 +244,7 @@
     $(document).ready(function () {
         
 
-        $("#designation-column").on("change",function(){
-            role_name = $("#designation-column").val();
-            if(role_name.toLowerCase().includes('teacher')){
-                $("#subject-column").removeAttr('disabled');
-                $("#class_column").removeAttr('disabled');
-            }else{
-                $("#subject-column").attr('disabled',true);
-                $("#class_column").attr('disabled',true);
-            }
-
-        })
+        
 
        
     });

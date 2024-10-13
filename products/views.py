@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 from accounts.views import check_role_seller
 from django.contrib.auth.decorators import login_required,user_passes_test
 
-from products.models import Category
+from products.models import Category, Product, Tags
 from seller.models import Seller
 
 @login_required(login_url='login')
@@ -71,6 +71,8 @@ def add_category(request):
           return JsonResponse({"status":"not found","message":"Not Exists!"})
 
   return render(request,"products/add_category.html",context)
+
+
 
 @login_required(login_url='login')
 @user_passes_test(check_role_seller)
@@ -260,6 +262,8 @@ def category_details(request):
   context['categories'] = categories
   return render(request,"products/search_category.html",context)
 
+
+
 @login_required(login_url='login')
 @user_passes_test(check_role_seller)
 def update_category(request,iid):
@@ -274,8 +278,6 @@ def update_category(request,iid):
     messages.error(request,"Somethings goes Wrong!!")
 
   context['category'] = category
-
-  
 
   if request.method == 'POST':
     try:
@@ -301,11 +303,12 @@ def update_category(request,iid):
     except:
       messages.error(request,"Somethings goes Wrong!!")
     return redirect("categories_details")
-
-
-                                                                                   
+                                                                               
   return render(request,"products/update_category.html",context)
 
+
+@login_required(login_url='login')
+@user_passes_test(check_role_seller)
 def delete_category(request,iid):
   try:
     id = base64.b64decode(iid).decode('utf-8')
@@ -323,8 +326,98 @@ def delete_category(request,iid):
 
 
 
+@login_required(login_url='login')
+@user_passes_test(check_role_seller)
 def add_products(request):
-  return render(request,"products/add_products.html")
+  context={}
+  try:
+    seller = Seller.objects.get(user=request.user)
+    categories = Category.objects.filter(seller=seller)
+    tags = Tags.objects.filter(seller=seller)
+    context["categories"] = categories
+    context["tags"] = tags
+  except Seller.DoesNotExist:
+    messages.error(request,"Seller Does Not Exists!!")
+    return redirect("login")
+  except Category.DoesNotExist:
+    messages.error(request,"Category Does Not Exists!!")
+    return redirect("login")
+  except Tags.DoesNotExist:
+    messages.error(request,"Tags Does Not Exists!!")
+    return redirect("login")
+  
+  # autogenerate
+  prefix = 'P'
+  last_product = Product.objects.filter(product_id__startswith=prefix).order_by('product_id').last()
+  if last_product:
+    last_id = int(last_product.product_id[1:])
+    new_id = last_id + 1
+    product_id = f"{prefix}{new_id:04d}"
+  else:
+    new_id = 1
+    product_id = f"{prefix}{new_id:04d}"
+  context['product_id'] = product_id
+
+  try:
+    if request.method == 'POST':
+      product_name = request.POST.get('product_name')
+      category_id = request.POST.get("category")
+      brand = request.POST.get("brand")
+      # product_slug = request.POST.get('product_slug')
+      price = request.POST.get('price')
+      discount = request.POST.get("discount")
+      stock = request.POST.get("stock_quantity")
+      sku = request.POST.get("sku")
+      size = request.POST.get("size")
+      color = request.POST.get("color")
+      weight = request.POST.get("weight")
+      material = request.POST.get("material")
+      width = request.POST.get("width")
+      height = request.POST.get("height")
+      tags = request.POST.get("tags")
+      product_desc = request.POST.get("product_desc")
+      
+
+      try:
+        category = Category.objects.get(category_id=category_id)
+      except Category.DoesNotExist:
+        messages.error(request,"Category Does Not Exists!!")
+      
+      if "product_pic_front" in request.FILES:
+        product_pic_front = request.FILES["product_pic_front"]
+      else:
+        product_pic_front = None
+
+      if "product_pic_back" in request.FILES:
+        product_pic_back = request.FILES["product_pic_back"]
+      else:
+        product_pic_back = None
+
+      if "product_pic_third" in request.FILES:
+        product_pic_third = request.FILES["product_pic_third"]
+      else:
+        product_pic_third = None
+
+      if "product_pic_fourth" in request.FILES:
+        product_pic_fourth = request.FILES["product_pic_fourth"]
+      else:
+        product_pic_fourth = None
+
+      try:
+        product = Product(seller=seller,category=category,product_id=product_id,product_name=product_name,brand=brand,price=price,discount=discount,stock_quantity=stock,sku=sku,color=color,size=size,weight=weight,material=material,width=width,height=height,tags=tags,product_desc=product_desc,product_pic_front=product_pic_front,product_pic_back=product_pic_back,product_pic_third=product_pic_third,product_pic_fourth=product_pic_fourth)
+        product.save()
+        if(Product.objects.filter(product_id=product_id,seller=seller)).exists():
+          messages.success(request, "Product Added Successfully!!")
+        else:
+          messages.error(request, "Failed To Add Product!!")
+      except:
+        messages.error(request, "Failed To Add Product!!")
+      return redirect("add_products")
+
+  except:
+    messages.error(request,"Somethings Went Wrong!!")
+
+  return render(request,"products/add_products.html",context)
 
 def products_details(request):
   return render(request,"products/products_details.html")

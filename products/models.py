@@ -3,6 +3,7 @@ from seller.models import Seller
 
 
 class Tags(models.Model):
+  seller = models.ForeignKey(Seller, related_name="tags", on_delete=models.CASCADE, null=True)
   tag_name = models.CharField(max_length=30, unique=True)
   tag_desc = models.CharField(max_length=100)
 
@@ -19,7 +20,7 @@ class Tags(models.Model):
 class Category(models.Model):
   seller = models.ForeignKey(Seller, related_name="category", on_delete=models.CASCADE, null=True)
   category_id = models.CharField(max_length=10,unique=True)
-  category_name = models.CharField(max_length=50,unique=True)
+  category_name = models.CharField(max_length=50)
   category_slug = models.SlugField()
   category_pic = models.ImageField(upload_to="products/categories", null=True)
   category_desc = models.CharField(max_length=50, null=True,blank=True)
@@ -28,40 +29,69 @@ class Category(models.Model):
   def __str__(self):
     return self.category_name
   
+  def save(self, *args, **kwargs):
+        if not self.category_id:  # Only generate if category_id is not set
+            prefix = 'C'
+            last_category = Category.objects.filter(category_id__startswith=prefix).order_by('category_id').last()
+            if last_category:
+                last_id = int(last_category.category_id[1:])
+                new_id = last_id + 1
+            else:
+                new_id = 1
+            self.category_id = f"{prefix}{new_id:04d}"
+
+        super().save(*args, **kwargs)
+  
   class Meta:
+    unique_together = ('seller', 'category_name')
     db_table = "category"
     verbose_name = "Category"
     verbose_name_plural = "Categories"
     ordering = ['category_name']
+  
 
 class Product(models.Model):
-  seller = models.ForeignKey(Seller, related_name="product", on_delete=models.CASCADE)
-  category = models.ForeignKey(Category, related_name='category', on_delete=models.CASCADE)
+  seller = models.ForeignKey(Seller, related_name="products", on_delete=models.CASCADE)
+  category = models.ForeignKey(Category, related_name='categories', on_delete=models.CASCADE)
   product_id = models.CharField(max_length=50,unique=True)
   product_name = models.CharField(max_length=100,unique=True)
   product_slug = models.SlugField()
   brand  = models.CharField(max_length=50)
-  price =  models.DecimalField(max_digits=10, decimal_places=2)
-  discount = models.DecimalField(max_digits=5, decimal_places=2)
+  price =  models.CharField(max_length=50)
+  discount = models.CharField(max_length=50)
   stock_quantity = models.CharField(max_length=50)
-  sku = models.CharField(max_length=50, null=True,blank=True)
+  sku = models.CharField(max_length=50)
   size = models.CharField(max_length=50,null=True,blank=True)
-  color = models.CharField(max_length=50,null=True,blank=True)
-  weight = models.CharField(max_length=50,null=True,blank=True)
+  color = models.CharField(max_length=50)
+  weight = models.CharField(max_length=50)
   material = models.CharField(max_length=50,null=True,blank=True)
   width = models.CharField(max_length=50,null=True,blank=True)
   height = models.CharField(max_length=50,null=True,blank=True)
   tags = models.CharField(max_length=50,null=True,blank=True)
+  product_desc = models.CharField(max_length=200,null=True,blank=True)
   product_pic_front = models.ImageField(upload_to="products/product_photo/")
   product_pic_back = models.ImageField(upload_to="products/product_photo/")
-  product_pic_third = models.ImageField(upload_to="products/product_photo/",null=True,blank=True)
-  product_pic_fourth = models.ImageField(upload_to="products/product_photo/",null=True,blank=True)
+  product_pic_third = models.ImageField(upload_to="products/product_photo/", null=True, blank=True)
+  product_pic_fourth = models.ImageField(upload_to="products/product_photo/", null=True, blank=True)
 
-  created_at  = models.TimeField(auto_now_add=True)
-  updated_at = models.TimeField(auto_now=True)
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
 
   def __str__(self):
     return self.product_name
+  
+  def save(self, *args, **kwargs):
+        if not self.product_id:  # Only generate if product_id is not set
+            prefix = 'P'
+            last_product = Product.objects.filter(product_id__startswith=prefix).order_by('product_id').last()
+            if last_product:
+                last_id = int(last_product.product_id[1:])  # Extract the number from the ID
+                new_id = last_id + 1
+            else:
+                new_id = 1
+            self.product_id = f"{prefix}{new_id:04d}"  # Generate the new product_id
+
+        super().save(*args, **kwargs)
   
   class Meta:
     db_table = "product"

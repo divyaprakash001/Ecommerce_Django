@@ -58,7 +58,7 @@ class Seller(models.Model):
             'is_approved':self.is_approved
           }
         if self.is_approved == True:
-          mail_subject="Congratulations! Your restaurant _has been approved."
+          mail_subject="Congratulations! Your Seller Account has been approved."
           send_notification(mail_subject, mail_template,context)
         else:
           mail_subject="We're sorry! You are not eligible for publishing your products on our marketplace!"
