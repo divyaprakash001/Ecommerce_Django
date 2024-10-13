@@ -39,7 +39,7 @@ def add_category(request):
     except Seller.DoesNotExist:
       messages.error(request, "You are not a seller")
       return redirect("add_category")
-    if (category_id is not None and category_id is not '') and (category_name is not None and category_name is not ''):
+    if (category_id != None and category_id != '') and (category_name != None and category_name != ''):
       cat = Category(seller=seller,category_id=category_id,category_name=category_name,category_slug=category_slug,category_desc=category_desc,category_pic=category_photo)
       cat.save()
       try:
@@ -54,6 +54,7 @@ def add_category(request):
     return redirect("add_categories")
 
   
+  # ajax part ********************************************************
   elif request.headers.get('x-requested-with') == 'XMLHttpRequest':
       if request.method == 'GET':
         try:
@@ -74,25 +75,27 @@ def add_category(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_seller)
 def category_details(request):
+  context={}
   try:
     seller = Seller.objects.get(user=request.user)
   except Seller.DoesNotExist:
     messages.error(request,"You are not a seller")
     return redirect("login")
 
-  context={}
   if request.headers.get('x-requested-with') == 'XMLHttpRequest':
     if request.method == 'POST':
       category_id = request.POST.get("category_id").strip()
       category_name = request.POST.get("category_name").strip()
+      status = request.POST.get("category_status").strip()
       sort_by = request.POST.get("sort_by").strip()
 
       conditions={}
-      if category_id is not None and category_id != '':
-          conditions['category_id'] = category_id
-      if category_name is not  None and category_name != '':
-          conditions['category_name'] = category_name
-
+      if category_id != None and category_id != '':
+        conditions['category_id'] = category_id
+      if category_name != None and category_name != '':
+        conditions['category_name'] = category_name
+      if status != None and status != '':
+        conditions['status'] = status
 
 
       my_data = Category.objects.filter(**conditions, seller=seller).order_by(sort_by) if conditions else Category.objects.filter(seller=seller).order_by(sort_by)
@@ -253,7 +256,7 @@ def category_details(request):
     
 
 
-  categories = Category.objects.filter(seller=seller).order_by("category_id")
+  categories = seller.category.all().order_by("category_id")
   context['categories'] = categories
   return render(request,"products/search_category.html",context)
 

@@ -244,10 +244,10 @@
                             </a>
                             <ul class="submenu" {% if request.path == '/add-categories/' or request.path == '/categories-details/' or request.path == '/add-products/' or request.path == '/products-details/' or request.path == '/add-attributes/' or request.path == '/attributes-details/'  %} style="display: block;" {% endif %}>
                                 <li class="submenu-item  ">
-                                    <a {% if request.path == '/add-categories/' or request.path == '/categories-details/' %} class="active2" {% endif %} href="{% url "add_categories" %}">Categories</a>
+                                    <a {% if request.path == '/add-categories/' or request.path == '/categories-details/' %} class="active2" {% endif %} href="{% url "categories_details" %}">Categories</a>
                                 </li>
                                 <li class="submenu-item ">
-                                    <a {% if request.path == '/add-products/' or request.path == '/products-details/' %} class="active2" {% endif %} href="{% url "add_products" %}">Products</a>
+                                    <a {% if request.path == '/add-products/' or request.path == '/products-details/' %} class="active2" {% endif %} href="{% url "products_details" %}">Products</a>
                                 </li>
                                 <li class="submenu-item ">
                                     <a {% if request.path == '/add-attributes/' or request.path == '/attributes-details/' %} class="active2" {% endif %} href="">Attributes</a>
