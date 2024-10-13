@@ -85,6 +85,7 @@ def category_details(request):
     if request.method == 'POST':
       category_id = request.POST.get("category_id").strip()
       category_name = request.POST.get("category_name").strip()
+      sort_by = request.POST.get("sort_by").strip()
 
       conditions={}
       if category_id is not None and category_id != '':
@@ -93,14 +94,15 @@ def category_details(request):
           conditions['category_name'] = category_name
 
 
-      my_data = Category.objects.filter(**conditions, seller=seller).order_by("category_id") if conditions else Category.objects.filter(seller=seller).order_by("category_id")
+
+      my_data = Category.objects.filter(**conditions, seller=seller).order_by(sort_by) if conditions else Category.objects.filter(seller=seller).order_by(sort_by)
       if my_data.exists():
           items_per_page =10
           paginator = Paginator(my_data, items_per_page)
           page_number = request.POST.get('page', 1)
           page_obj = paginator.get_page(page_number)
           sno=1
-          html_part = '<table class="table table-hover table-responsive table-striped" id="table1"><thead><tr><th>S.&nbsp;No.</th><th>Category&nbsp;ID</th><th>Category&nbsp;Name</th><th>Seller&nbsp;Name</th><th>Category&nbsp;Slug</th><th>Image</th><th>Status</th><th align="center" colspan="5" >Action</th></tr> </thead> <tbody>'
+          html_part = '<table class="table table-hover table-responsive table-striped" id="table1"><thead><tr><th>S.&nbsp;No.</th><th>Category&nbsp;ID</th><th>Category&nbsp;Name</th><th>Seller&nbsp;Name</th><th>Category&nbsp;Slug</th><th>Status</th><th align="center" colspan="5" >Action</th></tr> </thead> <tbody>'
           for sno, x in enumerate(page_obj,start=1 + (page_obj.number - 1) * items_per_page):
               # sno += 1
               html_part += f'<tr><td>{sno}</td>'
@@ -108,18 +110,19 @@ def category_details(request):
               html_part += f'<td id="category_name">{x.category_name}</td>'
               html_part += f'<td id="seller_name">{x.seller.seller_name}</td>'
               html_part += f'<td id="category_slug">{x.category_slug}</td>'
-              html_part += f'<td> <a title="Click on view to see more" class="view" ><i class="fa-solid fa-eye" style="color:blue;" ></i></a> </td>'
+              
               if x.status.lower() == 'active':
                   html_part += f'<td> <button id="statusButton" title="Active" class="btn btn-sm btn-success">Active</button></td>'
               elif x.status.lower() == 'inactive':
                   html_part += f'<td> <button id="statusButton" title="Inactive" class="btn btn-sm btn-danger">Inactive</button></td>'
-
+              
+              html_part += f'<td> <a title="Click on view to see more" class="view" ><i class="fa-solid fa-eye" style="color:blue;" ></i></a> </td>'
               html_part += f'<td> <a title="Edit" href="/categories-update/{base64.b64encode(str(x.category_id).encode()).decode()}/"><i class="fa-solid fa-pen" style="color:green;" ></i></a> </td>'
               if x.status.lower() == 'active':
                 html_part += f'<td> <a title="Change Status")" ><i class="fa-solid fa-user" style="color:#56B6F7;"></i></a> </td>'
               elif x.status.lower() == 'inactive':
                 html_part += f'<td> <a title="Change Status" onclick="changeStatus({base64.b64encode(str(x.category_id).encode()).decode()})" ><i class="fa-solid fa-user" style="color:red;"></i></a> </td>'
-              html_part += f'<td> <a title="Delete" onclick="Delete(\'/privilege-delete/{base64.b64encode(str(x.category_id).encode()).decode()}/\')" ><i class="fa-solid fa-trash" style="color:red;"></i></a> </td>'
+              html_part += f'<td> <a title="Delete" onclick="Delete(\'/categories-delete/{base64.b64encode(str(x.category_id).encode()).decode()}/\')" ><i class="fa-solid fa-trash" style="color:red;"></i></a> </td>'
               
               html_part += f'</tr>'                        
           response_data = {   
@@ -142,37 +145,115 @@ def category_details(request):
       what = request.GET.get('what')
       category_id = request.GET.get('category_id')
       try:
-        category = Category.objects.get(category_id=category_id)
-        if category.status.lower() == 'active':
-          category.status = 'Inactive'
-          category.save()
-          response_data = {
-            'status': True,
-            'message': 'Category Status Changed to Inactive',
-            'tags' : 'success',
+        seller = Seller.objects.get(user=request.user)
+      except Seller.DoesNotExist:
+        messages.error(request,"You are not a Seller.")
+        return redirect("login")
+
+      if what == 'view_category':
+        try:
+          view_data = Category.objects.get(category_id=category_id, seller=seller)
+          view_html=f'''<h4 class="card-title p-3">School Information :- </h4>
+          <div class="row p-3">
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Seller ID : </div>
+                      <div class="w-50"> {str(view_data.seller.id)}</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Seller Name : </div>
+                      <div class="w-50"> {str(view_data.seller.seller_name)}</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Category ID : </div>
+                      <div class="w-50">{str(view_data.category_id)}</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Category Name : </div>
+                      <div class="w-50">{ str(view_data.category_name) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Category Slug : </div>
+                      <div class="w-50">{ str(view_data.category_slug) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Category Desc : </div>
+                      <div class="w-50">{ str(view_data.category_desc) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Category Image : </div>
+                      <div class="w-50">'''
+          if view_data.category_pic:            
+            view_html += f'''<img src='{view_data.category_pic.url}' alt="Category Pic" width='200' height='100' ></div>'''
+          else:            
+            view_html += '''Not Available'''
+          view_html += '''</div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Status : </div>'''
+          if view_data.status.lower() == 'active':
+              view_html +=  f'''<div class="w-50"><button class="btn btn-sm btn-success text-white">{ str(view_data.status) }</button></div></div>'''
+          elif view_data.status.lower() == 'pending':
+              view_html +=  f'''<div class="w-50"><button class="btn btn-sm btn-warning text-white">{ str(view_data.status) }</button></div></div>'''
+          elif view_data.status.lower() == 'inactive': 
+              view_html +=  f'''<div class="w-50"><button class="btn btn-sm btn-danger text-white">{ str(view_data.status) }</button></div></div>'''
+          
+          response_data={
+              "status":True,
+              "view_html":view_html
+          }
+        except Category.DoesNotExist:        
+            response_data={
+                "status":False,
+                "message":"Data does not exists!!!"
             }
-        elif category.status.lower() == 'inactive':
-          category.status = 'Active'
-          category.save()
-          response_data = {
-            'status': True,
-            'message': 'Category Status Changed to Active',
-            'tags' : 'success',
-            }
+        return JsonResponse(response_data,safe=False)
+      elif what == 'changeStatus':
+        try:
+          category = Category.objects.get(category_id=category_id,seller=seller)
+          if category.status.lower() == 'active':
+            category.status = 'Inactive'
+            category.save()
+            response_data = {
+              'status': True,
+              'message': 'Category Status Changed to Inactive',
+              'tags' : 'success',
+              }
+          elif category.status.lower() == 'inactive':
+            category.status = 'Active'
+            category.save()
+            response_data = {
+              'status': True,
+              'message': 'Category Status Changed to Active',
+              'tags' : 'success',
+              }
 
 
-      except Category.DoesNotExist:
-        response_data = {
-          'status': False,
-          'tags' : 'error',
-          'message': 'Category Not Found !',
-        }
+        except Category.DoesNotExist:
+          response_data = {
+            'status': False,
+            'tags' : 'error',
+            'message': 'Category Not Found !',
+          }
         
-      return JsonResponse(response_data, safe=False)
+        return JsonResponse(response_data, safe=False)
     
 
 
-  categories = Category.objects.all().order_by("category_id")
+  categories = Category.objects.filter(seller=seller).order_by("category_id")
   context['categories'] = categories
   return render(request,"products/search_category.html",context)
 
@@ -200,16 +281,16 @@ def update_category(request,iid):
       category_slug = request.POST.get('category_slug')
       category_status = request.POST.get('category_status')
       category_desc = request.POST.get("category_description")
-      if "category_photo" in request.FILES:
-          category_photo = request.FILES["category_photo"]
-      else:
-        category_photo = None
+      
+
 
       category.category_id = category_id
       if  category_name is not category.category_name:
         category.category_name = category_name
       category.category_slug = category_slug
-      category.category_pic = category_photo
+      if "category_photo" in request.FILES:
+        category_photo = request.FILES["category_photo"]
+        category.category_pic = category_photo
       category.status = category_status
       category.category_desc = category_desc
       category.save()
@@ -221,6 +302,22 @@ def update_category(request,iid):
 
                                                                                    
   return render(request,"products/update_category.html",context)
+
+def delete_category(request,iid):
+  try:
+    id = base64.b64decode(iid).decode('utf-8')
+    seller = Seller.objects.get(user=request.user)
+    category =  Category.objects.get(category_id = id,seller=seller)
+    category.delete()
+    messages.success(request,"Category Deleted Successfully!")
+  except Seller.DoesNotExist:
+    messages.error(request,"Seller Does Not Exists!!")
+  except Category.DoesNotExist:
+    messages.error(request,"Category Does Not Exists!!")
+  except:
+    messages.error(request,"Somethings goes Wrong!!")
+  return redirect("categories_details")
+
 
 
 def add_products(request):

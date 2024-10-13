@@ -66,12 +66,11 @@
 
                     <div class="col-md-4 col-12 mt-3">
                       <div class="form-group">
-                          <label for="role_name" class="form-label">Sort By</label>
-                          <select name="role_name" id="role_name" class="form-select">
-                            <option value="">-- Select Sort By --</option>
-                            {% for x in data.searching_data %}
-                            <option value="{{x.role_name}}">{{x.role_name}}</option>
-                            {% endfor %}
+                          <label for="sort_by" class="form-label">Sort By</label>
+                          <select name="sort_by" id="sort_by" class="form-select">
+                            {% comment %} <option value="">-- Select Sort By --</option> {% endcomment %}
+                            <option value="category_id" selected>Category Id</option>
+                            <option value="category_name">Category Name</option>
                           </select>
                       </div>
                   </div>
@@ -156,7 +155,6 @@
 
 <script>
   function Delete(e) { 
-    alert(e)
     swal.fire({
             title: 'Are you sure?',
             text: 'Do You Want To Delete This Record ?',
@@ -241,11 +239,11 @@
 
   {% comment %} view the details on models {% endcomment %}
   $(document).on('click', '.view', function() {
-    role_id = $(this).closest('tr').find('#role_id').text();
+    category_id = $(this).closest('tr').find('#category_id').text();
     $('.loder').removeAttr('hidden');
     $.ajax({
         type: "get",
-        data: {'what':'view privileges','role_id':role_id},
+        data: {'what':'view_category','category_id':category_id},
         success: function (response) {
           $('.modal-body').html(response.view_html);  
           $('#view_details').click();
@@ -290,12 +288,12 @@
             icon.css("color", "#56B6F7");
           }
          
-          {% comment %} Swal.fire({
+          Swal.fire({
             icon: response.tags,
             title: response.message,
             showConfirmButton: true,
             confirmButtonClass: 'btn btn-success'
-        }); {% endcomment %}
+        });
         
         
         
