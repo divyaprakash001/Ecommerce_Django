@@ -48,12 +48,6 @@
                   </div>
 
                   <div class="col-md-3 col-12 mt-3">
-                      <div class="form-group">
-                          <label for="product_name">Product Name<font class="text-danger"> *</font></label>
-                          <input required  type="text" id="product_name" class="form-control" name="product_name" placeholder="Product Name">
-                      </div>
-                  </div>
-                  <div class="col-md-3 col-12 mt-3">
                     <div class="form-group">
                         <label for="category">Category<font class="text-danger"> *</font></label>
                         <select required  class="form-select" id="category" name="category">
@@ -64,15 +58,24 @@
                         </select>
                     </div>
                   </div>
-                  
+
+                  <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="brand">Brand<font class="text-danger"> *</font></label>
+                        <input required  type="text" id="brand" class="form-control"
+                        placeholder="Brand" name="brand" readonly>
+                        <span id="span" class="text-danger" style="font-size:14px;"></span>
+                    </div>
+                  </div>
 
                   <div class="col-md-3 col-12 mt-3">
                       <div class="form-group">
-                          <label for="brand">Brand<font class="text-danger"> *</font></label>
-                          <input required  type="text" id="brand" class="form-control"
-                          placeholder="Brand" name="brand">
+                          <label for="product_name">Product Name<font class="text-danger"> *</font></label>
+                          <input required  type="text" id="product_name"  class="form-control" name="product_name" placeholder="Product Name" readonly>
+                          <span id="span" class="text-danger" style="font-size:14px;"></span>
                       </div>
-                    </div>
+                  </div>
+               
 
                     <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
@@ -239,10 +242,80 @@
   </div>
 </section>
 
+<script>
+    $(document).ready(function(){
+        $("#category").on("change",function(){
+            let cat_id = $("#category").val();
+            if (cat_id != undefined && cat_id != ""){
+                $("#brand").removeAttr('readonly', false);
+                $("#brand").closest('.form-group').find('span').text("")
+            }else{
+                $("#brand").attr('readonly',true);
+            }
+        })
+        $("#brand").on("keyup",function(){
+            let brand = $(this).val();
+            if (brand != undefined && brand != ""){
+                $("#product_name").removeAttr('readonly', false);
+                $("#product_name").closest('.form-group').find('span').text("")
+            }else{
+                $("#product_name").attr('readonly',true);
+            }
+        })
+
+        $('#brand').on('click', function() {
+            if ($(this).attr('readonly')) { // Check if the input is disabled
+                $("#brand").closest('.form-group').find('span').text("Please Choose Category First!")
+            }else{
+                $("#brand").closest('.form-group').find('span').text("")
+            }
+        });
+
+        $('#product_name').on('click', function() {
+            if ($(this).attr('readonly')) { // Check if the input is disabled
+                $("#product_name").closest('.form-group').find('span').text("Please Enter Brand First!")
+            }else{
+                $("#product_name").closest('.form-group').find('span').text("")
+            }
+        });
+
+
+        /* generating sku */
+        $('#product_name').on('keyup', function() {
+            let brand = $(this).val();
+            let cat_id = $("#category").val();
+            if (brand != undefined && brand != "" && cat_id != undefined && cat_id != "")
+            {
+                $.ajax({
+                    type: "POST",
+                    
+
+
+    });
+</script>
 
 <script>
     $(document).ready(function () {
-        
+        $("#product_name").on("keyup",function(){
+            product_name = $("#product_name").val();
+                  $.ajax({
+                      url: "{% url 'add_products' %}",  
+                      type: "GET",
+                      data: {
+                          product_name: product_name,
+                      },
+                      success: function(response) {
+                          if(response.status == 'found'){
+                              $("#product_name").closest('.form-group').find('span').text(response.message);
+                          }else{
+                              $("#product_name").closest('.form-group').find('span').text("");
+                          }
+                      },
+                      error: function(xhr) {
+                          $('#response').html('An error occurred: ' + xhr.responseText);
+                      }
+                  });
+          });
 
         
 

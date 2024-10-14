@@ -325,6 +325,9 @@ def delete_category(request,iid):
   return redirect("categories_details")
 
 
+def generate_sku():
+  pass
+
 
 @login_required(login_url='login')
 @user_passes_test(check_role_seller)
@@ -414,8 +417,30 @@ def add_products(request):
         messages.error(request, "Failed To Add Product!!")
       return redirect("add_products")
 
+# ajax part
+    elif request.headers.get('x-requested-with') == 'XMLHttpRequest':
+      if request.method == 'GET':
+        try:
+          seller = Seller.objects.get(user=request.user)
+        except Seller.DoesNotExist:
+          messages.error(request,"You Are Not A Seller")
+          return redirect("login")
+        
+        product_name = request.GET.get("product_name").strip()
+        # available = Product.objects.filter(product_name=product_name,seller=seller).exists()
+        products = Product.objects.filter(seller=seller).values_list("product_name",flat=True)
+        product_exists=False
+        for product in products:
+            if product_name.lower() == product.lower():
+                product_exists = True
+                break
+        if product_exists:
+          return JsonResponse({"status":"found","message":"Already Exists!"})
+        else:
+          return JsonResponse({"status":"not found","message":"Not Exists!"})
   except:
     messages.error(request,"Somethings Went Wrong!!")
+
 
   return render(request,"products/add_products.html",context)
 
