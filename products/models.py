@@ -73,6 +73,7 @@ class Product(models.Model):
   product_pic_back = models.ImageField(upload_to="products/product_photo/")
   product_pic_third = models.ImageField(upload_to="products/product_photo/", null=True, blank=True)
   product_pic_fourth = models.ImageField(upload_to="products/product_photo/", null=True, blank=True)
+  status = models.CharField(max_length=15,default='Active')
 
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
@@ -81,17 +82,22 @@ class Product(models.Model):
     return self.product_name
   
   def save(self, *args, **kwargs):
-        if not self.product_id:  # Only generate if product_id is not set
-            prefix = 'P'
-            last_product = Product.objects.filter(product_id__startswith=prefix).order_by('product_id').last()
-            if last_product:
-                last_id = int(last_product.product_id[1:])  # Extract the number from the ID
-                new_id = last_id + 1
-            else:
-                new_id = 1
-            self.product_id = f"{prefix}{new_id:04d}"  # Generate the new product_id
+    if not self.product_id:  
+        prefix = 'P'
+        last_product = Product.objects.filter(product_id__startswith=prefix).order_by('product_id').last()
+        if last_product:
+            last_id = int(last_product.product_id[1:])  
+            new_id = last_id + 1
+        else:
+            new_id = 1
+        self.product_id = f"{prefix}{new_id:04d}"
 
-        super().save(*args, **kwargs)
+    # Generate SKU
+    if self.brand and self.category and self.product_name:
+        self.sku = f"{self.brand.upper()}-{self.category.category_id}-{self.product_name[:3].upper()}-{self.product_id}"
+
+    super().save(*args, **kwargs)
+
   
   class Meta:
     db_table = "product"

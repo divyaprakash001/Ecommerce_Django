@@ -413,8 +413,9 @@ def add_products(request):
           messages.success(request, "Product Added Successfully!!")
         else:
           messages.error(request, "Failed To Add Product!!")
-      except:
-        messages.error(request, "Failed To Add Product!!")
+      except Exception as e:
+        print(e)
+        messages.error(request, f"Failed To Add Product!!")
       return redirect("add_products")
 
 # ajax part
@@ -433,7 +434,7 @@ def add_products(request):
         for product in products:
             if product_name.lower() == product.lower():
                 product_exists = True
-                break
+                
         if product_exists:
           return JsonResponse({"status":"found","message":"Already Exists!"})
         else:
@@ -445,7 +446,113 @@ def add_products(request):
   return render(request,"products/add_products.html",context)
 
 def products_details(request):
-  return render(request,"products/products_details.html")
+  context={}
+  seller = None
+  try:
+    seller = Seller.objects.get(user=request.user)
+  except Seller.DoesNotExist:
+    seller = None
+    messages.error(request,"You are not a Seller.")
+
+  if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+    if request.method == 'POST':
+      product_id = request.POST.get("product_id")
+      product_name = request.POST.get("product_name")
+      category_id = request.POST.get("category")
+      stock_quantity = request.POST.get("stock_quantity")
+      size = request.POST.get("size")
+      color = request.POST.get("color")
+      weight = request.POST.get("weight")
+      material = request.POST.get("material")
+      min_price = request.POST.get("min_price")
+      max_price = request.POST.get("max_price")
+      sort_by = request.POST.get("sort_by")
+
+      conditions = {}
+      if product_id != None and product_id != '':
+        conditions['product_id'] = product_id
+
+      if product_name != None and product_name != '':
+        conditions['product_name'] = product_name
+      
+      if category_id != None and category_id != '':
+        conditions['category_id'] = category_id
+      
+      if stock_quantity != None and stock_quantity != '':
+        conditions['stock_quantity'] = stock_quantity
+      
+      if size != None and size != '':
+        conditions['size'] = size
+        
+      if color != None and color != '':
+        conditions['color'] = color
+
+      if weight != None and weight != '':
+        conditions['weight'] = weight
+
+      if material != None and material != '':
+        conditions['material'] = material
+
+      if min_price != None and min_price != '':
+        conditions['min_price'] = min_price
+
+      if max_price != None and max_price != '':
+        conditions['max_price'] = max_price
+
+
+      my_data = (Product.objects.filter(**conditions,seller=seller).order_by(sort_by) if conditions else Product.objects.filter(seller=seller).order_by(sort_by))
+      if my_data.exists():
+          items_per_page =10
+          paginator = Paginator(my_data, items_per_page)
+          page_number = request.POST.get('page', 1)
+          page_obj = paginator.get_page(page_number)
+          sno=1
+          html_part = '<table class="table table-hover table-responsive table-striped" id="table1"><thead><tr><th>S.&nbsp;No.</th><th>Category&nbsp;ID</th><th>Category&nbsp;Name</th><th>Seller&nbsp;Name</th><th>Category&nbsp;Slug</th><th>Status</th><th align="center" colspan="5" >Action</th></tr> </thead> <tbody>'
+          for sno, x in enumerate(page_obj,start=1 + (page_obj.number - 1) * items_per_page):
+              # sno += 1
+              html_part += f'<tr><td>{sno}</td>'
+              html_part += f'<td id="category_id">{x.product_id}</td>'
+              html_part += f'<td id="category_name">{x.product_name}</td>'
+              html_part += f'<td id="seller_name">{x.seller.seller_name}</td>'
+              html_part += f'<td id="category_slug">{x.brand}</td>'
+              
+              if x.status.lower() == 'active':
+                  html_part += f'<td> <button id="statusButton" title="Active" class="btn btn-sm btn-success">Active</button></td>'
+              elif x.status.lower() == 'inactive':
+                  html_part += f'<td> <button id="statusButton" title="Inactive" class="btn btn-sm btn-danger">Inactive</button></td>'
+              
+              html_part += f'<td> <a title="Click on view to see more" class="view" ><i class="fa-solid fa-eye" style="color:blue;" ></i></a> </td>'
+              # html_part += f'<td> <a title="Edit" href="/categories-update/{base64.b64encode(str(x.category_id).encode()).decode()}/"><i class="fa-solid fa-pen" style="color:green;" ></i></a> </td>'
+              if x.status.lower() == 'active':
+                html_part += f'<td> <a title="Change Status")" ><i class="fa-solid fa-user" style="color:#56B6F7;"></i></a> </td>'
+              elif x.status.lower() == 'inactive':
+                html_part += f'<td> <a title="Change Status" onclick="changeStatus({base64.b64encode(str(x.category_id).encode()).decode()})" ><i class="fa-solid fa-user" style="color:red;"></i></a> </td>'
+              html_part += f'<td> <a title="Delete" onclick="Delete(\'/categories-delete/{base64.b64encode(str(x.category_id).encode()).decode()}/\')" ><i class="fa-solid fa-trash" style="color:red;"></i></a> </td>'
+              
+              html_part += f'</tr>'                        
+          response_data = {   
+              'status': True,
+              'html_part' : html_part,
+              'has_next': page_obj.has_next(),
+              'has_previous': page_obj.has_previous(),
+              'current_page': page_obj.number,
+              'total_pages': paginator.num_pages,
+            }
+      else:
+          response_data = {
+                'status': False,
+                'tags' : 'error',
+                'message': 'No Record Available !',
+                'html_part' : '<div class="alert text-white text-black fs-5 rounded font-bold" style="background-color:#56B6F7;"> No Record Available ! </div>'
+        }
+      return JsonResponse(response_data, safe=False)
+      
+  
+  products = seller.products.all()
+  context['products'] = products
+  
+  context['seller']=seller
+  return render(request,"products/products_details.html",context)
 
 def add_order(request):
   return render(request,"products/add_order.html")
