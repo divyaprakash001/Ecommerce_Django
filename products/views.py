@@ -9,6 +9,7 @@ from django.db.models import Q, FloatField
 from django.db.models.functions import Cast
 from products.models import Category, Product, Tags
 from seller.models import Seller
+from django.db import connection
 
 @login_required(login_url='login')
 @user_passes_test(check_role_seller)
@@ -39,7 +40,7 @@ def add_category(request):
       seller = Seller.objects.get(user = request.user)
     except Seller.DoesNotExist:
       messages.error(request, "You are not a seller")
-      return redirect("add_category")
+      return redirect("login")
     if (category_id != None and category_id != '') and (category_name != None and category_name != ''):
       cat = Category(seller=seller,category_id=category_id,category_name=category_name,category_slug=category_slug,category_desc=category_desc,category_pic=category_photo)
       cat.save()
@@ -326,8 +327,6 @@ def delete_category(request,iid):
   return redirect("categories_details")
 
 
-def generate_sku():
-  pass
 
 
 @login_required(login_url='login')
@@ -454,6 +453,7 @@ def products_details(request):
   except Seller.DoesNotExist:
     seller = None
     messages.error(request,"You are not a Seller.")
+    return redirect("login")
 
   if request.headers.get('x-requested-with') == 'XMLHttpRequest':
     if request.method == 'POST':
@@ -507,6 +507,8 @@ def products_details(request):
 
 
       my_data = (Product.objects.filter(**conditions,seller=seller).order_by(sort_by) if conditions else Product.objects.filter(seller=seller).order_by(sort_by))
+      # print(my_data.query)
+      # print(connection.queries)
       if my_data.exists():
           items_per_page =10
           paginator = Paginator(my_data, items_per_page)
@@ -530,12 +532,12 @@ def products_details(request):
                   html_part += f'<td> <button id="statusButton" title="Inactive" class="btn btn-sm btn-danger">Inactive</button></td>'
               
               html_part += f'<td> <a title="Click on view to see more" class="view" ><i class="fa-solid fa-eye" style="color:blue;" ></i></a> </td>'
-              # html_part += f'<td> <a title="Edit" href="/categories-update/{base64.b64encode(str(x.category_id).encode()).decode()}/"><i class="fa-solid fa-pen" style="color:green;" ></i></a> </td>'
+              html_part += f'<td> <a title="Edit" href="/product-update/{base64.b64encode(str(x.product_id).encode()).decode()}/"><i class="fa-solid fa-pen" style="color:green;" ></i></a> </td>'
               if x.status.lower() == 'active':
                 html_part += f'<td> <a title="Change Status")" ><i class="fa-solid fa-user" style="color:#56B6F7;"></i></a> </td>'
               elif x.status.lower() == 'inactive':
-                html_part += f'<td> <a title="Change Status" onclick="changeStatus({base64.b64encode(str(x.category_id).encode()).decode()})" ><i class="fa-solid fa-user" style="color:red;"></i></a> </td>'
-              html_part += f'<td> <a title="Delete" onclick="Delete(\'/categories-delete/{base64.b64encode(str(x.category_id).encode()).decode()}/\')" ><i class="fa-solid fa-trash" style="color:red;"></i></a> </td>'
+                html_part += f'<td> <a title="Change Status"  ><i class="fa-solid fa-user" style="color:red;"></i></a> </td>'
+              html_part += f'<td> <a title="Delete" onclick="Delete(\'/product-delete/{base64.b64encode(str(x.product_id).encode()).decode()}/\')" ><i class="fa-solid fa-trash" style="color:red;"></i></a> </td>'
               
               html_part += f'</tr>'                        
           response_data = {   
@@ -585,14 +587,20 @@ def products_details(request):
               </div>
               <div class="col-lg-6 col-12 mb-3">
                   <div class="row">
-                      <div class="w-50 fw-bold">Category ID : </div>
+                      <div class="w-50 fw-bold">Product ID : </div>
                       <div class="w-50">{str(view_data.product_id)}</div>
                   </div>
               </div>
               <div class="col-lg-6 col-12 mb-3">
                   <div class="row">
-                      <div class="w-50 fw-bold">Category Name : </div>
+                      <div class="w-50 fw-bold">Product Name : </div>
                       <div class="w-50">{ str(view_data.product_name) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Brand Name : </div>
+                      <div class="w-50">{ str(view_data.brand) }</div>
                   </div>
               </div>
               <div class="col-lg-6 col-12 mb-3">
@@ -603,16 +611,100 @@ def products_details(request):
               </div>
               <div class="col-lg-6 col-12 mb-3">
                   <div class="row">
-                      <div class="w-50 fw-bold">Category Desc : </div>
+                      <div class="w-50 fw-bold">Original Price : </div>
                       <div class="w-50">{ str(view_data.price) }</div>
                   </div>
               </div>
               <div class="col-lg-6 col-12 mb-3">
                   <div class="row">
-                      <div class="w-50 fw-bold">Category Image : </div>
+                      <div class="w-50 fw-bold">Disounted Price : </div>
+                      <div class="w-50">{ str(float(view_data.price) - (float(view_data.price) * (view_data.discount / 100))) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Stock Quantity : </div>
+                      <div class="w-50">{ str(view_data.stock_quantity) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">SKU : </div>
+                      <div class="w-50">{ str(view_data.sku) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Size : </div>
+                      <div class="w-50">{ str(view_data.size) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Color : </div>
+                      <div class="w-50">{ str(view_data.color) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Weight : </div>
+                      <div class="w-50">{ str(view_data.weight) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Material : </div>
+                      <div class="w-50">{ str(view_data.material) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Dimension : </div>
+                      <div class="w-50">{ str(view_data.width) } X {str(view_data.height)}</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Tag : </div>
+                      <div class="w-50">{ str(view_data.tags) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Front Image : </div>
                       <div class="w-50">'''
           if view_data.product_pic_front:            
             view_html += f'''<img src='{view_data.product_pic_front.url}' alt="Product Front Pic" width='200' height='100' ></div>'''
+          else:            
+            view_html += '''Not Available'''
+          view_html += '''</div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Back Image : </div>
+                      <div class="w-50">'''
+          if view_data.product_pic_back:            
+            view_html += f'''<img src='{view_data.product_pic_back.url}' alt="Product Front Pic" width='200' height='100' ></div>'''
+          else:            
+            view_html += '''Not Available'''
+          view_html += '''</div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Third Image : </div>
+                      <div class="w-50">'''
+          if view_data.product_pic_third:            
+            view_html += f'''<img src='{view_data.product_pic_third.url}' alt="Product Front Pic" width='200' height='100' ></div>'''
+          else:            
+            view_html += '''Not Available'''
+          view_html += '''</div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Fourth Image : </div>
+                      <div class="w-50">'''
+          if view_data.product_pic_fourth:            
+            view_html += f'''<img src='{view_data.product_pic_fourth.url}' alt="Product Front Pic" width='200' height='100' ></div>'''
           else:            
             view_html += '''Not Available'''
           view_html += '''</div>
@@ -626,6 +718,28 @@ def products_details(request):
               view_html +=  f'''<div class="w-50"><button class="btn btn-sm btn-warning text-white">{ str(view_data.status) }</button></div></div>'''
           elif view_data.status.lower() == 'inactive': 
               view_html +=  f'''<div class="w-50"><button class="btn btn-sm btn-danger text-white">{ str(view_data.status) }</button></div></div>'''
+
+          view_html += f'''
+          </div>
+            <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Product Description : </div>
+                      <div class="w-50">{ str(view_data.product_desc) }</div>
+                  </div>
+              </div>
+            <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Created At : </div>
+                      <div class="w-50">{ str(view_data.created_at.date()) }</div>
+                  </div>
+              </div>
+            <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Updated At : </div>
+                      <div class="w-50">{ str(view_data.updated_at.date()) }</div>
+                  </div>
+              </div>
+          '''    
           
           response_data={
               "status":True,
@@ -638,19 +752,20 @@ def products_details(request):
             }
         return JsonResponse(response_data,safe=False)
       elif what == 'changeStatus':
+        print(what)
         try:
-          category = Category.objects.get(category_id=category_id,seller=seller)
-          if category.status.lower() == 'active':
-            category.status = 'Inactive'
-            category.save()
+          product = Product.objects.get(product_id=product_id,seller=seller)
+          if product.status.lower() == 'active':
+            product.status = 'Inactive'
+            product.save()
             response_data = {
               'status': True,
               'message': 'Category Status Changed to Inactive',
               'tags' : 'success',
               }
-          elif category.status.lower() == 'inactive':
-            category.status = 'Active'
-            category.save()
+          elif product.status.lower() == 'inactive':
+            product.status = 'Active'
+            product.save()
             response_data = {
               'status': True,
               'message': 'Category Status Changed to Active',
@@ -666,10 +781,8 @@ def products_details(request):
           }
         
         return JsonResponse(response_data, safe=False)
-    
-
-      
   
+
   products = seller.products.all().order_by("product_id")
   unique_brand = set(product.brand for product in products)
   unique_color = set(product.color for product in products)
@@ -682,6 +795,72 @@ def products_details(request):
   context['unique_material'] = unique_material
 
   return render(request,"products/products_details.html",context)
+
+
+
+
+@login_required(login_url='login')
+@user_passes_test(check_role_seller)
+def update_product(request,iid):
+  context = {}
+  try:
+    id = base64.b64decode(iid).decode('utf-8')
+    product = Product.objects.get(product_id = id)
+  except Product.DoesNotExist:
+    product = None
+    messages.error(request,"Product Does Not Exists!!")
+  except:
+    messages.error(request,"Somethings goes Wrong!!")
+
+  context['product'] = product
+
+  if request.method == 'POST':
+    try:
+      product_id = request.POST.get('product_id')
+      product_name = request.POST.get('product_name')
+      # category_slug = request.POST.get('category_slug')
+      product_status = request.POST.get('product_status')
+      product_desc = request.POST.get("product_desc")
+      
+
+
+      product.product_id = product_id
+      if  product_name is not product.product_name:
+        product.category_name = product_name
+      # product.category_slug = category_slug
+      if "category_photo" in request.FILES:
+        category_photo = request.FILES["category_photo"]
+        # category.category_pic = category_photo
+      product.status = product_status
+      product.category_desc = product_desc
+      product.save()
+      messages.success(request,"Category Updated Successfully!")
+    except:
+      messages.error(request,"Somethings goes Wrong!!")
+    return redirect("products_details")
+                                                                               
+  return render(request,"products/update_product.html",context)
+
+
+
+@login_required(login_url='login')
+@user_passes_test(check_role_seller)
+def delete_product(request,iid):
+  try:
+    id = base64.b64decode(iid).decode('utf-8')
+    seller = Seller.objects.get(user=request.user)
+    product =  Product.objects.get(product_id = id,seller=seller)
+    product.delete()
+    messages.success(request,"Product Deleted Successfully!")
+  except Seller.DoesNotExist:
+    messages.error(request,"Seller Does Not Exists!!")
+  except Product.DoesNotExist:
+    messages.error(request,"Product Does Not Exists!!")
+  except:
+    messages.error(request,"Somethings goes Wrong!!")
+  return redirect("products_details")
+
+
 
 def add_order(request):
   return render(request,"products/add_order.html")

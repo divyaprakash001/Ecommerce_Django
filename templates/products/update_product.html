@@ -1,0 +1,373 @@
+{% extends "sellerBase.html" %}
+{% load static %}
+
+{% block extralinks %}
+{% comment %} yet to be done {% endcomment %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="{% static "js/address_entry.js" %}"></script>
+  <style>
+    input, select{
+        height: 3rem;
+    }
+    {% comment %} for shifting header to left {% endcomment %}
+    .left-shift{
+        margin-left:-23px;
+    }
+    .up-shift{
+        margin-top:-20px;
+    }
+  </style>
+{% endblock extralinks %}
+
+{% block content %}
+<div class="page-heading mt-0">
+  <h3 style="text-align: center; position: relative;">Update Products 
+      {% comment %} <a href="{% url "products_details" %}" style="position: absolute; top: -40%; right: 0;" ><button class="page_change fs-6 btn" role="button"><i class="fa-solid fa-search"></i>&nbsp;Records&nbsp;</button></a> {% endcomment %}
+  </h3>
+</div>
+
+<section id="multiple-column-form">
+  <div class="row match-height">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h4 class="card-title">Products Information</h4>
+          <div><b class="text-danger" >Note</b><span class="font-bold"> :- All asterisk (*) field is mandatory.</span></div>
+        </div>
+        <div class="card-content up-shift">
+          <div class="card-body">
+              <form class="form" action="{% url "add_products" %}" method='post' enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="product_id">Product Id<font class="text-danger"> *</font></label>
+                          <input required  type="text" id="product_id" required class="form-control"
+                              placeholder="Product Id" name="product_id" value="{{product_id}}"  readonly>
+                      </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="category">Category<font class="text-danger"> *</font></label>
+                        <select required  class="form-select" id="category" name="category">
+                            <option value="" selected>--- Select Category ---</option>
+                            {% for x in categories %}
+                            <option value="{{x.category_id}}">{{x.category_name | title}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                    <div class="form-group">
+                        <label for="brand">Brand<font class="text-danger"> *</font></label>
+                        <input required  type="text" id="brand" class="form-control"
+                        placeholder="Brand" name="brand" readonly>
+                        <span id="span" class="text-danger span" style="font-size:14px;"></span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="product_name">Product Name<font class="text-danger"> *</font></label>
+                          <input required  type="text" id="product_name"  class="form-control" name="product_name" placeholder="Product Name" readonly>
+                          <span id="span" class="text-danger span" style="font-size:14px;"></span>
+                      </div>
+                  </div>
+               
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="price">Price in ₹<font class="text-danger"> *</font></label>
+                            <div class="input-group mb-3">
+                                <button class="btn btn-light-success" type="button" id="button-addon1">₹</button>
+                                <input required  type="number" step="0.01" required name="price" id="price" class="form-control" placeholder="Price">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="discount">Discount in %</label>
+                            <div class="input-group mb-3">
+                                <input required  type="number" required name="discount" id="discount" class="form-control" placeholder="Discount">
+                                <button class="btn btn-light-success" type="button" id="button-addon1">%</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="stock_quantity">Stock Quantity<font class="text-danger"> *</font></label>
+                            <input required  type="number" id="stock_quantity" class="form-control"
+                                placeholder="Stock Quantity" name="stock_quantity">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="sku">SKU<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="sku" class="form-control"
+                                placeholder="Stock Keeping Unit" name="sku" readonly>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="size">Size<font class=""> (if applicable)</font></label>
+                            <select required  class="form-select" id="size" name="size">
+                                <option value="" selected>--- Select Size ---</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                                <option value="XXXL">XXXL</option>
+                            </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="color">Color<font class="text-danger"> *</font></label>
+                            <input required  type="text" id="color" class="form-control"
+                                placeholder="Color" name="color">
+                        </div>
+                      </div>
+
+                    <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="weight">Weight (in g)<font class="text-danger"> *</font></label>
+                            <input required  type="number" id="weight" class="form-control"
+                                placeholder="Weight" name="weight">
+                        </div>
+                      </div>
+                      
+    
+                      <div class="col-md-3 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="material">Material</label>
+                            <input required  type="text" id="material" class="form-control"
+                            placeholder="Material" name="material">
+                        </div>
+                      </div>
+
+
+                      <div class="col-md-3 col-12 mt-3">
+                        <div class="d-flex align-items-center">
+                            <div class="form-group w-50 mr-2">
+                                <label for="width">Width<font class="text-danger"> *</font></label>
+                                <input  type="number" id="width" class="form-control" placeholder="Width" name="width">
+                            </div>
+                            <span class="mx-2">x</span>
+                            <div class="form-group w-50">
+                                <label for="height">Height<font class="text-danger"> *</font></label>
+                                <input  type="number" id="height" class="form-control" placeholder="Height" name="height">
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                  <div class="col-md-3 col-12 mt-3">
+                      <div class="form-group">
+                          <label for="tags">Tags</label>
+                          <select required  class="form-select" id="tags" name="tags">
+                            <option value="" selected>--- Select Tags ---</option>
+                            {% for x in tags %}
+                            <option value="{{x.tag_name}}">{{x.tag_name | title}}</option>
+                            {% endfor %}
+                        </select>
+                      </div>
+                  </div>
+
+                  <div class="col-md-6 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="product_desc">Product Description<font class="text-danger"> *</font></label>
+                            <textarea name="product_desc" id="product_desc" class="form-control"></textarea>
+                        </div>
+                      </div>
+
+                  
+
+    </div>
+
+    <div class="card-header left-shift">
+      <h4 class="card-title">Upload Photos</h4>
+  </div>
+  <div class="row mb-3 up-shift">
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="product_pic_front">Product Front Image<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="product_pic_front" id="product_pic_front" class="form-control" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="product_pic_back">Product Back Image<font class="text-danger"> *</font></label>
+                            <input required  type="file" name="product_pic_back" class="form-control" id="product_pic_back" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="product_pic_third">Product Image 3<font class="text-danger"> *</font></label>
+                            <input   type="file" name="product_pic_third" class="form-control" id="product_pic_third" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 mt-3">
+                        <div class="form-group">
+                            <label for="product_pic_fourth">Product Image 4<font class="text-danger"> *</font></label>
+                            <input   type="file" name="product_pic_fourth" class="form-control" id="product_pic_fourth" accept="image/*">
+                        </div>
+                    </div>
+                
+      
+                </div>
+  
+                    <div class="col-12 d-flex gap-4 justify-content-center mb-3 mt-3">
+                        <button type="submit"
+                            class="btn btn-success me-1 mb-1 mt-3"><i class="fa-solid fa-check"></i> &nbsp;Submit</button>
+                        <button type="button" onclick="history.back();"
+                            class="btn btn-light-secondary me-1 mb-1 mt-3"><i class="fa-solid fa-rotate"></i> &nbsp;Cancel</button>
+                        
+                    </div>
+        
+
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+    $(document).ready(function(){
+
+
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        let productStatus = '';
+        $("#product_name").on("keyup",function(){
+            product_name = $(this).val();
+                  $.ajax({
+                      url: "{% url 'add_products' %}",  
+                      type: "GET",
+                      data: {
+                          product_name: product_name,
+                      },
+                      success: function(response) {
+                        console.log(response)
+                        console.log(response.status)
+                          if(response.status == 'found'){
+                            productStatus='found';
+                            $("#product_name").closest('.form-group').find('span').text(response.message);
+                          }else if(response.status == 'not found'){
+                            productStatus='not found';
+                            $("#product_name").closest('.form-group').find('span').text("");
+                          }
+                      },
+                      error: function(xhr) {
+                          $('#response').html('An error occurred: ' + xhr.responseText);
+                      }
+                  });
+          });
+
+          $("#product_name").on("focusout", function() {
+            if (productStatus === 'found') {
+                $("#product_name").closest('.form-group').find('span').text("Already Exists!");
+            }
+        });
+    
+        $("#product_name").on("focusin", function() {
+            if (productStatus === 'found') {
+                $("#product_name").closest('.form-group').find('span').text("Already Exists!");
+            }
+        });
+
+
+
+        $("#category").on("change", function() {
+            let cat_id = $("#category").val();
+            if (cat_id !== undefined && cat_id !== "") {
+                $("#brand").removeAttr('readonly');
+                $("#brand").closest('.form-group').find('span').text("");
+            } else {
+                $("#brand").attr('readonly', true);
+            }
+        });
+        $("#brand").on("keyup",function(){
+            let brand = $(this).val();
+            if (brand != undefined && brand != ""){
+                $("#product_name").removeAttr('readonly');
+                if(productStatus=='found'){
+                    $("#product_name").closest('.form-group').find('span').text("Already Exists!")
+                }else{
+                    $("#product_name").closest('.form-group').find('span').text("")
+                }
+            }else{
+                $("#product_name").attr('readonly',true);
+            }
+        })
+
+        $('#brand').on('click', function() {
+            if ($(this).attr('readonly')) { // Check if the input is disabled
+                $("#brand").closest('.form-group').find('span').text("Please Choose Category First!")
+            }else{
+                $("#brand").closest('.form-group').find('span').text("")
+            }
+        });
+
+        $('#product_name').on('click', function() {
+            if ($(this).attr('readonly')) { // Check if the input is disabled
+                $("#product_name").closest('.form-group').find('span').text("Please Enter Brand First!")
+            }else{
+                if(productStatus  === 'found'){
+                    $("#product_name").closest('.form-group').find('span').text("Already Exists!");
+                }else{
+                    $("#product_name").closest('.form-group').find('span').text("")
+                }
+
+            }
+        });
+
+
+        /* generate sku */
+        function generateSKU() {
+            let brand = $("#brand").val();
+            let cat_id = $("#category").val();
+            let product_id = $("#product_id").val();
+            let product_name = $('#product_name').val();
+        
+            if (brand && cat_id && product_name) {
+                let sku = `${brand.toUpperCase()}-${cat_id}-${product_name.substring(0, 3).toUpperCase()}-${product_id}`;
+                $("#sku").val(sku);
+            }
+        }
+
+        $('#product_name').on('keyup', generateSKU);
+        $('#brand').on('keyup', generateSKU);
+        $("#category").on('change', generateSKU);
+
+
+        $("form").on("submit",function(e){
+            span = $(".span").text();
+            if((span.includes('Already Exists!'))){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Product Name Already Exists',
+                    showConfirmButton: true,
+                    confirmButtonClass: 'btn btn-success'
+                });
+                return false;
+            }
+        })
+
+    });
+
+</script>
+
+{% endblock %}

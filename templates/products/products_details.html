@@ -357,7 +357,7 @@
 
 {% comment %} change the status {% endcomment %}
   $(document).on('click', '.fa-user', function() {
-    category_id = $(this).closest('tr').find('#category_id').text();
+    product_id = $(this).closest('tr').find('#product_id').text();
     let statusButton = $(this).closest('tr').find('#statusButton'); 
     let icon = $(this);
     swal.fire({
@@ -373,7 +373,7 @@
     if (res.isConfirmed) {
       $.ajax({
         type: "get",
-        data: {'what':'changeStatus','category_id':category_id},
+        data: {'what':'changeStatus','product_id':product_id},
         success: function (response) {
           if(response.message.toLowerCase().includes("inactive")){
             statusButton.text("Inactive")

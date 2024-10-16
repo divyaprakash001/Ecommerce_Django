@@ -295,43 +295,7 @@
                             </ul>
                         </li>
 
-                        <li class="sidebar-item  has-sub">
-                            <a href="#" class='sidebar-link'>
-                                <i class="fa-solid fa-clock"></i>
-                                <span>Time Table</span>
-                            </a>
-                            <ul class="submenu " {% if request.path == '/Teacher-Time-Table/' or request.path == '/Class-Time-Table/' or request.path == '/Generate-Time-Table/' %} style="display: block;" {% endif %} >
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/Generate-Time-Table/' %} class="active2" {% endif %} href="">Generate Time Table</a>
-                                </li>
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/Class-Time-Table/' %} class="active2" {% endif %} href="">For Classes</a>
-                                </li>
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/Teacher-Time-Table/' %} class="active2" {% endif %} href="">For Teachers</a>
-                                </li>
-                            </ul>
-                        </li>
 
-                        <li class="sidebar-item  has-sub">
-                            <a href="#" class='sidebar-link'>
-                                <i class="fa-solid fa-file-pen"></i>
-                                <span>Exam's</span>
-                            </a>
-                            <ul class="submenu" {% if request.path == '/Create-Exam/' or request.path == '/scheduled-exams/' or request.path == '/exam-registration/' or request.path == '/exam-registration-search/' or request.path == '/assign-exam/' or request.path == '/assigned-exams/' %} style="display: block;" {% endif %}  >
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/Create-Exam/' or request.path == '/scheduled-exams/' %} class="active2" {% endif %}  href="">Create</a>
-                                </li>
-                                
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/exam-registration/' or request.path == '/exam-registration-search/'  %} class="active2" {% endif %}  href="">Register Students</a>
-                                </li>
-
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/assign-exam/' or request.path == '/assigned-exams/' %} class="active2" {% endif %}  href="">Assignment</a>
-                                </li>
-                            </ul>
-                        </li>
 
                         <li class="sidebar-item  has-sub">
                             <a href="#" class='sidebar-link'>
@@ -383,31 +347,8 @@
                                 <span>Other Expenses</span>
                             </a>
                         </li>
-                        <li class="sidebar-item  has-sub">
-                            <a href="#" class='sidebar-link'>
-                                <i class="fa-solid fa-suitcase-rolling"></i>
-                                <span>School Accessory</span>
-                            </a>
-                            <ul class="submenu" {% if request.path == '/add-uniform-details/' or request.path == '/uniform-details/' or request.path == '/issue-uniform/' or request.path == '/issued-uniform/' or request.path == '/add-book/' or request.path == '/book-details/' or request.path == '/sell-books/' or request.path == '/sold-books/' %} style="display: block;" {% endif %} >
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/add-uniform-details/' or request.path == '/uniform-details/' %} class="active2" {% endif %} href=""> Set Uniform Charge</a>
-                                </li>
-                               
-                            </ul>
-                        </li>
-                        <li class="sidebar-item  has-sub">
-                            <a href="#" class='sidebar-link'>
-                                <i class="fa-solid fa-book"></i>
-                                <span>Library</span>
-                            </a>
-                            <ul class="submenu" {% if request.path == '/add-shelf/' or request.path == '/search-shelf/' or request.path == '/add-library-book/' or request.path == '/search-book/' or request.path == '/issue-book/' or request.path == '/issued-book-details/' or request.path == '/return-book/' or request.path == '/returned-book-details/' or request.path == '/generate-library-card/' or request.path == '/library-card-details/'    %} style="display: block;" {% endif %} >
-                                <li class="submenu-item ">
-                                    <a {% if request.path == '/generate-library-card/' or request.path == '/library-card-details/' %} class="active2" {% endif %}  href="">Library Card</a>
-                                </li>
-                               
-                            
-                            </ul>
-                        </li>
+                        
+                        
 
                         <li class="sidebar-title">Message Section </li>
 
