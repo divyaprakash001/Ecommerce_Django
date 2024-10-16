@@ -5,7 +5,8 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from accounts.views import check_role_seller
 from django.contrib.auth.decorators import login_required,user_passes_test
-
+from django.db.models import Q, FloatField
+from django.db.models.functions import Cast
 from products.models import Category, Product, Tags
 from seller.models import Seller
 
@@ -407,7 +408,7 @@ def add_products(request):
         product_pic_fourth = None
 
       try:
-        product = Product(seller=seller,category=category,product_id=product_id,product_name=product_name,brand=brand,price=price,discount=discount,stock_quantity=stock,sku=sku,color=color,size=size,weight=weight,material=material,width=width,height=height,tags=tags,product_desc=product_desc,product_pic_front=product_pic_front,product_pic_back=product_pic_back,product_pic_third=product_pic_third,product_pic_fourth=product_pic_fourth)
+        product = Product(seller=seller,category=category,product_id=product_id,product_name=product_name,brand=brand.capitalize(),price=price,discount=discount,stock_quantity=stock,sku=sku,color=color.capitalize(),size=size,weight=weight,material=material.capitalize(),width=width,height=height,tags=tags,product_desc=product_desc.capitalize(),product_pic_front=product_pic_front,product_pic_back=product_pic_back,product_pic_third=product_pic_third,product_pic_fourth=product_pic_fourth)
         product.save()
         if(Product.objects.filter(product_id=product_id,seller=seller)).exists():
           messages.success(request, "Product Added Successfully!!")
@@ -458,6 +459,7 @@ def products_details(request):
     if request.method == 'POST':
       product_id = request.POST.get("product_id")
       product_name = request.POST.get("product_name")
+      brand = request.POST.get("brand")
       category_id = request.POST.get("category")
       stock_quantity = request.POST.get("stock_quantity")
       size = request.POST.get("size")
@@ -474,12 +476,15 @@ def products_details(request):
 
       if product_name != None and product_name != '':
         conditions['product_name'] = product_name
+
+      if brand != None and brand != '':
+        conditions['brand'] = brand
       
       if category_id != None and category_id != '':
-        conditions['category_id'] = category_id
+        conditions['category__category_id'] = category_id
       
       if stock_quantity != None and stock_quantity != '':
-        conditions['stock_quantity'] = stock_quantity
+        conditions['stock_quantity__lte'] = stock_quantity
       
       if size != None and size != '':
         conditions['size'] = size
@@ -488,16 +493,17 @@ def products_details(request):
         conditions['color'] = color
 
       if weight != None and weight != '':
-        conditions['weight'] = weight
+        conditions['weight__lte'] = weight
 
       if material != None and material != '':
         conditions['material'] = material
 
       if min_price != None and min_price != '':
-        conditions['min_price'] = min_price
+        print(type(float(min_price)))
+        conditions['price__gte'] = float(min_price)
 
       if max_price != None and max_price != '':
-        conditions['max_price'] = max_price
+        conditions['price__lte'] = float(max_price)
 
 
       my_data = (Product.objects.filter(**conditions,seller=seller).order_by(sort_by) if conditions else Product.objects.filter(seller=seller).order_by(sort_by))
@@ -507,14 +513,16 @@ def products_details(request):
           page_number = request.POST.get('page', 1)
           page_obj = paginator.get_page(page_number)
           sno=1
-          html_part = '<table class="table table-hover table-responsive table-striped" id="table1"><thead><tr><th>S.&nbsp;No.</th><th>Category&nbsp;ID</th><th>Category&nbsp;Name</th><th>Seller&nbsp;Name</th><th>Category&nbsp;Slug</th><th>Status</th><th align="center" colspan="5" >Action</th></tr> </thead> <tbody>'
+          html_part = '<table class="table table-hover table-responsive table-striped" id="table1"><thead><tr><th>S.&nbsp;No.</th><th>Product&nbsp;ID</th><th>Product&nbsp;Name</th><th>Seller&nbsp;Name</th><th>Category</th><th>Brand</th><th>Stock&nbsp;Quantity</th><th>Status</th><th align="center" colspan="5" >Action</th></tr> </thead> <tbody>'
           for sno, x in enumerate(page_obj,start=1 + (page_obj.number - 1) * items_per_page):
               # sno += 1
               html_part += f'<tr><td>{sno}</td>'
-              html_part += f'<td id="category_id">{x.product_id}</td>'
-              html_part += f'<td id="category_name">{x.product_name}</td>'
+              html_part += f'<td id="product_id">{x.product_id}</td>'
+              html_part += f'<td id="product_name">{x.product_name}</td>'
               html_part += f'<td id="seller_name">{x.seller.seller_name}</td>'
+              html_part += f'<td id="category_slug">{x.category}</td>'
               html_part += f'<td id="category_slug">{x.brand}</td>'
+              html_part += f'<td id="category_slug">{x.stock_quantity}</td>'
               
               if x.status.lower() == 'active':
                   html_part += f'<td> <button id="statusButton" title="Active" class="btn btn-sm btn-success">Active</button></td>'
@@ -546,12 +554,133 @@ def products_details(request):
                 'html_part' : '<div class="alert text-white text-black fs-5 rounded font-bold" style="background-color:#56B6F7;"> No Record Available ! </div>'
         }
       return JsonResponse(response_data, safe=False)
+    
+    if request.method == 'GET':
+      what = request.GET.get('what')
+      product_id = request.GET.get('product_id')
+      try:
+        seller = Seller.objects.get(user=request.user)
+      except Seller.DoesNotExist:
+        messages.error(request,"You are not a Seller.")
+        return redirect("login")
+
+      if what == 'view_product':
+        print("here")
+        print(product_id)
+        try:
+          view_data = Product.objects.get(product_id=product_id, seller=seller)
+          view_html=f'''<h4 class="card-title p-3">School Information :- </h4>
+          <div class="row p-3">
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Seller ID : </div>
+                      <div class="w-50"> {str(view_data.seller.id)}</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Seller Name : </div>
+                      <div class="w-50"> {str(view_data.seller.seller_name)}</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Category ID : </div>
+                      <div class="w-50">{str(view_data.product_id)}</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Category Name : </div>
+                      <div class="w-50">{ str(view_data.product_name) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Category : </div>
+                      <div class="w-50">{ str(view_data.category.category_name) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Category Desc : </div>
+                      <div class="w-50">{ str(view_data.price) }</div>
+                  </div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Category Image : </div>
+                      <div class="w-50">'''
+          if view_data.product_pic_front:            
+            view_html += f'''<img src='{view_data.product_pic_front.url}' alt="Product Front Pic" width='200' height='100' ></div>'''
+          else:            
+            view_html += '''Not Available'''
+          view_html += '''</div>
+              </div>
+              <div class="col-lg-6 col-12 mb-3">
+                  <div class="row">
+                      <div class="w-50 fw-bold">Status : </div>'''
+          if view_data.status.lower() == 'active':
+              view_html +=  f'''<div class="w-50"><button class="btn btn-sm btn-success text-white">{ str(view_data.status) }</button></div></div>'''
+          elif view_data.status.lower() == 'pending':
+              view_html +=  f'''<div class="w-50"><button class="btn btn-sm btn-warning text-white">{ str(view_data.status) }</button></div></div>'''
+          elif view_data.status.lower() == 'inactive': 
+              view_html +=  f'''<div class="w-50"><button class="btn btn-sm btn-danger text-white">{ str(view_data.status) }</button></div></div>'''
+          
+          response_data={
+              "status":True,
+              "view_html":view_html
+          }
+        except Category.DoesNotExist:        
+            response_data={
+                "status":False,
+                "message":"Data does not exists!!!"
+            }
+        return JsonResponse(response_data,safe=False)
+      elif what == 'changeStatus':
+        try:
+          category = Category.objects.get(category_id=category_id,seller=seller)
+          if category.status.lower() == 'active':
+            category.status = 'Inactive'
+            category.save()
+            response_data = {
+              'status': True,
+              'message': 'Category Status Changed to Inactive',
+              'tags' : 'success',
+              }
+          elif category.status.lower() == 'inactive':
+            category.status = 'Active'
+            category.save()
+            response_data = {
+              'status': True,
+              'message': 'Category Status Changed to Active',
+              'tags' : 'success',
+              }
+
+
+        except Category.DoesNotExist:
+          response_data = {
+            'status': False,
+            'tags' : 'error',
+            'message': 'Category Not Found !',
+          }
+        
+        return JsonResponse(response_data, safe=False)
+    
+
       
   
-  products = seller.products.all()
+  products = seller.products.all().order_by("product_id")
+  unique_brand = set(product.brand for product in products)
+  unique_color = set(product.color for product in products)
+  unique_material = set(product.material for product in products)
+  categories = seller.category.all()
   context['products'] = products
-  
-  context['seller']=seller
+  context['categories'] = categories
+  context['unique_brand'] = unique_brand
+  context['unique_color'] = unique_color
+  context['unique_material'] = unique_material
+
   return render(request,"products/products_details.html",context)
 
 def add_order(request):

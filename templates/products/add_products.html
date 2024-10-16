@@ -82,7 +82,7 @@
                             <label for="price">Price in ₹<font class="text-danger"> *</font></label>
                             <div class="input-group mb-3">
                                 <button class="btn btn-light-success" type="button" id="button-addon1">₹</button>
-                                <input required  type="text" required name="price" id="price" class="form-control" placeholder="Price">
+                                <input required  type="number" step="0.01" required name="price" id="price" class="form-control" placeholder="Price">
                             </div>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                         <div class="form-group">
                             <label for="discount">Discount in %</label>
                             <div class="input-group mb-3">
-                                <input required  type="text" required name="discount" id="discount" class="form-control" placeholder="Discount">
+                                <input required  type="number" required name="discount" id="discount" class="form-control" placeholder="Discount">
                                 <button class="btn btn-light-success" type="button" id="button-addon1">%</button>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                     <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
                             <label for="stock_quantity">Stock Quantity<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="stock_quantity" class="form-control"
+                            <input required  type="number" id="stock_quantity" class="form-control"
                                 placeholder="Stock Quantity" name="stock_quantity">
                         </div>
                     </div>
@@ -138,8 +138,8 @@
 
                     <div class="col-md-3 col-12 mt-3">
                         <div class="form-group">
-                            <label for="weight">Weight<font class="text-danger"> *</font></label>
-                            <input required  type="text" id="weight" class="form-control"
+                            <label for="weight">Weight (in g)<font class="text-danger"> *</font></label>
+                            <input required  type="number" id="weight" class="form-control"
                                 placeholder="Weight" name="weight">
                         </div>
                       </div>
@@ -158,12 +158,12 @@
                         <div class="d-flex align-items-center">
                             <div class="form-group w-50 mr-2">
                                 <label for="width">Width<font class="text-danger"> *</font></label>
-                                <input required type="text" id="width" class="form-control" placeholder="Width" name="width">
+                                <input  type="number" id="width" class="form-control" placeholder="Width" name="width">
                             </div>
                             <span class="mx-2">x</span>
                             <div class="form-group w-50">
                                 <label for="height">Height<font class="text-danger"> *</font></label>
-                                <input required type="text" id="height" class="form-control" placeholder="Height" name="height">
+                                <input  type="number" id="height" class="form-control" placeholder="Height" name="height">
                             </div>
                         </div>
                     </div>
