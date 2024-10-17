@@ -817,6 +817,7 @@ def update_product(request,iid):
   context['product'] = product
 
   if request.method == 'POST':
+    print(request.POST)
     try:
       product_id = request.POST.get("product_id").strip()
       category_id = request.POST.get("category").strip()
@@ -858,6 +859,7 @@ def update_product(request,iid):
         product.material=material
         product.width = width
         product.height = height
+        product.tags=tags
         product.status=product_status
         product.product_desc = product_desc
 

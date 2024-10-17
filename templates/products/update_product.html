@@ -186,8 +186,8 @@
                           <select required  class="form-select" id="tags" name="tags">
                             <option value="">--- Select Tags ---</option>
                             {% for tag in tags %}
-                            <option value="{{ tag.tag_name }}" {% if tag.tag_name == product.tags %}selected{% endif %}>
-                                {{ tag.tag_name | title }}
+                            <option value="{{tag.tag_name}}" {% if tag.tag_name == product.tags %}selected{% endif %}>
+                                {{tag.tag_name | title}}
                             </option>
                             {% endfor %}
                         </select>

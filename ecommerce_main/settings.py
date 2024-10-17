@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'seller',
     'products',
+    'marketplace',
     # 'accounts.apps.AccountsConfig',
 ]
 

@@ -25,4 +25,5 @@ urlpatterns = [
     path("", views.home, name="home_page"),
     path('accounts/',include('accounts.urls')),
     path('',include('products.urls')),
+    path('marketplace/',include('marketplace.urls')),
 ] + static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

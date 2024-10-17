@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from seller.models import Seller
 
@@ -77,6 +78,10 @@ class Product(models.Model):
 
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
+
+  def discounted_price(self):
+        discount_amount = (self.price * Decimal(self.discount)) / Decimal(100)
+        return self.price - discount_amount
 
   def __str__(self):
     return self.product_name
