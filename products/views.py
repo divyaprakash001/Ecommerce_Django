@@ -5,11 +5,11 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from accounts.views import check_role_seller
 from django.contrib.auth.decorators import login_required,user_passes_test
-from django.db.models import Q, FloatField
-from django.db.models.functions import Cast
+# from django.db.models import Q, FloatField
+# from django.db.models.functions import Cast
 from products.models import Category, Product, Tags
 from seller.models import Seller
-from django.db import connection
+# from django.db import connection
 
 @login_required(login_url='login')
 @user_passes_test(check_role_seller)
@@ -28,9 +28,9 @@ def add_category(request):
   context['category_id'] = category_id
 
   if request.method == 'POST':
-    category_name = request.POST.get("category_name")
-    category_slug = request.POST.get("category_slug")
-    category_desc = request.POST.get("category_description")
+    category_name = request.POST.get("category_name").strip()
+    category_slug = request.POST.get("category_slug").strip()
+    category_desc = request.POST.get("category_description").strip()
     if "category_photo" in request.FILES:
       category_photo = request.FILES["category_photo"]
     else:
@@ -283,11 +283,11 @@ def update_category(request,iid):
 
   if request.method == 'POST':
     try:
-      category_id = request.POST.get('category_id')
-      category_name = request.POST.get('category_name')
-      category_slug = request.POST.get('category_slug')
-      category_status = request.POST.get('category_status')
-      category_desc = request.POST.get("category_description")
+      category_id = request.POST.get('category_id').strip()
+      category_name = request.POST.get('category_name').strip()
+      category_slug = request.POST.get('category_slug').strip()
+      category_status = request.POST.get('category_status').strip()
+      category_desc = request.POST.get("category_description").strip()
       
 
 
@@ -363,22 +363,22 @@ def add_products(request):
 
   try:
     if request.method == 'POST':
-      product_name = request.POST.get('product_name')
-      category_id = request.POST.get("category")
-      brand = request.POST.get("brand")
+      product_name = request.POST.get('product_name').strip()
+      category_id = request.POST.get("category").strip()
+      brand = request.POST.get("brand").strip()
       # product_slug = request.POST.get('product_slug')
-      price = request.POST.get('price')
-      discount = request.POST.get("discount")
-      stock = request.POST.get("stock_quantity")
-      sku = request.POST.get("sku")
-      size = request.POST.get("size")
-      color = request.POST.get("color")
-      weight = request.POST.get("weight")
-      material = request.POST.get("material")
-      width = request.POST.get("width")
-      height = request.POST.get("height")
-      tags = request.POST.get("tags")
-      product_desc = request.POST.get("product_desc")
+      price = request.POST.get('price').strip()
+      discount = request.POST.get("discount").strip()
+      stock = request.POST.get("stock_quantity").strip()
+      sku = request.POST.get("sku").strip()
+      size = request.POST.get("size").strip()
+      color = request.POST.get("color").strip()
+      weight = request.POST.get("weight").strip()
+      material = request.POST.get("material").strip()
+      width = request.POST.get("width").strip()
+      height = request.POST.get("height").strip()
+      tags = request.POST.get("tags").strip()
+      product_desc = request.POST.get("product_desc").strip()
       
 
       try:
@@ -457,18 +457,18 @@ def products_details(request):
 
   if request.headers.get('x-requested-with') == 'XMLHttpRequest':
     if request.method == 'POST':
-      product_id = request.POST.get("product_id")
-      product_name = request.POST.get("product_name")
-      brand = request.POST.get("brand")
-      category_id = request.POST.get("category")
-      stock_quantity = request.POST.get("stock_quantity")
-      size = request.POST.get("size")
-      color = request.POST.get("color")
-      weight = request.POST.get("weight")
-      material = request.POST.get("material")
-      min_price = request.POST.get("min_price")
-      max_price = request.POST.get("max_price")
-      sort_by = request.POST.get("sort_by")
+      product_id = request.POST.get("product_id").strip()
+      product_name = request.POST.get("product_name").strip()
+      brand = request.POST.get("brand").strip()
+      category_id = request.POST.get("category").strip()
+      stock_quantity = request.POST.get("stock_quantity").strip()
+      size = request.POST.get("size").strip()
+      color = request.POST.get("color").strip()
+      weight = request.POST.get("weight").strip()
+      material = request.POST.get("material").strip()
+      min_price = request.POST.get("min_price").strip()
+      max_price = request.POST.get("max_price").strip()
+      sort_by = request.POST.get("sort_by").strip()
 
       conditions = {}
       if product_id != None and product_id != '':
@@ -558,8 +558,8 @@ def products_details(request):
       return JsonResponse(response_data, safe=False)
     
     if request.method == 'GET':
-      what = request.GET.get('what')
-      product_id = request.GET.get('product_id')
+      what = request.GET.get('what').strip()
+      product_id = request.GET.get('product_id').strip()
       try:
         seller = Seller.objects.get(user=request.user)
       except Seller.DoesNotExist:
@@ -567,8 +567,6 @@ def products_details(request):
         return redirect("login")
 
       if what == 'view_product':
-        print("here")
-        print(product_id)
         try:
           view_data = Product.objects.get(product_id=product_id, seller=seller)
           view_html=f'''<h4 class="card-title p-3">School Information :- </h4>
@@ -805,40 +803,94 @@ def update_product(request,iid):
   context = {}
   try:
     id = base64.b64decode(iid).decode('utf-8')
-    product = Product.objects.get(product_id = id)
+    seller = Seller.objects.get(user=request.user)
+    product = Product.objects.get(product_id = id,seller=seller)
   except Product.DoesNotExist:
     product = None
     messages.error(request,"Product Does Not Exists!!")
-  except:
-    messages.error(request,"Somethings goes Wrong!!")
-
+  except Seller.DoesNotExist:
+    seller = None
+    messages.error(request,"You are not a Seller!!")
+    return redirect("login")
+  except Exception as e:
+    messages.error(request,f"Somethings goes Wrong!! {e}")
   context['product'] = product
 
   if request.method == 'POST':
     try:
-      product_id = request.POST.get('product_id')
-      product_name = request.POST.get('product_name')
-      # category_slug = request.POST.get('category_slug')
-      product_status = request.POST.get('product_status')
-      product_desc = request.POST.get("product_desc")
+      product_id = request.POST.get("product_id").strip()
+      category_id = request.POST.get("category").strip()
+      product_name = request.POST.get('product_name').strip()
+      brand = request.POST.get("brand").strip()
+      # product_slug = request.POST.get('product_slug')
+      price = request.POST.get('price').strip()
+      discount = request.POST.get("discount").strip()
+      stock = request.POST.get("stock_quantity").strip()
+      sku = request.POST.get("sku").strip()
+      size = request.POST.get("size").strip()
+      color = request.POST.get("color").strip()
+      weight = request.POST.get("weight").strip()
+      material = request.POST.get("material").strip()
+      width = request.POST.get("width").strip()
+      height = request.POST.get("height").strip()
+      tags = request.POST.get("tags").strip()
+      product_status = request.POST.get("status").strip()
+      product_desc = request.POST.get("product_desc").strip()
       
 
+      try:
+        category = Category.objects.get(category_id=category_id)
+      except Category.DoesNotExist:
+        messages.error(request,"Category Does Not Exists!!")
 
-      product.product_id = product_id
-      if  product_name is not product.product_name:
-        product.category_name = product_name
-      # product.category_slug = category_slug
-      if "category_photo" in request.FILES:
-        category_photo = request.FILES["category_photo"]
-        # category.category_pic = category_photo
-      product.status = product_status
-      product.category_desc = product_desc
-      product.save()
-      messages.success(request,"Category Updated Successfully!")
+      try:
+        product.product_id = product_id
+        product.category = category
+        product.product_name = product_name
+        product.brand = brand
+        product.price = price
+        product.discount=discount
+        product.stock_quantity = stock
+        product.sku = sku
+        product.size = size
+        product.color = color
+        product.weight = weight
+        product.material=material
+        product.width = width
+        product.height = height
+        product.status=product_status
+        product.product_desc = product_desc
+
+        if "product_pic_front" in request.FILES:
+          product_pic_front = request.FILES["product_pic_front"]
+          product.product_pic_front = product_pic_front
+
+        if "product_pic_back" in request.FILES:
+          product_pic_back = request.FILES["product_pic_back"]
+          product.product_pic_back = product_pic_back
+
+        if "product_pic_third" in request.FILES:
+          product_pic_third = request.FILES["product_pic_third"]
+          product.product_pic_third = product_pic_third
+
+        if "product_pic_fourth" in request.FILES:
+          product_pic_fourth = request.FILES["product_pic_fourth"]
+          product.product_pic_fourth = product_pic_fourth
+
+        product.save()
+        messages.success(request,"Product Updated Successfully!")
+      except:
+        messages.error(request,"Failed to Update Product!!")
+
     except:
       messages.error(request,"Somethings goes Wrong!!")
     return redirect("products_details")
-                                                                               
+  sizes = ['S','M','L','XL','XXL','XXXL']                                                                         
+  tags = Tags.objects.filter(seller=seller)
+  categories = Category.objects.filter(seller=seller)
+  context['tags']=tags
+  context['categories']=categories
+  context['sizes']=sizes
   return render(request,"products/update_product.html",context)
 
 

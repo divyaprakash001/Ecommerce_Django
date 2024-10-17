@@ -5,8 +5,9 @@ from products.models import Category,Product,Tags
 # Register your models here.
 class CategoryAdmin(admin.ModelAdmin):
   prepopulated_fields = {"category_slug":("category_name",)}
-  list_display = ['category_name','category_id','seller']
+  list_display = ['category_name','category_id','seller__seller_name']
   exclude = ['category_id']
+  search_fields = ['category_name','seller__seller_name']
 
 
 # class ProductAdminForm(forms.ModelForm):
@@ -31,6 +32,7 @@ class ProductAdmin(admin.ModelAdmin):
   list_display = ['product_name','product_id','category','brand','sku','seller','updated_at']
   list_display_links=['product_name','category','brand']
   exclude = ['product_id','sku']
+  search_fields = ('product_id','product_name','category__category_name','brand','size','color','weight','material','tags')
 
   # form = ProductAdminForm
 
