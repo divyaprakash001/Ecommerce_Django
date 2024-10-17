@@ -881,8 +881,8 @@ def update_product(request,iid):
 
         product.save()
         messages.success(request,"Product Updated Successfully!")
-      except:
-        messages.error(request,"Failed to Update Product!!")
+      except Exception as e:
+        messages.error(request,f"Failed to Update Product!!{e}")
 
     except:
       messages.error(request,"Somethings goes Wrong!!")

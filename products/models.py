@@ -69,7 +69,7 @@ class Product(models.Model):
   width = models.PositiveIntegerField(null=True,blank=True)
   height = models.PositiveIntegerField(null=True,blank=True)
   tags = models.CharField(max_length=50,null=True,blank=True)
-  product_desc = models.CharField(max_length=200,null=True,blank=True)
+  product_desc = models.CharField(max_length=1000,null=True,blank=True)
   product_pic_front = models.ImageField(upload_to="products/product_photo/")
   product_pic_back = models.ImageField(upload_to="products/product_photo/")
   product_pic_third = models.ImageField(upload_to="products/product_photo/", null=True, blank=True)

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 
 {% block content %}
   <!-- Breadcrumb Begin -->
@@ -237,13 +238,13 @@
                             <div class="product__item__pic set-bg" data-setbg="{{product.product_pic_front.url}}">
                                 <div class="label new">{{product.tags}}</div>
                                 <ul class="product__hover">
-                                    <li><a href="img/shop/shop-1.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                    <li><a href="{{product.product_pic_front.url}}" class="image-popup"><span class="arrow_expand"></span></a></li>
                                     <li><a href="#"><span class="icon_heart_alt"></span></a></li>
                                     <li><a href="#"><span class="icon_bag_alt"></span></a></li>
                                 </ul>
                             </div>
                             <div class="product__item__text">
-                                <h6><a href="#">{{product.product_name}}</a></h6>
+                                <h6><a href="{% url "product_desc" product.product_id|base64_encode %}">{{product.product_name}}</a></h6>
                                 <div class="rating">
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>
