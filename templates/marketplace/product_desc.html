@@ -2,6 +2,7 @@
 {% load custom_filters %}
 
 {% block content %}
+{% include "includes/alerts.html" %}
    <!-- Breadcrumb Begin -->
    <div class="breadcrumb-option">
     <div class="container">
@@ -84,10 +85,12 @@
                         <div class="quantity">
                             <span>Quantity:</span>
                             <div class="pro-qty">
-                                <input type="text" value="1">
+                                <span class="dec qtybtn">-</span>
+                                <input type="text" class="cart_val" value="1"  disabled style="background-color: white;">
+                                <span class="inc qtybtn" >+</span>
                             </div>
                         </div>
-                        <a href="#" class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
+                        <a href="" style="cursor: pointer;" data-id={{product.product_id}} data-url="{% url "add_to_cart" product.product_id|base64_encode %}"  class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
                         <ul>
                             <li><a href="#"><span class="icon_heart_alt"></span></a></li>
                             <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
@@ -241,7 +244,40 @@
             {% endfor %}
         </div>
     </div>
+    
 </section>
 <!-- Product Details Section End -->
+
+
+
+<script>
+    
+$(document).ready(function () {
+    $(".cart-btn").on("click", function (e) {
+        e.preventDefault();
+        let cart_val = $(".cart_val").val();
+        let product_id = $(this).attr("data-id");
+        let url = $(this).attr("data-url");
+        $.ajax({
+            type: "get",
+            url: url,
+            data: {"what":"by_marketplace" ,"product_id": product_id, 'cart_val': cart_val },
+            success: function (response) {
+                console.log(response)
+                $(".cart_icon").text(response.cart_counter.cart_count)
+                if (response.message.includes("Login Required")) {
+                    window.location.href = "{% url 'login' %}";
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log("AJAX Error:", status, error);
+            }
+        });
+
+    })
+
+
+});
+</script>
 
 {% endblock %}

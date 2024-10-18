@@ -7,12 +7,14 @@
     <div class="offcanvas__close">+</div>
     <ul class="offcanvas__widget">
         <li><span class="icon_search search-switch"></span></li>
+        {% if user.is_authenticated %}
         <li><a href="#"><span class="icon_heart_alt"></span>
-                <div class="tip">2</div>
-            </a></li>
+            <div class="tip">2</div>
+        </a></li>
         <li><a href="#"><span class="icon_bag_alt"></span>
-                <div class="tip">2</div>
-            </a></li>
+            <div class="tip">2</div>
+        </a></li>
+        {% endif %}
     </ul>
     <div class="offcanvas__logo">
         <a href="{% url "home_page" %}"><img src="{% static "img/logo.png" %}" alt=""></a>
@@ -74,12 +76,14 @@
                     </div>
                     <ul class="header__right__widget">
                         <li><span title="Search Products" class="icon_search search-switch"></span></li>
+                        {% if user.is_authenticated %}
                         <li><a title="Wishlist" href="#"><span class="icon_heart_alt"></span>
-                                <div class="tip">2</div>
-                            </a></li>
-                        <li><a title="Cart" href="#"><span class="icon_bag_alt"></span>
-                                <div class="tip">2</div>
-                            </a></li>
+                            <div class="tip">2</div>
+                        </a></li>
+                        <li><a title="Cart" href="{% url "shopping_cart" %}"><span class="icon_bag_alt"></span>
+                            <div class="tip cart_icon">{{cart_count}}</div>
+                        </a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>

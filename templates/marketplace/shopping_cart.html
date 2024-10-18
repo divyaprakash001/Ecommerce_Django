@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block content %}
+{% include "includes/alerts.html" %}
+<div class="breadcrumb-option">
+  <div class="container">
+      <div class="row">
+          <div class="col-lg-12">
+              <div class="breadcrumb__links">
+                  <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                  <span>Shopping cart</span>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- Breadcrumb End -->
+
+<!-- Shop Cart Section Begin -->
+<section class="shop-cart spad">
+  <div class="container">
+      <div class="row">
+          <div class="col-lg-12">
+              <div class="shop__cart__table">
+                  <table>
+                      <thead>
+                          <tr>
+                              <th>Product</th>
+                              <th>Price</th>
+                              <th>Quantity</th>
+                              <th>Total</th>
+                              <th></th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        {% for cart_item in cart_items %}
+                          <tr>
+                              <td class="cart__product__item">
+                                  <img src="img/shop-cart/cp-1.jpg" alt="">
+                                  <div class="cart__product__item__title">
+                                      <h6>{{cart_item.product}}</h6>
+                                      <div class="rating">
+                                          <i class="fa fa-star"></i>
+                                          <i class="fa fa-star"></i>
+                                          <i class="fa fa-star"></i>
+                                          <i class="fa fa-star"></i>
+                                          <i class="fa fa-star"></i>
+                                      </div>
+                                  </div>
+                              </td>
+                              <td class="cart__price"><span>₹ {{cart_item.product.discounted_price}}</span> &nbsp;<del style="color:lightgray; font-size:12px;">{{cart_item.product.price}}</del></td>
+                              <td class="cart__quantity">
+                                  <div class="pro-qty">
+                                      <span class="dec qtybtn" data-id="{{cart_item.product.product_id}}" data-url="{% url "decrease_cart" cart_item.product.product_id|base64_encode %}">-</span>
+                                      <input type="text" class="cart_val" value="{{cart_item.quantity}}" disabled style="background-color: white;">
+                                      <span class="inc qtybtn cart-btn" data-id="{{cart_item.product.product_id}}" data-url="{% url "add_to_cart" cart_item.product.product_id|base64_encode %}" >+</span>
+                                  </div>
+                              </td>
+                              <td class="cart__total">₹ {{cart_item.total_price}}</td>
+                              <td class="cart__close"><span class="icon_close"></span></td>
+                          </tr>
+                          {% endfor %}
+                          
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="cart__btn">
+                  <a href="{% url "marketplace" %}">Continue Shopping</a>
+              </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="cart__btn update__btn">
+                  <a href="#"><span class="icon_loading"></span> Update cart</a>
+              </div>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-lg-6">
+              <div class="discount__content">
+                  <h6>Discount codes</h6>
+                  <form action="#">
+                      <input type="text" placeholder="Enter your coupon code">
+                      <button type="submit" class="site-btn">Apply</button>
+                  </form>
+              </div>
+          </div>
+          <div class="col-lg-4 offset-lg-2">
+              <div class="cart__total__procced">
+                  <h6>Cart total</h6>
+                  <ul>
+                      <li>Subtotal <span>₹ 750.0</span></li>
+                      <li>Total <span>₹ 750.0</span></li>
+                  </ul>
+                  <a href="#" class="primary-btn">Proceed to checkout</a>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+<!-- Shop Cart Section End -->
+
+<script>
+    let sum=0;
+    let cart__total = document.querySelectorAll(".cart__total")
+    cart__total.forEach(function(item) {
+           let itemText = item.textContent.replace(/[₹, ]/g, '');
+           item_val = parseFloat(itemText);
+           sum += item_val;
+    });
+    console.log(sum)
+    spantotal =  document.querySelector(".cart__total__procced ul li span:first-child")
+    spanTotalText =  spantotal.textContent.replace(/[₹, ]/g, '')
+    if (spantotal) {
+        spantotal.textContent = `₹ ${sum}`; // Set the new total with ₹
+    }
+</script>
+
+<script>
+    
+$(document).ready(function () {
+    $(".cart-btn").on("click", function (e) {
+        e.preventDefault();
+        let product_id = $(this).attr("data-id");
+        let cart_val = $(".cart_val").val();
+        let url = $(this).attr("data-url");
+        $.ajax({
+            type: "get",
+            url: url,
+            data: {"what":"by_shopping_cart" ,"product_id": product_id, 'cart_val': cart_val },
+            success: function (response) {
+                console.log(response)
+                $(".cart_icon").text(response.cart_counter.cart_count)
+                if (response.message.includes("Login Required")) {
+                    window.location.href = "{% url 'login' %}";
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log("AJAX Error:", status, error);
+            }
+        });
+    });
+
+
+    /*decrease cart*/
+    $(".dec").on("click", function (e) {
+        e.preventDefault();
+        let product_id = $(this).attr("data-id");
+        let url = $(this).attr("data-url");
+        $.ajax({
+            type: "get",
+            url: url,
+            data: {"product_id": product_id },
+            success: function (response) {
+                console.log(response)
+                $(".cart_icon").text(response.cart_counter.cart_count)
+                if (response.message.includes("Login Required")) {
+                    window.location.href = "{% url 'login' %}";
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log("AJAX Error:", status, error);
+            }
+        });
+
+    });
+
+
+});
+</script>
+
+{% endblock %}

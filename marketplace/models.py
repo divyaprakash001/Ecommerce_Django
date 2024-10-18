@@ -11,8 +11,11 @@ class Cart(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at= models.DateTimeField(auto_now=True)
 
-  def __unicode__(self):
-    return self.user
+  def __str__(self):
+    return f"self.product.product_name - {self.quantity}"
+  
+  def total_price(self):
+    return (self.product.discounted_price() * self.quantity)
   
   class Meta:
     db_table = "cart"

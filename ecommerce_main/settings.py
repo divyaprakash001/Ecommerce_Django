@@ -73,6 +73,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'seller.context_processors.fetch_seller',
+                'marketplace.context_processors.get_cart_counter',
             ],
         },
     },
