@@ -264,9 +264,11 @@ $(document).ready(function () {
             data: {"what":"by_marketplace" ,"product_id": product_id, 'cart_val': cart_val },
             success: function (response) {
                 console.log(response)
-                $(".cart_icon").text(response.cart_counter.cart_count)
-                if (response.message.includes("Login Required")) {
-                    window.location.href = "{% url 'login' %}";
+                if(response.status=='Success'){
+                    $(".cart_icon").text(response.cart_counter.cart_count)
+                }
+                else if (response.status == "Login Required") {
+                    window.location = "/accounts/login";
                 }
             },
             error: function (xhr, status, error) {

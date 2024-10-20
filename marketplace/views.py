@@ -100,7 +100,7 @@ def add_to_cart(request,product_id=None):
     
   else:  
     messages.error(request,"You are not logged in!")
-    return JsonResponse({'status':"Failed",'message':'Login Required'})
+    return JsonResponse({'status':"Login Required",'message':'Login Required'})
 
 
 def decrease_cart(request,product_id=None):
@@ -118,7 +118,8 @@ def decrease_cart(request,product_id=None):
               cart.quantity -= 1
               cart.save()
               messages.success(request,"Cart Updated Successfully.")
-              return JsonResponse({'status':"Success",'message':'Cart Decreased Successfully.','cart_counter':get_cart_counter(request),"total_price":"cart__total"})
+              total_price = cart.product.discounted_price() * cart.quantity
+              return JsonResponse({'status':"Success",'message':'Cart Decreased Successfully.','cart_counter':get_cart_counter(request),"total_price":total_price})
             elif cart.quantity == 1:
               # cart.quantity = 1
               # cart.save()

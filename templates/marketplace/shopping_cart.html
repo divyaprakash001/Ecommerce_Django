@@ -52,12 +52,12 @@
                               <td class="cart__price"><span>₹ {{cart_item.product.discounted_price}}</span> &nbsp;<del style="color:lightgray; font-size:12px;">{{cart_item.product.price}}</del></td>
                               <td class="cart__quantity">
                                   <div class="pro-qty">
-                                      <span class="dec qtybtn" data-id="{{cart_item.product.product_id}}" data-url="{% url "decrease_cart" cart_item.product.product_id|base64_encode %}">-</span>
+                                      <span id={{cart_item.id}} class="dec qtybtn" data-id="{{cart_item.product.product_id}}" data-url="{% url "decrease_cart" cart_item.product.product_id|base64_encode %}">-</span>
                                       <input type="text" class="cart_val" value="{{cart_item.quantity}}" disabled style="background-color: white;">
-                                      <span class="inc qtybtn cart-btn" data-id="{{cart_item.product.product_id}}" data-url="{% url "add_to_cart" cart_item.product.product_id|base64_encode %}" >+</span>
+                                      <span id={{cart_item.id}} class="inc qtybtn cart-btn" data-id="{{cart_item.product.product_id}}" data-url="{% url "add_to_cart" cart_item.product.product_id|base64_encode %}" >+</span>
                                   </div>
                               </td>
-                              <td class="cart__total">₹ {{cart_item.total_price}}</td>
+                              <td id="cart-item-{{cart_item.id}}" class="cart__total">₹ {{cart_item.total_price}}</td>
                               <td class="cart__close"><span class="icon_close"></span></td>
                           </tr>
                           {% endfor %}
@@ -128,13 +128,17 @@ $(document).ready(function () {
         let product_id = $(this).attr("data-id");
         let cart_val = $(".cart_val").val();
         let url = $(this).attr("data-url");
+        let cart_id = $(this).attr("id");
         $.ajax({
             type: "get",
             url: url,
             data: {"what":"by_shopping_cart" ,"product_id": product_id, 'cart_val': cart_val },
             success: function (response) {
                 console.log(response)
-                $(".cart_icon").text(response.cart_counter.cart_count)
+                if(response.status == 'Success'){
+                    $(".cart_icon").text(response.cart_counter.cart_count);
+                    $("#cart-item-"+cart_id).html(response.total_price)
+                }
                 if (response.message.includes("Login Required")) {
                     window.location.href = "{% url 'login' %}";
                 }
@@ -151,6 +155,7 @@ $(document).ready(function () {
         e.preventDefault();
         let product_id = $(this).attr("data-id");
         let url = $(this).attr("data-url");
+        let cart_id = $(this).attr("id");
         $.ajax({
             type: "get",
             url: url,
@@ -158,8 +163,11 @@ $(document).ready(function () {
             success: function (response) {
                 console.log(response)
                 $(".cart_icon").text(response.cart_counter.cart_count)
+                if(response.status == 'Success'){
+                    $("#cart-item-"+cart_id).html(response.total_price)
+                }
                 if (response.message.includes("Login Required")) {
-                    window.location.href = "{% url 'login' %}";
+                    window.location = "/login";
                 }
             },
             error: function (xhr, status, error) {
