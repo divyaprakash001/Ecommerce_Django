@@ -94,7 +94,7 @@
                         <ul class="product__hover">
                             <li><a href="{{product.product_pic_front.url}}" class="image-popup"><span class="arrow_expand"></span></a></li>
                             <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
+                            <li><a href="#" class="cart-btn" data-id="{{product.product_id}}" data-url="{% url "add_to_cart" product.product_id|base64_encode %}"><span class="icon_bag_alt"></span></a></li>
                         </ul>
                     </div>
                     <div class="product__item__text">
@@ -404,4 +404,35 @@
 <!-- Services Section End -->
 
 {% include "includes/instagram.html" %}
+
+<script>
+    $(".cart-btn").on("click", function (e) {
+        e.preventDefault();
+        let product_id = $(this).attr("data-id");
+        let cart_val = $(".cart_val").val();
+        let url = $(this).attr("data-url");
+        let cart_id = $(this).attr("id");
+        $.ajax({
+            type: "get",
+            url: url,
+            data: {"what":"by_shopping_cart" ,"product_id": product_id, 'cart_val': cart_val },
+            success: function (response) {
+                console.log(response)
+                console.log(response.get_cart_amounts['subtotal'])
+                if(response.status == 'Success'){
+                    $(".cart_icon").text(response.cart_counter.cart_count);
+                    $("#cart-total-"+cart_id).html(response.total_price)
+                }
+                if (response.message.includes("Login Required")) {
+                    window.location.href = "{% url 'login' %}";
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log("AJAX Error:", status, error);
+            }
+        });
+    });
+    </script>
+
+
 {% endblock %}

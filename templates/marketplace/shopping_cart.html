@@ -106,10 +106,10 @@
               <div class="cart__total__procced">
                   <h6>Cart total</h6>
                   <ul>
-                      <li>Subtotal <span class="subtotal">₹ 750.0</span></li>
-                      <li>Discount Coupon <span class="subtotal">₹ 750.0</span></li>
-                      <li>Tax <span class="subtotal">₹ 750.0</span></li>
-                      <li>Total <span>₹ 750.0</span></li>
+                      <li>Subtotal <span id="subtotal">₹ {{subtotal|floatformat:2}}</span></li>
+                      <li>Discount Coupon <span id="subtotal">₹ 0</span></li>
+                      <li>Tax <span id="tax">₹ {{tax|floatformat:2}}</span></li>
+                      <li>Total <span id="grand_total">₹ {{grand_total|floatformat:2}}</span></li>
                   </ul>
                   <a href="#" class="primary-btn">Proceed to checkout</a>
               </div>
@@ -120,26 +120,9 @@
 <!-- Shop Cart Section End -->
 
 <script>
-    function total_sum(){
-        let sum=0;
-        let cart__total = document.querySelectorAll(".cart__total")
-        cart__total.forEach(function(item) {
-               let itemText = item.textContent.replace(/[₹, ]/g, '');
-               item_val = parseFloat(itemText);
-               sum += item_val;
-        });
-        console.log(sum)
-        spantotal =  document.querySelector(".cart__total__procced ul li span:first-child")
-        spanTotalText =  spantotal.textContent.replace(/[₹, ]/g, '')
-        if (spantotal) {
-            spantotal.textContent = `₹ ${sum}`; // Set the new total with ₹
-        }
-    }
 
     
 $(document).ready(function () {
-    total_sum()
-
     $(".cart-btn").on("click", function (e) {
         e.preventDefault();
         let product_id = $(this).attr("data-id");
@@ -152,12 +135,17 @@ $(document).ready(function () {
             data: {"what":"by_shopping_cart" ,"product_id": product_id, 'cart_val': cart_val },
             success: function (response) {
                 console.log(response)
+                console.log(response.get_cart_amounts['subtotal'])
                 if(response.status == 'Success'){
                     $(".cart_icon").text(response.cart_counter.cart_count);
                     $("#cart-total-"+cart_id).html(response.total_price)
-                    total_sum()
+                    total_sum(
+                        response.get_cart_amounts['subtotal'],
+                        response.get_cart_amounts['tax'],
+                        response.get_cart_amounts['grand_total']
+                        )
                 }
-                if (response.message.includes("Login Required")) {
+                else if (response.message.includes("Login Required")) {
                     window.location.href = "{% url 'login' %}";
                 }
             },
@@ -184,13 +172,22 @@ $(document).ready(function () {
                 $(".cart_icon").text(response.cart_counter.cart_count)
                 if(response.status == 'Success'){
                     $("#cart-total-"+cart_id).html(response.total_price)
-                    total_sum()
+                    total_sum(
+                        response.get_cart_amounts['subtotal'],
+                        response.get_cart_amounts['tax'],
+                        response.get_cart_amounts['grand_total']
+                        )
                 }
                 else if (response.status == "Login Required") {
                     window.location = "/login";
                 }else if(response.status == 'Removed'){
                     tr = $("#cart-item-"+cart_id).remove();
                     swal(response.message,'','success')
+                    total_sum(
+                        response.get_cart_amounts['subtotal'],
+                        response.get_cart_amounts['tax'],
+                        response.get_cart_amounts['grand_total']
+                        )
                     if($(".cart_icon").text() == 0){
                         document.getElementById("empty_cart").style.display = 'block';
                         document.getElementById("cart_table").style.display = 'none';
@@ -219,7 +216,11 @@ $(document).ready(function () {
                 $(".cart_icon").text(response.cart_counter.cart_count)
                 if(response.status == 'Deleted'){
                     tr = $("#cart-item-"+cart_id).remove();
-                    total_sum()
+                    total_sum(
+                        response.get_cart_amounts['subtotal'],
+                        response.get_cart_amounts['tax'],
+                        response.get_cart_amounts['grand_total']
+                        )
                     swal(response.message,'','success')
                     if($(".cart_icon").text() == 0){
                         document.getElementById("empty_cart").style.display = 'block';
@@ -239,6 +240,13 @@ $(document).ready(function () {
 
 
 });
+
+function  total_sum(subtotal,tax,grand_total){
+    $("#subtotal").html(subtotal.toFixed(2));
+    $("#tax").html(tax.toFixed(2));
+    $("#grand_total").html(grand_total.toFixed(2));
+}
+
 </script>
 
 {% endblock %}

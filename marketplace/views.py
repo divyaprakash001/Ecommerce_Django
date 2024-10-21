@@ -1,7 +1,7 @@
 import base64
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from marketplace.context_processors import get_cart_counter
+from marketplace.context_processors import get_cart_amounts, get_cart_counter
 from marketplace.models import Cart
 from products.models import Product,Category
 from django.contrib import messages
@@ -79,12 +79,12 @@ def add_to_cart(request,product_id=None):
               print(cart.quantity)
               total_price = cart.product.discounted_price() * cart.quantity
               messages.success(request,"Cart Updated Successfully.")
-              return JsonResponse({'status':"Success",'message':'Cart Updated Successfully.','cart_counter':get_cart_counter(request),"total_price":total_price})
+              return JsonResponse({'status':"Success",'message':'Cart Updated Successfully.','cart_counter':get_cart_counter(request),"total_price":total_price,'get_cart_amounts':get_cart_amounts(request)})
             except Cart.DoesNotExist:
               cart = Cart(user=request.user,product=product,quantity=1)
               cart.save()
               messages.success(request,"Product Added To Cart Successfully!!!")
-              return JsonResponse({'status':"Success",'message':'Added To Cart Successfully.','cart_counter':get_cart_counter(request)})
+              return JsonResponse({'status':"Success",'message':'Added To Cart Successfully.','cart_counter':get_cart_counter(request),'get_cart_amounts':get_cart_amounts(request)})
           except Product.DoesNotExist:
             return JsonResponse({'status':"Failed",'message':'Product Dose Not Exists!!'})
           except Exception as e:
@@ -117,21 +117,19 @@ def decrease_cart(request,product_id=None):
             if cart.quantity > 1:
               cart.quantity -= 1
               cart.save()
-              messages.success(request,"Cart Updated Successfully.")
               total_price = cart.product.discounted_price() * cart.quantity
-              return JsonResponse({'status':"Success",'message':'Cart Decreased Successfully.','cart_counter':get_cart_counter(request),"total_price":total_price})
+              return JsonResponse({'status':"Success",'message':'Cart Decreased Successfully.','cart_counter':get_cart_counter(request),"total_price":total_price,'get_cart_amounts':get_cart_amounts(request)})
             elif cart.quantity == 1:
               cart.delete()
               cart.quantity == 0
-              return JsonResponse({'status':"Removed",'message':'Product Removed Successfully.','cart_counter':get_cart_counter(request)})
+              return JsonResponse({'status':"Removed",'message':'Product Removed Successfully.','cart_counter':get_cart_counter(request),'get_cart_amounts':get_cart_amounts(request)})
             else:
-              messages.warning(request,"Could Not Be Zero.")
-              return JsonResponse({'status':"Failed",'message':'Could Not Be Zero.','cart_counter':get_cart_counter(request)})
+              return JsonResponse({'status':"Failed",'message':'Could Not Be Zero.','cart_counter':get_cart_counter(request),'get_cart_amounts':get_cart_amounts(request)})
           except Cart.DoesNotExist:
             cart = Cart(user=request.user,product=product,quantity=1)
             cart.save()
             messages.success(request,"Product Added To Cart Successfully!!!")
-            return JsonResponse({'status':"Success",'message':'Added To Cart Successfully.','cart_counter':get_cart_counter(request)})
+            return JsonResponse({'status':"Success",'message':'Added To Cart Successfully.','cart_counter':get_cart_counter(request),'get_cart_amounts':get_cart_amounts(request)})
         except Product.DoesNotExist:
           return JsonResponse({'status':"Failed",'message':'Product Dose Not Exists!!'})
         except Exception as e:
@@ -163,11 +161,11 @@ def delete_from_cart(request,cart_id=None):
           if cart:
             cart.delete()
             total_price = cart.product.discounted_price() * cart.quantity
-            return JsonResponse({'status':"Deleted",'message':'Product Deleted From Cart.','cart_counter':get_cart_counter(request),"total_price":total_price})
+            return JsonResponse({'status':"Deleted",'message':'Product Deleted From Cart.','cart_counter':get_cart_counter(request),"total_price":total_price,'get_cart_amounts':get_cart_amounts(request)})
           else:
-            return JsonResponse({'status':"Not Found",'message':'Product Not Found In Cart.','cart_counter':get_cart_counter(request)})
+            return JsonResponse({'status':"Not Found",'message':'Product Not Found In Cart.','cart_counter':get_cart_counter(request),'get_cart_amounts':get_cart_amounts(request)})
         except Cart.DoesNotExist:
-          return JsonResponse({'status':"Not Found",'message':'Product Not Found In Cart.','cart_counter':get_cart_counter(request)})   
+          return JsonResponse({'status':"Not Found",'message':'Product Not Found In Cart.','cart_counter':get_cart_counter(request),'get_cart_amounts':get_cart_amounts(request)})   
     else:
       return JsonResponse({'status':"Failed",'message':'Invalid Request'})
   else:
