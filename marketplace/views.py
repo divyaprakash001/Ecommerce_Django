@@ -110,7 +110,7 @@ def decrease_cart(request,product_id=None):
         try:
           prod_id =  base64.b64decode(product_id).decode('utf-8')
           product = Product.objects.get(product_id=prod_id)
-          cart_val = request.GET.get("cart_val")
+          # cart_val = request.GET.get("cart_val")
         # check product is already in the cart or not
           try:
             cart = Cart.objects.get(user=request.user,product=product)
@@ -121,10 +121,9 @@ def decrease_cart(request,product_id=None):
               total_price = cart.product.discounted_price() * cart.quantity
               return JsonResponse({'status':"Success",'message':'Cart Decreased Successfully.','cart_counter':get_cart_counter(request),"total_price":total_price})
             elif cart.quantity == 1:
-              # cart.quantity = 1
-              # cart.save()
-              messages.warning(request,"Could Not Be Zero.")
-              return JsonResponse({'status':"Failed",'message':'Could Not Be Zero.','cart_counter':get_cart_counter(request)})
+              cart.delete()
+              cart.quantity == 0
+              return JsonResponse({'status':"Removed",'message':'Product Removed Successfully.','cart_counter':get_cart_counter(request)})
             else:
               messages.warning(request,"Could Not Be Zero.")
               return JsonResponse({'status':"Failed",'message':'Could Not Be Zero.','cart_counter':get_cart_counter(request)})
@@ -136,19 +135,11 @@ def decrease_cart(request,product_id=None):
         except Product.DoesNotExist:
           return JsonResponse({'status':"Failed",'message':'Product Dose Not Exists!!'})
         except Exception as e:
-          return JsonResponse({'status':"Failed",'message':'Some Error Occurs!!',"error":f"{e}"})
-
-
-
-          
+          return JsonResponse({'status':"Failed",'message':'Some Error Occurs!!',"error":f"{e}"})    
     else:
       return JsonResponse({'status':"Failed",'message':'Invalid Request'})
-    return JsonResponse({'status':"Success",'message':'Yeah'})
-      
-    
-  else:  
-    messages.error(request,"You are not logged in!")
-    return JsonResponse({'status':"Failed",'message':'Login Required'})
+  else:
+    return JsonResponse({'status':"Login Required",'message':'Login Required'})
 
 
   
@@ -156,8 +147,29 @@ login_required(login_url="login")
 def shopping_cart(request):
   context={}
   if request.user.is_authenticated:
-    cart_items = Cart.objects.filter(user=request.user)
+    cart_items = Cart.objects.filter(user=request.user).order_by("created_at")
     context['cart_items'] = cart_items
   else:
     return redirect("login")
   return render(request,"marketplace/shopping_cart.html",context)
+
+
+def delete_from_cart(request,cart_id=None):
+  if request.user.is_authenticated:
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+      if request.method == 'GET':
+        try:
+          cart = Cart.objects.get(user=request.user,id=cart_id)
+          if cart:
+            cart.delete()
+            total_price = cart.product.discounted_price() * cart.quantity
+            return JsonResponse({'status':"Deleted",'message':'Product Deleted From Cart.','cart_counter':get_cart_counter(request),"total_price":total_price})
+          else:
+            return JsonResponse({'status':"Not Found",'message':'Product Not Found In Cart.','cart_counter':get_cart_counter(request)})
+        except Cart.DoesNotExist:
+          return JsonResponse({'status':"Not Found",'message':'Product Not Found In Cart.','cart_counter':get_cart_counter(request)})   
+    else:
+      return JsonResponse({'status':"Failed",'message':'Invalid Request'})
+  else:
+    return JsonResponse({'status':"Login Required",'message':'Login Required'})
+

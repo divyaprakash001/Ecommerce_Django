@@ -17,6 +17,12 @@ class Cart(models.Model):
   def total_price(self):
     return (self.product.discounted_price() * self.quantity)
   
+  def subtotal(self):
+    sum=0
+    for item in self.products.all():
+      sum += self.total_price
+    return self.sum
+  
   class Meta:
     db_table = "cart"
     verbose_name = "Cart"

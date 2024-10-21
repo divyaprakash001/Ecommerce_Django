@@ -23,7 +23,11 @@
       <div class="row">
           <div class="col-lg-12">
               <div class="shop__cart__table">
-                  <table>
+                <div class="mx-auto text-center pb-4" id="empty_cart" style="display:none;">
+                    <h2>No Product In The Cart</h2>
+                  </div>
+                {% if cart_items %}
+                  <table id="cart_table">
                       <thead>
                           <tr>
                               <th>Product</th>
@@ -34,10 +38,11 @@
                           </tr>
                       </thead>
                       <tbody>
+                       
                         {% for cart_item in cart_items %}
-                          <tr>
+                          <tr id="cart-item-{{cart_item.id}}">
                               <td class="cart__product__item">
-                                  <img src="img/shop-cart/cp-1.jpg" alt="">
+                                  <img src="{{cart_item.product.product_pic_front.url}}" style="height:150px" alt="">
                                   <div class="cart__product__item__title">
                                       <h6>{{cart_item.product}}</h6>
                                       <div class="rating">
@@ -57,13 +62,21 @@
                                       <span id={{cart_item.id}} class="inc qtybtn cart-btn" data-id="{{cart_item.product.product_id}}" data-url="{% url "add_to_cart" cart_item.product.product_id|base64_encode %}" >+</span>
                                   </div>
                               </td>
-                              <td id="cart-item-{{cart_item.id}}" class="cart__total">₹ {{cart_item.total_price}}</td>
-                              <td class="cart__close"><span class="icon_close"></span></td>
+                              <td id="cart-total-{{cart_item.id}}" class="cart__total">₹ {{cart_item.total_price}}</td>
+                              <td class="delete_cart" data-id={{cart_item.id}} data-url = "{% url "delete_from_cart" cart_item.id %}" class="cart__close"><span class="icon_close" style="cursor: pointer;"></span></td>
                           </tr>
                           {% endfor %}
+
+                         
                           
                       </tbody>
                   </table>
+                  {% else %}
+                  <div class="mx-auto text-center pb-4">
+                    <h2>No Product In The Cart</h2>
+                  </div>
+
+                  {% endif %}
               </div>
           </div>
       </div>
@@ -93,7 +106,9 @@
               <div class="cart__total__procced">
                   <h6>Cart total</h6>
                   <ul>
-                      <li>Subtotal <span>₹ 750.0</span></li>
+                      <li>Subtotal <span class="subtotal">₹ 750.0</span></li>
+                      <li>Discount Coupon <span class="subtotal">₹ 750.0</span></li>
+                      <li>Tax <span class="subtotal">₹ 750.0</span></li>
                       <li>Total <span>₹ 750.0</span></li>
                   </ul>
                   <a href="#" class="primary-btn">Proceed to checkout</a>
@@ -105,24 +120,26 @@
 <!-- Shop Cart Section End -->
 
 <script>
-    let sum=0;
-    let cart__total = document.querySelectorAll(".cart__total")
-    cart__total.forEach(function(item) {
-           let itemText = item.textContent.replace(/[₹, ]/g, '');
-           item_val = parseFloat(itemText);
-           sum += item_val;
-    });
-    console.log(sum)
-    spantotal =  document.querySelector(".cart__total__procced ul li span:first-child")
-    spanTotalText =  spantotal.textContent.replace(/[₹, ]/g, '')
-    if (spantotal) {
-        spantotal.textContent = `₹ ${sum}`; // Set the new total with ₹
+    function total_sum(){
+        let sum=0;
+        let cart__total = document.querySelectorAll(".cart__total")
+        cart__total.forEach(function(item) {
+               let itemText = item.textContent.replace(/[₹, ]/g, '');
+               item_val = parseFloat(itemText);
+               sum += item_val;
+        });
+        console.log(sum)
+        spantotal =  document.querySelector(".cart__total__procced ul li span:first-child")
+        spanTotalText =  spantotal.textContent.replace(/[₹, ]/g, '')
+        if (spantotal) {
+            spantotal.textContent = `₹ ${sum}`; // Set the new total with ₹
+        }
     }
-</script>
 
-<script>
     
 $(document).ready(function () {
+    total_sum()
+
     $(".cart-btn").on("click", function (e) {
         e.preventDefault();
         let product_id = $(this).attr("data-id");
@@ -137,7 +154,8 @@ $(document).ready(function () {
                 console.log(response)
                 if(response.status == 'Success'){
                     $(".cart_icon").text(response.cart_counter.cart_count);
-                    $("#cart-item-"+cart_id).html(response.total_price)
+                    $("#cart-total-"+cart_id).html(response.total_price)
+                    total_sum()
                 }
                 if (response.message.includes("Login Required")) {
                     window.location.href = "{% url 'login' %}";
@@ -156,6 +174,7 @@ $(document).ready(function () {
         let product_id = $(this).attr("data-id");
         let url = $(this).attr("data-url");
         let cart_id = $(this).attr("id");
+
         $.ajax({
             type: "get",
             url: url,
@@ -164,9 +183,50 @@ $(document).ready(function () {
                 console.log(response)
                 $(".cart_icon").text(response.cart_counter.cart_count)
                 if(response.status == 'Success'){
-                    $("#cart-item-"+cart_id).html(response.total_price)
+                    $("#cart-total-"+cart_id).html(response.total_price)
+                    total_sum()
                 }
-                if (response.message.includes("Login Required")) {
+                else if (response.status == "Login Required") {
+                    window.location = "/login";
+                }else if(response.status == 'Removed'){
+                    tr = $("#cart-item-"+cart_id).remove();
+                    swal(response.message,'','success')
+                    if($(".cart_icon").text() == 0){
+                        document.getElementById("empty_cart").style.display = 'block';
+                        document.getElementById("cart_table").style.display = 'none';
+                    }
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log("AJAX Error:", status, error);
+            }
+        });
+    });
+
+
+
+    /*delete from cart*/
+    $(".delete_cart").on("click", function (e) {
+        e.preventDefault();
+        let cart_id = $(this).attr("data-id");
+        let url = $(this).attr("data-url");
+
+        $.ajax({
+            type: "get",
+            url: url,
+            success: function (response) {
+                console.log(response)
+                $(".cart_icon").text(response.cart_counter.cart_count)
+                if(response.status == 'Deleted'){
+                    tr = $("#cart-item-"+cart_id).remove();
+                    total_sum()
+                    swal(response.message,'','success')
+                    if($(".cart_icon").text() == 0){
+                        document.getElementById("empty_cart").style.display = 'block';
+                        document.getElementById("cart_table").style.display = 'none';
+                    }
+                }
+                else if (response.status == "Login Required") {
                     window.location = "/login";
                 }
             },
@@ -174,8 +234,8 @@ $(document).ready(function () {
                 console.log("AJAX Error:", status, error);
             }
         });
-
     });
+
 
 
 });
