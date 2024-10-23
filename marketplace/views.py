@@ -6,12 +6,18 @@ from marketplace.models import Cart
 from products.models import Product,Category
 from django.contrib import messages
 from django.contrib.auth.decorators import  login_required
+from django.core.paginator import Paginator
 
 # Create your views here.
 def marketplace(request):
   context={}
   products = Product.objects.filter(status='Active')
-  context['products'] = products
+
+  paginator = Paginator(products, 10)  # Show 10 products per page
+  page_number = request.GET.get('page')  # Get the page number from the request
+  page_obj = paginator.get_page(page_number)
+
+  context['page_obj'] = page_obj
   return render(request,"marketplace/shop.html",context)
 
 def product_desc(request,iid):
@@ -49,17 +55,16 @@ def add_to_cart(request,product_id=None):
             # check product is already in the cart or not
             try:
               cart = Cart.objects.get(user=request.user,product=product)
-              print(cart.quantity)
               cart.quantity += int(cart_val)
               cart.save()
-              print(cart.quantity)
+              
               total_price = cart.product.discounted_price() * cart.quantity
-              messages.success(request,"Cart Updated Successfully.")
+              
               return JsonResponse({'status':"Success",'message':'Cart Updated Successfully.','cart_counter':get_cart_counter(request),"total_price":total_price})
             except Cart.DoesNotExist:
               cart = Cart(user=request.user,product=product,quantity=int(cart_val))
               cart.save()
-              messages.success(request,"Product Added To Cart Successfully!!!")
+              
               return JsonResponse({'status':"Success",'message':'Added To Cart Successfully.','cart_counter':get_cart_counter(request)})
           except Product.DoesNotExist:
             return JsonResponse({'status':"Failed",'message':'Product Doee Not Exists!!'})
@@ -73,17 +78,15 @@ def add_to_cart(request,product_id=None):
           # check product is already in the cart or not
             try:
               cart = Cart.objects.get(user=request.user,product=product)
-              print(cart.quantity)
               cart.quantity += 1
               cart.save()
-              print(cart.quantity)
               total_price = cart.product.discounted_price() * cart.quantity
-              messages.success(request,"Cart Updated Successfully.")
+              
               return JsonResponse({'status':"Success",'message':'Cart Updated Successfully.','cart_counter':get_cart_counter(request),"total_price":total_price,'get_cart_amounts':get_cart_amounts(request)})
             except Cart.DoesNotExist:
               cart = Cart(user=request.user,product=product,quantity=1)
               cart.save()
-              messages.success(request,"Product Added To Cart Successfully!!!")
+              
               return JsonResponse({'status':"Success",'message':'Added To Cart Successfully.','cart_counter':get_cart_counter(request),'get_cart_amounts':get_cart_amounts(request)})
           except Product.DoesNotExist:
             return JsonResponse({'status':"Failed",'message':'Product Dose Not Exists!!'})
@@ -99,7 +102,6 @@ def add_to_cart(request,product_id=None):
       
     
   else:  
-    messages.error(request,"You are not logged in!")
     return JsonResponse({'status':"Login Required",'message':'Login Required'})
 
 
@@ -128,7 +130,7 @@ def decrease_cart(request,product_id=None):
           except Cart.DoesNotExist:
             cart = Cart(user=request.user,product=product,quantity=1)
             cart.save()
-            messages.success(request,"Product Added To Cart Successfully!!!")
+            
             return JsonResponse({'status':"Success",'message':'Added To Cart Successfully.','cart_counter':get_cart_counter(request),'get_cart_amounts':get_cart_amounts(request)})
         except Product.DoesNotExist:
           return JsonResponse({'status':"Failed",'message':'Product Dose Not Exists!!'})
@@ -171,3 +173,17 @@ def delete_from_cart(request,cart_id=None):
   else:
     return JsonResponse({'status':"Login Required",'message':'Login Required'})
 
+
+def shop_by_category(request,category_name):
+  context={}
+  try:
+    category = Category.objects.filter(category_name=category_name)
+  except Category.DoesNotExist:
+    messages.error(request,"Category Does not exists")
+    return redirect("home_page")
+  products = Product.objects.filter(category__in=category,status='Active')
+  paginator = Paginator(products, 10)  # Show 10 products per page
+  page_number = request.GET.get('page')  # Get the page number from the request
+  page_obj = paginator.get_page(page_number)
+  context['page_obj'] = page_obj
+  return render(request,"marketplace/shop_by_category.html",context)

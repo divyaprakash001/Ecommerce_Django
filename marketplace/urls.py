@@ -4,6 +4,10 @@ from . import views
 
 urlpatterns = [
     path('', views.marketplace, name="marketplace"),
+    path('<str:category_name>', views.shop_by_category, name="shop_by_category"),
+
+
+
     path('product/<iid>/', views.product_desc, name="product_desc"),
 
     # add to cart

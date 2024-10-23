@@ -12,10 +12,13 @@
                     <div class="categories__item categories__large__item set-bg"
                     data-setbg="{% static "img/categories/category-1.jpg" %}">
                     <div class="categories__text">
-                        <h1>Women’s fashion</h1>
+                        {% comment %} <h1>Women’s fashion</h1> {% endcomment %}
+                        <h1>{{categories.1}}</h1>
                         <p>Sitamet, consectetur adipiscing elit, sed do eiusmod tempor incidid-unt labore
                         edolore magna aliquapendisse ultrices gravida.</p>
-                        <a href="#">Shop now</a>
+                        {% with first_category=categories.1 %}
+                            <a href="{% url "shop_by_category" first_category.category_name  %}">Shop now</a>
+                        {% endwith %}
                     </div>
                 </div>
             </div>
@@ -24,36 +27,45 @@
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
                         <div class="categories__item set-bg" data-setbg="{% static "img/categories/category-2.jpg" %}">
                             <div class="categories__text">
-                                <h4>Men’s fashion</h4>
+                                {% comment %} <h4>Men’s fashion</h4> {% endcomment %}
+                                <h4>{{categories.0}}</h4>
                                 <p>358 items</p>
-                                <a href="#">Shop now</a>
+                                {% with second_category=categories.0 %}
+                                <a href="{% url "shop_by_category" second_category.category_name  %}">Shop now</a>
+                                {% endwith %}
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
                         <div class="categories__item set-bg" data-setbg="{% static "img/categories/category-3.jpg" %}">
                             <div class="categories__text">
-                                <h4>Kid’s fashion</h4>
+                                <h4>{{categories.2}}</h4>
                                 <p>273 items</p>
-                                <a href="#">Shop now</a>
+                                {% with third_category=categories.2 %}
+                                <a href="{% url "shop_by_category" third_category.category_name  %}">Shop now</a>
+                                {% endwith %}
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
                         <div class="categories__item set-bg" data-setbg="{% static "img/categories/category-4.jpg" %}">
                             <div class="categories__text">
-                                <h4>Cosmetics</h4>
+                                <h4>{{categories.4}}</h4>
                                 <p>159 items</p>
-                                <a href="#">Shop now</a>
+                                {% with fourth_category=categories.4 %}
+                                <a href="{% url "shop_by_category" fourth_category.category_name  %}">Shop now</a>
+                                {% endwith %}
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
                         <div class="categories__item set-bg" data-setbg="{% static "img/categories/category-5.jpg" %}">
                             <div class="categories__text">
-                                <h4>Accessories</h4>
+                                <h4>{{categories.3}}</h4>
                                 <p>792 items</p>
-                                <a href="#">Shop now</a>
+                                {% with fifth_category=categories.3 %}
+                                <a href="{% url "shop_by_category" fifth_category.category_name  %}">Shop now</a>
+                                {% endwith %}
                             </div>
                         </div>
                     </div>

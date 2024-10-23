@@ -1,5 +1,5 @@
 from .models import Cart
-from products.models import Product
+from products.models import Category, Product
 
 def get_cart_counter(request):
   cart_count=0
@@ -30,4 +30,8 @@ def get_cart_amounts(request):
     grand_total = subtotal + tax
   
   return dict(subtotal=subtotal,tax=tax,grand_total=grand_total)
+
+def category_list(request):
+  categories = Category.objects.filter(status="Active").order_by("created_at")
+  return dict(categories=categories)
     

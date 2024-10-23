@@ -26,6 +26,7 @@ class Category(models.Model):
   category_pic = models.ImageField(upload_to="products/categories", null=True)
   category_desc = models.CharField(max_length=50, null=True,blank=True)
   status = models.CharField( max_length=10,default="Active")
+  created_at = models.DateTimeField(auto_now_add=True,null=True)
 
   def __str__(self):
     return self.category_name

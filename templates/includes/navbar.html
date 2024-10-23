@@ -44,9 +44,14 @@
                 <nav class="header__menu">
                     <ul>
                         <li class="{% if '/' == request.path %}active{% endif %}"><a href="{% url "home_page" %}">Home</a></li>
-                        <li><a href="#">Women’s</a></li>
-                        <li><a href="#">Men’s</a></li>
-                        <li><a href="{% url "marketplace" %}">Shop</a></li>
+                        {% with first_category=categories.1 %}
+                            <li class="{% if first_category.category_name in request.path %}active{% endif %}"><a href="{% url "shop_by_category" first_category.category_name %}">Women’s</a></li>
+                        {% endwith %}
+                        {% with first_category=categories.0 %}
+                            <li class="{% if first_category.category_name in request.path %}active{% endif %}"><a href="{% url "shop_by_category" first_category.category_name %}">Men's</a></li>
+                        {% endwith %}
+
+                        <li ><a href="{% url "marketplace" %}">Shop</a></li>
                         <li><a href="#">Pages</a>
                             <ul class="dropdown">
                                 <li><a href="./product-details.html">Product Details</a></li>
